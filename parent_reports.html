@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Parent Reports | Rahlat Aman</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+:root{
+    --bg:#07111f;
+    --card:#111827;
+    --card2:#182235;
+    --gold:#D4AF37;
+    --blue:#38BDF8;
+    --green:#10B981;
+    --red:#EF4444;
+    --orange:#F59E0B;
+    --white:#F8FAFC;
+    --gray:#94A3B8;
+    --line:rgba(255,255,255,0.08);
+    --locked:#2a3547;
+}
+*{ margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+body{ background:linear-gradient(to bottom,#07111f,#0b1220); color:var(--white); overflow-x:hidden; }
+
+.top-header{ position:sticky; top:0; z-index:999; backdrop-filter:blur(15px); background:rgba(7,17,31,0.88); border-bottom:1px solid rgba(255,255,255,0.05); padding:18px 30px; display:flex; justify-content:space-between; align-items:center; }
+.left-header{ display:flex; align-items:center; gap:16px; }
+.back-btn{ width:45px; height:45px; border-radius:14px; display:flex; align-items:center; justify-content:center; text-decoration:none; background:rgba(212,175,55,0.12); color:var(--gold); font-size:1.1rem; }
+.header-title h1{ color:var(--gold); font-size:1.4rem; }
+.header-title p{ font-size:0.8rem; color:var(--gray); margin-top:4px; }
+
+.notification-center{ position:relative; }
+.notify-btn{ width:50px; height:50px; border-radius:15px; border:none; cursor:pointer; background:rgba(56,189,248,0.1); color:var(--blue); font-size:1.1rem; position:relative; transition:0.3s; }
+.notify-btn:hover{ transform:scale(1.05); }
+.notify-count{ position:absolute; top:-5px; right:-5px; width:22px; height:22px; border-radius:50%; background:var(--red); color:white; font-size:0.75rem; display:flex; align-items:center; justify-content:center; border:2px solid #07111f; }
+.notification-panel{ position:absolute; top:70px; right:0; width:360px; background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px; display:none; box-shadow:0 20px 50px rgba(0,0,0,0.5); max-height:520px; overflow-y:auto; }
+.notification-panel.active{ display:block; animation:fadeDown .3s ease; }
+.notification-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+
+/* ── NOTIFICATION ITEM with X button ── */
+.notification-item{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.05);
+    border-left:4px solid var(--blue);
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:12px;
+    transition:0.3s;
+    position:relative;
+}
+.notification-item:hover{ transform:translateX(4px); }
+.notification-item h4{ font-size:0.92rem; margin-bottom:6px; padding-right:24px; }
+.notification-item p{ color:var(--gray); font-size:0.78rem; line-height:1.5; }
+.notification-item small{ color:var(--gold); }
+
+/* X delete button on each notification */
+.notif-delete-btn{
+    position:absolute;
+    top:10px; right:10px;
+    width:22px; height:22px;
+    border-radius:50%;
+    background:rgba(239,68,68,0.15);
+    border:1px solid rgba(239,68,68,0.3);
+    color:var(--red);
+    font-size:0.7rem;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    transition:all 0.2s;
+    line-height:1;
+}
+.notif-delete-btn:hover{
+    background:var(--red);
+    color:white;
+    transform:scale(1.15);
+}
+
+/* Notification disappear animation */
+@keyframes notifPop{
+    0%  { opacity:1; transform:scale(1) translateX(0); }
+    40% { opacity:0.6; transform:scale(1.06) translateX(4px); }
+    100%{ opacity:0; transform:scale(0.85) translateX(20px); max-height:0; margin:0; padding:0; border:none; }
+}
+.notification-item.removing{ animation:notifPop 0.4s ease forwards; pointer-events:none; }
+
+.container{ max-width:1500px; margin:auto; padding:30px; }
+.hero-section{ background:linear-gradient(135deg,#132033,#1b2d49); border-radius:30px; padding:35px; position:relative; overflow:hidden; margin-bottom:28px; border:1px solid rgba(255,255,255,0.05); }
+.hero-section::before{ content:''; position:absolute; width:300px; height:300px; background:rgba(56,189,248,0.08); border-radius:50%; top:-150px; right:-100px; }
+.hero-top{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+.hero-left h2{ font-size:2rem; color:white; }
+.hero-left p{ margin-top:10px; color:#cbd5e1; line-height:1.7; max-width:800px; }
+.hero-stats{ display:flex; gap:15px; flex-wrap:wrap; }
+.stat-card{ min-width:160px; background:rgba(255,255,255,0.05); padding:18px; border-radius:20px; border:1px solid rgba(255,255,255,0.05); transition:0.3s; }
+.stat-card:hover{ transform:translateY(-5px); }
+.stat-card h3{ font-size:1.5rem; margin-top:10px; }
+.stat-card p{ color:var(--gray); font-size:0.8rem; }
+
+.main-grid{ display:grid; grid-template-columns:1.4fr 0.9fr; gap:25px; }
+.card{ background:var(--card); border-radius:28px; padding:24px; border:1px solid rgba(255,255,255,0.05); box-shadow:0 15px 40px rgba(0,0,0,0.35); }
+.section-title{ display:flex; justify-content:space-between; align-items:center; margin-bottom:22px; }
+.section-title h3{ color:var(--gold); font-size:1.1rem; }
+.section-title span{ color:var(--gray); font-size:0.8rem; }
+
+.compliance-box{ display:flex; justify-content:space-between; align-items:center; gap:30px; flex-wrap:wrap; }
+.radial-area{ position:relative; width:240px; height:240px; }
+.score-overlay{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+.score-overlay h1{ font-size:3rem; color:var(--green); }
+.score-overlay p{ color:#d1fae5; }
+.compliance-details{ flex:1; }
+.compliance-details h4{ color:var(--green); margin-bottom:12px; }
+.compliance-details p{ line-height:1.8; color:#cbd5e1; font-size:0.92rem; }
+.progress-list{ margin-top:18px; }
+.progress-item{ margin-bottom:15px; }
+.progress-label{ display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.85rem; }
+.progress-bar{ width:100%; height:10px; background:#0f172a; border-radius:50px; overflow:hidden; }
+.progress-fill{ height:100%; border-radius:50px; }
+
+.predictive-hub-box{ background:linear-gradient(145deg,#0f192b,#15243f); border:1px solid rgba(56,189,248,0.15); border-radius:20px; padding:20px; margin-bottom:25px; }
+.predictive-header{ display:flex; align-items:center; gap:12px; margin-bottom:15px; }
+.predictive-header i{ color:var(--blue); font-size:1.3rem; }
+.predictive-grid{ display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+.prediction-card{ background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:14px; }
+.prediction-card h5{ color:var(--gold); font-size:0.9rem; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.prediction-card p{ font-size:0.82rem; color:#cbd5e1; line-height:1.5; }
+
+.activity-card{ background:rgba(255,255,255,0.03); border-radius:20px; padding:18px; margin-bottom:18px; border-left:4px solid var(--blue); transition:0.3s; position:relative; }
+.activity-card:hover{ transform:translateY(-4px); }
+.activity-card.locked-event{ background:rgba(255,255,255,0.01)!important; border-left:4px solid var(--locked)!important; opacity:0.55; }
+.activity-card.locked-event h4,.activity-card.locked-event p{ color:#64748b!important; }
+.activity-top{ display:flex; justify-content:space-between; align-items:center; }
+.activity-date{ background:rgba(56,189,248,0.15); color:var(--blue); padding:8px 12px; border-radius:12px; font-size:0.78rem; }
+.activity-card.locked-event .activity-date{ background:#1e293b!important; color:#64748b!important; }
+.activity-status{ background:rgba(16,185,129,0.15); color:var(--green); padding:7px 10px; border-radius:10px; font-size:0.72rem; }
+.activity-status.pending-status{ background:rgba(245,158,11,0.15); color:var(--orange); }
+.activity-card.locked-event .activity-status{ background:#1e293b!important; color:#64748b!important; }
+.activity-card h4{ margin-bottom:8px; margin-top:10px; }
+.activity-card p{ color:var(--gray); line-height:1.6; font-size:0.88rem; }
+.activity-bottom{ margin-top:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+.activity-rate{ display:flex; gap:6px; color:#475569; font-size:1.1rem; }
+.activity-rate i{ cursor:pointer; transition:0.2s; }
+.activity-rate i:hover,.activity-rate i.active-star{ color:var(--gold); }
+.more-btn{ background:rgba(212,175,55,0.12); color:var(--gold); border:none; padding:10px 15px; border-radius:12px; cursor:pointer; transition:0.3s; }
+.more-btn:hover{ background:var(--gold); color:#07111f; }
+
+.chart-box{ height:320px; }
+.alert-box{ background:linear-gradient(135deg,#2b1620,#341926); border:1px solid rgba(239,68,68,0.25); border-radius:20px; padding:20px; margin-top:20px; }
+.alert-box h4{ color:#fca5a5; margin-bottom:10px; }
+.alert-box p{ color:#fecaca; font-size:0.85rem; line-height:1.7; }
+
+.feedback-box textarea{ width:100%; background:#0f172a; border:1px solid rgba(255,255,255,0.05); border-radius:18px; padding:18px; color:white; min-height:120px; resize:none; }
+.feedback-actions{ display:flex; gap:12px; margin-top:18px; }
+.btn{ border:none; padding:14px; border-radius:15px; cursor:pointer; font-weight:600; transition:0.3s; display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+.btn:hover{ transform:translateY(-3px); }
+.btn-primary{ background:var(--gold); color:#07111f; }
+.btn-secondary{ background:rgba(56,189,248,0.12); color:var(--blue); }
+.btn-success{ background:var(--green); color:#07111f; }
+.btn-danger{ background:var(--red); color:white; }
+
+.slots-label{ display:block; margin-bottom:8px; color:var(--blue); font-size:0.9rem; }
+.slots-container{ display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; margin-top:8px; }
+.slot-box{ padding:10px; text-align:center; border-radius:10px; font-size:0.82rem; font-weight:600; cursor:pointer; transition:0.2s; border:1px solid transparent; }
+.slot-box.available{ background:rgba(16,185,129,0.15); color:var(--green); border-color:rgba(16,185,129,0.3); }
+.slot-box.available:hover{ background:var(--green); color:#07111f; }
+.slot-box.booked{ background:rgba(239,68,68,0.12); color:var(--red); border-color:rgba(239,68,68,0.2); cursor:not-allowed; }
+.slot-box.selected{ background:var(--blue)!important; color:#07111f!important; border-color:var(--white); box-shadow:0 0 10px var(--blue); }
+
+.scheduled-meetings-panel{ margin-top:20px; background:rgba(255,255,255,0.02); border:1px dashed rgba(255,255,255,0.1); border-radius:18px; padding:18px; }
+.meeting-list-item{ background:var(--card2); border-radius:14px; padding:16px; margin-top:12px; border:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center; box-shadow:0 8px 20px rgba(0,0,0,0.2); }
+.meeting-list-item data{ display:block; font-size:0.85rem; color:var(--gray); margin-top:5px; }
+.meeting-item-actions{ display:flex; gap:8px; }
+.mini-btn{ padding:8px 14px; border-radius:10px; font-size:0.78rem; cursor:pointer; border:none; font-weight:600; }
+
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:10000; padding:20px; backdrop-filter:blur(5px); }
+.modal.active{ display:flex; animation:fadeIn .3s ease; }
+.modal-box{ width:100%; max-width:550px; background:var(--card); border-radius:28px; padding:28px; border:1px solid rgba(255,255,255,0.08); box-shadow:0 20px 50px rgba(0,0,0,0.6); }
+.modal-box h2{ color:var(--gold); margin-bottom:20px; font-size:1.4rem; }
+.input-group{ margin-bottom:16px; }
+.input-group label{ display:block; margin-bottom:8px; color:var(--blue); font-size:0.9rem; }
+.input-group input,.input-group select,.input-group textarea{ width:100%; background:#0f172a; border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:13px; color:white; font-size:0.9rem; }
+.modal-actions{ display:flex; gap:12px; margin-top:25px; }
+
+.app-alert-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; display:none; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(8px); }
+.app-alert-overlay.active{ display:flex; animation:fadeIn 0.25s ease; }
+.app-alert-box{ background:#151f32; border:2px solid var(--gold); border-radius:24px; width:100%; max-width:420px; padding:30px; text-align:center; box-shadow:0 0 40px rgba(214,175,55,0.25); }
+.app-alert-icon{ width:70px; height:70px; border-radius:50%; background:rgba(214,175,55,0.15); color:var(--gold); display:inline-flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:20px; }
+.app-alert-icon.alarm{ background:rgba(239,68,68,0.15); color:var(--red); animation:pulseRed 1s infinite alternate; }
+.app-alert-box h3{ margin-bottom:10px; color:var(--white); font-size:1.3rem; }
+.app-alert-box p{ color:var(--gray); font-size:0.92rem; line-height:1.6; margin-bottom:25px; }
+
+.toast-alert{ position:fixed; bottom:30px; right:30px; background:#111827; border-left:4px solid var(--blue); padding:18px 25px; border-radius:16px; box-shadow:0 20px 40px rgba(0,0,0,0.5); display:flex; align-items:center; gap:15px; z-index:999999; transform:translateY(150px); opacity:0; transition:0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+.toast-alert.show{ transform:translateY(0); opacity:1; }
+
+/* ── MEETING REMINDER POPUP ── */
+.meeting-reminder-overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,0.82);
+    backdrop-filter:blur(10px);
+    z-index:199999;
+    display:none; align-items:center; justify-content:center;
+    padding:20px;
+}
+.meeting-reminder-overlay.active{ display:flex; animation:fadeIn 0.3s ease; }
+
+.meeting-reminder-box{
+    background:linear-gradient(145deg,#0f1f38,#17284a);
+    border:2px solid var(--gold);
+    border-radius:28px;
+    width:100%; max-width:460px;
+    padding:32px;
+    text-align:center;
+    box-shadow:0 0 60px rgba(212,175,55,0.3), 0 30px 60px rgba(0,0,0,0.6);
+    animation:reminderBounce 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    position:relative;
+}
+
+@keyframes reminderBounce{
+    from{ opacity:0; transform:scale(0.8) translateY(30px); }
+    to  { opacity:1; transform:scale(1)   translateY(0); }
+}
+
+.reminder-pulse-ring{
+    width:80px; height:80px; border-radius:50%;
+    background:rgba(212,175,55,0.15);
+    border:2px solid rgba(212,175,55,0.4);
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:2.2rem;
+    margin-bottom:18px;
+    animation:ringPulse 1.5s ease-in-out infinite;
+}
+@keyframes ringPulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(212,175,55,0.5); }
+    50%    { box-shadow:0 0 0 16px rgba(212,175,55,0); }
+}
+
+.reminder-title{
+    font-size:1.4rem; font-weight:800;
+    color:var(--gold); margin-bottom:8px;
+}
+.reminder-subtitle{
+    font-size:0.85rem; color:var(--gray);
+    margin-bottom:20px;
+}
+
+.reminder-detail-grid{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:10px; margin-bottom:22px;
+    text-align:left;
+}
+.reminder-detail-item{
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:12px; padding:12px;
+}
+.reminder-detail-item .rd-label{
+    font-size:0.7rem; color:var(--gray);
+    text-transform:uppercase; letter-spacing:1px;
+    margin-bottom:4px;
+}
+.reminder-detail-item .rd-value{
+    font-size:0.9rem; font-weight:700; color:var(--white);
+}
+
+.reminder-notes{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:12px; padding:12px;
+    font-size:0.82rem; color:#cbd5e1;
+    text-align:left; margin-bottom:22px;
+    line-height:1.6;
+}
+
+.reminder-actions{ display:flex; gap:12px; }
+.reminder-actions button{ flex:1; padding:13px; border-radius:14px; font-weight:700; font-size:0.9rem; cursor:pointer; border:none; transition:all 0.2s; }
+.btn-remind-ok    { background:linear-gradient(135deg,var(--gold),#b8941f); color:#07111f; box-shadow:0 4px 16px rgba(212,175,55,0.35); }
+.btn-remind-ok:hover{ transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,175,55,0.5); }
+.btn-remind-cancel{ background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3)!important; }
+.btn-remind-cancel:hover{ background:var(--red); color:white; }
+
+.fb-saved-badge{ display:inline-flex; align-items:center; gap:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:var(--green); font-size:0.72rem; font-weight:700; padding:4px 10px; border-radius:20px; margin-top:8px; animation:fadeIn 0.3s ease; }
+
+@keyframes fadeIn  { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+@keyframes fadeDown{ from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulseRed{ from{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} to{box-shadow:0 0 0 15px rgba(239,68,68,0)} }
+
+@media(max-width:1000px){ .main-grid{grid-template-columns:1fr} .hero-top{flex-direction:column;align-items:flex-start} .notification-panel{width:100%;right:auto;left:0} }
+</style>
+</head>
+<body>
+
+<audio id="notificationSound"  src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" preload="auto"></audio>
+<audio id="successAlertSound"  src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" preload="auto"></audio>
+<audio id="loudLoudAlarm"      src="https://assets.mixkit.co/active_storage/sfx/911/911-preview.mp3"  preload="auto" loop></audio>
+
+<div class="toast-alert" id="toastAlert">
+    <i class="fas fa-circle-check" id="toastIcon" style="color:var(--green);font-size:1.4rem;"></i>
+    <div>
+        <h4 id="toastTitle"   style="margin-bottom:2px;color:white;">Cloud System</h4>
+        <p  id="toastMessage" style="font-size:0.85rem;color:var(--gray);"></p>
+    </div>
+</div>
+
+<div class="app-alert-overlay" id="appAlertDialog">
+    <div class="app-alert-box">
+        <div class="app-alert-icon" id="appAlertIconContainer"><i class="fas fa-bell" id="appAlertIcon"></i></div>
+        <h3 id="appAlertTitle">System Alert</h3>
+        <p  id="appAlertMsg">Message details go here.</p>
+        <div id="appAlertActions" style="display:flex;gap:10px;justify-content:center;"></div>
+    </div>
+</div>
+
+<!-- ★ MEETING REMINDER POPUP ★ -->
+<div class="meeting-reminder-overlay" id="meetingReminderOverlay">
+    <div class="meeting-reminder-box">
+        <div class="reminder-pulse-ring">⏰</div>
+        <div class="reminder-title">Meeting in 5 Minutes!</div>
+        <div class="reminder-subtitle">Your scheduled appointment is about to begin</div>
+
+        <div class="reminder-detail-grid">
+            <div class="reminder-detail-item">
+                <div class="rd-label">With</div>
+                <div class="rd-value" id="rem-staff">—</div>
+            </div>
+            <div class="reminder-detail-item">
+                <div class="rd-label">Date</div>
+                <div class="rd-value" id="rem-date">—</div>
+            </div>
+            <div class="reminder-detail-item">
+                <div class="rd-label">Time</div>
+                <div class="rd-value" id="rem-time">—</div>
+            </div>
+            <div class="reminder-detail-item">
+                <div class="rd-label">Status</div>
+                <div class="rd-value" style="color:var(--orange);">⏳ Pending</div>
+            </div>
+        </div>
+
+        <div class="reminder-notes" id="rem-notes"></div>
+
+        <div class="reminder-actions">
+            <button class="btn-remind-ok"     onclick="dismissReminder(true)">✅ I'm Ready</button>
+            <button class="btn-remind-cancel" onclick="dismissReminder(false)">❌ Cancel Meeting</button>
+        </div>
+    </div>
+</div>
+
+<header class="top-header">
+    <div class="left-header">
+        <a href="parent_dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <div class="header-title">
+            <h1>Parent Reports Center</h1>
+            <p>Monthly safety reports, activities, evaluations & notifications</p>
+        </div>
+    </div>
+    <div class="notification-center">
+        <button class="notify-btn" onclick="toggleNotifications()">
+            <i class="fas fa-bell"></i>
+            <div class="notify-count" id="notifyCount">6</div>
+        </button>
+        <div class="notification-panel" id="notificationPanel">
+            <div class="notification-header">
+                <h3>Monthly Notifications</h3>
+                <i class="fas fa-times" style="cursor:pointer;" onclick="toggleNotifications()"></i>
+            </div>
+
+            <!-- Each notification has an X button -->
+            <div class="notification-item" id="notif-1">
+                <button class="notif-delete-btn" onclick="deleteNotification('notif-1')"><i class="fas fa-xmark"></i></button>
+                <h4>Bus Arrival Delay</h4>
+                <p>The school bus was delayed today by 8 minutes because of traffic congestion.</p>
+                <small>10 mins ago</small>
+            </div>
+            <div class="notification-item" id="notif-2">
+                <button class="notif-delete-btn" onclick="deleteNotification('notif-2')"><i class="fas fa-xmark"></i></button>
+                <h4>Safety Event Added</h4>
+                <p>A new safety awareness workshop has been added for next Monday.</p>
+                <small>Today • 09:14 AM</small>
+            </div>
+            <div class="notification-item" id="notif-3">
+                <button class="notif-delete-btn" onclick="deleteNotification('notif-3')"><i class="fas fa-xmark"></i></button>
+                <h4>Upcoming Activity Reminder</h4>
+                <p>Road Safety Future Camp starts tomorrow at 08:00 AM.</p>
+                <small>Reminder • 1 day before</small>
+            </div>
+            <div class="notification-item" id="notif-4">
+                <button class="notif-delete-btn" onclick="deleteNotification('notif-4')"><i class="fas fa-xmark"></i></button>
+                <h4>Future Leadership Program</h4>
+                <p>The Future Student Leader activity will begin tomorrow.</p>
+                <small>Reminder • Upcoming Event</small>
+            </div>
+            <div class="notification-item" id="notif-5">
+                <button class="notif-delete-btn" onclick="deleteNotification('notif-5')"><i class="fas fa-xmark"></i></button>
+                <h4>Meeting Confirmation</h4>
+                <p>Your meeting with the Bus Supervisor has been accepted.</p>
+                <small>Yesterday</small>
+            </div>
+            <div class="notification-item" id="notif-6">
+                <button class="notif-delete-btn" onclick="deleteNotification('notif-6')"><i class="fas fa-xmark"></i></button>
+                <h4>Monthly Report Ready</h4>
+                <p>The April report is now available for PDF download.</p>
+                <small>Yesterday</small>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container" id="printableDashboard">
+    <section class="hero-section">
+        <div class="hero-top">
+            <div class="hero-left">
+                <h2>Rahlat Aman Monthly Safety Intelligence</h2>
+                <p>This page provides parents with a complete overview of transportation safety, student behavior, awareness activities, supervisor evaluations, school participation, trip updates, notifications, and communication with administration teams.</p>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card"><i class="fas fa-shield-heart" style="color:var(--green)"></i><h3>94%</h3><p>Safety Compliance</p></div>
+                <div class="stat-card"><i class="fas fa-calendar-check" style="color:var(--blue)"></i><h3>14</h3><p>Activities Completed</p></div>
+                <div class="stat-card"><i class="fas fa-bus" style="color:var(--gold)"></i><h3>22</h3><p>Successful Trips</p></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-grid">
+        <div>
+            <div class="card" style="margin-bottom:25px;">
+                <div class="section-title"><h3><i class="fas fa-chart-pie"></i> Safety Integrity Index</h3><span>Updated Today</span></div>
+                <div class="compliance-box">
+                    <div class="radial-area">
+                        <canvas id="safetyChart"></canvas>
+                        <div class="score-overlay"><h1>94%</h1><p>Excellent</p></div>
+                    </div>
+                    <div class="compliance-details">
+                        <h4>Monthly Safety Overview</h4>
+                        <p>The student completed 22 successful transportation trips while following all required transportation safety protocols including punctual boarding, seatbelt compliance, and emergency awareness participation.</p>
+                        <div class="progress-list">
+                            <div class="progress-item"><div class="progress-label"><span>Punctuality</span><span>95%</span></div><div class="progress-bar"><div class="progress-fill" style="width:95%;background:#10B981;"></div></div></div>
+                            <div class="progress-item"><div class="progress-label"><span>Transportation Conduct</span><span>88%</span></div><div class="progress-bar"><div class="progress-fill" style="width:88%;background:#38BDF8;"></div></div></div>
+                            <div class="progress-item"><div class="progress-label"><span>Emergency Awareness</span><span>91%</span></div><div class="progress-bar"><div class="progress-fill" style="width:91%;background:#D4AF37;"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="predictive-hub-box">
+                <div class="predictive-header"><i class="fas fa-brain"></i><h3 style="margin:0;font-size:1.1rem;color:var(--white);">Predictive Safety Analytics</h3></div>
+                <p style="font-size:0.88rem;color:var(--gray);margin-bottom:15px;line-height:1.6;">Based on historical records, data analysis, and supervisor feedback, Rahlat Aman generates behavioral safety insights to maximize preventive student discipline.</p>
+                <div class="predictive-grid">
+                    <div class="prediction-card"><h5><i class="fas fa-chart-line"></i> Punctuality Outlook</h5><p>The student shows a 96% high probability of maintaining optimal boarding arrival rates next month based on constant weekly performance curves.</p></div>
+                    <div class="prediction-card"><h5><i class="fas fa-lightbulb"></i> Recommended Action</h5><p>Encourage continuous participation in the upcoming "Road Safety Future Camp" to elevate the emergency awareness index from 91% to excellent ranges.</p></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title"><h3><i class="fas fa-calendar-star"></i> Activities & Engagement</h3><span>Monthly Events Matrix</span></div>
+
+                <div class="activity-card" data-activity-id="act1">
+                    <div class="activity-top"><div class="activity-date">12 April 2026</div><div class="activity-status">Completed</div></div>
+                    <h4>Safe Journey Workshop</h4>
+                    <p>Students participated in transportation awareness training covering emergency exits, blind spots, boarding procedures and safe crossing instructions.</p>
+                    <div class="activity-bottom">
+                        <div class="activity-rate" data-activity-id="act1" data-title="Safe Journey Workshop">
+                            <i class="far fa-star" onclick="rateActivity(this,1)"></i><i class="far fa-star" onclick="rateActivity(this,2)"></i><i class="far fa-star" onclick="rateActivity(this,3)"></i><i class="far fa-star" onclick="rateActivity(this,4)"></i><i class="far fa-star" onclick="rateActivity(this,5)"></i>
+                        </div>
+                        <button class="more-btn" onclick="showActivityDetails('Safe Journey Workshop','12 April 2026','Completed','Transportation awareness training covering emergency exits, boarding procedures, blind spots and safe crossing instructions.','Excellent participation and positive student interaction.')">More Details</button>
+                    </div>
+                </div>
+
+                <div class="activity-card" data-activity-id="act2">
+                    <div class="activity-top"><div class="activity-date">18 April 2026</div><div class="activity-status">Excellent Participation</div></div>
+                    <h4>Leader Of The Week</h4>
+                    <p>The student demonstrated leadership by helping younger students maintain safety procedures during boarding and departure.</p>
+                    <div class="activity-bottom">
+                        <div class="activity-rate" data-activity-id="act2" data-title="Leader Of The Week">
+                            <i class="far fa-star" onclick="rateActivity(this,1)"></i><i class="far fa-star" onclick="rateActivity(this,2)"></i><i class="far fa-star" onclick="rateActivity(this,3)"></i><i class="far fa-star" onclick="rateActivity(this,4)"></i><i class="far fa-star" onclick="rateActivity(this,5)"></i>
+                        </div>
+                        <button class="more-btn" onclick="showActivityDetails('Leader Of The Week','18 April 2026','Excellent Participation','Leadership activity focused on helping younger students follow transportation safety rules.','Student showed excellent teamwork and responsibility.')">More Details</button>
+                    </div>
+                </div>
+
+                <div class="activity-card" data-activity-id="act3">
+                    <div class="activity-top"><div class="activity-date">20 April 2026</div><div class="activity-status">Simulation Completed</div></div>
+                    <h4>Emergency Evacuation Drill</h4>
+                    <p>Students completed an emergency evacuation simulation successfully within the targeted response time.</p>
+                    <div class="activity-bottom">
+                        <div class="activity-rate" data-activity-id="act3" data-title="Emergency Evacuation Drill">
+                            <i class="far fa-star" onclick="rateActivity(this,1)"></i><i class="far fa-star" onclick="rateActivity(this,2)"></i><i class="far fa-star" onclick="rateActivity(this,3)"></i><i class="far fa-star" onclick="rateActivity(this,4)"></i><i class="far fa-star" onclick="rateActivity(this,5)"></i>
+                        </div>
+                        <button class="more-btn" onclick="showActivityDetails('Emergency Evacuation Drill','20 April 2026','Simulation Completed','Emergency evacuation simulation completed successfully within the required response time.','Safety awareness score improved after the activity.')">More Details</button>
+                    </div>
+                </div>
+
+                <div class="activity-card" id="event-2026-06-25" data-event-date="2026-06-25">
+                    <div class="activity-top"><div class="activity-date"><i class="fas fa-clock"></i> 25 June 2026</div><div class="activity-status pending-status" id="status-2026-06-25">Locked (Upcoming)</div></div>
+                    <h4>Smart Bus Guard AI Deployment</h4>
+                    <p>An interactive seminar showcasing the integration of Rahlat Aman bus sensor diagnostics and AI attendance tracking configurations for parents.</p>
+                    <div class="activity-bottom" id="actions-2026-06-25"><span style="font-size:0.82rem;color:var(--gray);"><i class="fas fa-lock"></i> Attendance unlocks on event day</span></div>
+                </div>
+
+                <div class="activity-card" id="event-2026-07-01" data-event-date="2026-07-01">
+                    <div class="activity-top"><div class="activity-date"><i class="fas fa-clock"></i> 01 July 2026</div><div class="activity-status pending-status" id="status-2026-07-01">Locked (Upcoming)</div></div>
+                    <h4>Summer Safety Awareness Program</h4>
+                    <p>Annual school closure transport protocol training. Learn how to prevent lock-in hazards and ensure safe offboarding routines during extreme temperatures.</p>
+                    <div class="activity-bottom" id="actions-2026-07-01"><span style="font-size:0.82rem;color:var(--gray);"><i class="fas fa-lock"></i> Attendance unlocks on event day</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="card" style="margin-bottom:25px;">
+                <div class="section-title"><h3><i class="fas fa-chart-column"></i> Behavioral Analysis</h3><span>Supervisor Evaluation</span></div>
+                <div class="chart-box"><canvas id="behaviorChart"></canvas></div>
+                <div class="alert-box"><h4><i class="fas fa-circle-info"></i> Supervisor Observation</h4><p>Student engagement improved significantly this month. Transportation discipline and awareness participation were consistently above school standards.</p></div>
+            </div>
+
+            <div class="card">
+                <div class="section-title"><h3><i class="fas fa-comments"></i> Parent Feedback & Actions</h3><span>Connected With Admin</span></div>
+                <div class="feedback-box">
+                    <textarea id="parentFeedbackArea" placeholder="Write your feedback, transportation concerns, suggestions, or meeting notes here..."></textarea>
+                    <div class="feedback-actions">
+                        <button class="btn btn-secondary" onclick="triggerAppPdfConfirmation()"><i class="fas fa-file-pdf"></i> Save PDF</button>
+                        <button class="btn btn-success"   onclick="dispatchFeedbackToFirebase()"><i class="fas fa-paper-plane"></i> Send Feedback</button>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <button class="btn btn-primary" style="width:100%;" onclick="openMeetingModal()"><i class="fas fa-handshake"></i> Request Meeting Portal</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card scheduled-meetings-panel" id="dashboardMeetingsPanel" style="display:none;margin-top:25px;">
+                <h4 style="font-size:1rem;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px;">
+                    <i class="fas fa-calendar-check"></i> Persistent Scheduled Appointments (Firebase Node)
+                </h4>
+                <div id="dashboardMeetingItem"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Meeting Modal -->
+<div class="modal" id="meetingModal">
+    <div class="modal-box" style="max-width:600px;">
+        <h2>Schedule School Meeting Slot</h2>
+        <div class="input-group">
+            <label><i class="fas fa-user-tie"></i> Select Staff/Official</label>
+            <select id="meetingDept" onchange="generateDynamicSlots()">
+                <option value="School Principal">School Principal (Administration)</option>
+                <option value="Social Specialist">Social Specialist (Student Care)</option>
+                <option value="Transportation Supervisor">Transportation Supervisor (Logistics)</option>
+                <option value="Class Teacher">Class Teacher (Academic)</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label><i class="fas fa-calendar-day"></i> Choose Date (Available from May to July 2026)</label>
+            <input type="date" id="meetingDate" min="2026-05-01" max="2026-07-31" onchange="generateDynamicSlots()">
+        </div>
+        <div class="input-group">
+            <span class="slots-label"><i class="fas fa-clock"></i> Available & Booked Hours Matrix</span>
+            <div class="slots-container" id="slotsMatrix"></div>
+            <input type="hidden" id="selectedTimeSlot" value="">
+        </div>
+        <div class="input-group">
+            <label><i class="fas fa-pen"></i> Add Meeting Subject / Comments</label>
+            <textarea id="meetingNotes" rows="3" placeholder="Provide context regarding safety feedback or metrics..."></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-primary"   onclick="confirmMeetingSlot()">Book Selected Slot</button>
+            <button class="btn btn-secondary" onclick="closeMeetingModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal" id="detailsModal">
+    <div class="modal-box">
+        <h2 id="detailsTitle">Activity Details</h2>
+        <p id="detailsDescription" style="color:#cbd5e1;line-height:1.7;margin-bottom:15px;"></p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px;">
+            <div style="background:rgba(255,255,255,0.03);padding:12px;border-radius:10px;"><span style="display:block;font-size:0.75rem;color:var(--gray)">Date</span><strong id="detailsDate" style="font-size:0.85rem;"></strong></div>
+            <div style="background:rgba(255,255,255,0.03);padding:12px;border-radius:10px;"><span style="display:block;font-size:0.75rem;color:var(--gray)">Status</span><strong id="detailsStatus" style="font-size:0.85rem;"></strong></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);padding:12px;border-radius:10px;margin-bottom:20px;"><span style="display:block;font-size:0.75rem;color:var(--gray)">Notes</span><strong id="detailsNotes" style="font-size:0.85rem;"></strong></div>
+        <button class="btn btn-primary" style="width:100%" onclick="closeDetailsModal()">Close Details</button>
+    </div>
+</div>
+
+<!-- FIREBASE MODULE — unchanged -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+    appId:"1:1088859717905:web:e65d7054db709e274dccb0",
+    apiKey:"AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain:"rahlataman-bus-safety-app.firebaseapp.com",
+    projectId:"rahlataman-bus-safety-app",
+    storageBucket:"rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId:"1088859717905"
+};
+
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+window.db=db; window.collection=collection; window.addDoc=addDoc;
+window.getDocs=getDocs; window.deleteDoc=deleteDoc; window.doc=doc;
+window.serverTimestamp=serverTimestamp; window.query=query;
+window.where=where; window.orderBy=orderBy;
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        try {
+            const snap = await getDocs(query(collection(db,'users'), where('uid','==',user.uid)));
+            snap.forEach(d => {
+                const data = d.data();
+                if (data.role === 'parent') {
+                    window._parentProfile = { uid:user.uid, id:data.id||user.uid, name:data.fullName||'Parent', email:data.email||user.email, role:'parent' };
+                }
+            });
+        } catch(e) { console.warn(e.message); }
+    } else {
+        const local = JSON.parse(localStorage.getItem('currentUser')||'{}');
+        if (local.role==='parent'||local.role==='Parent') {
+            window._parentProfile = { uid:local.uid||'guest', id:local.id||'guest', name:local.fullName||local.name||'Parent', email:local.email||'', role:'parent' };
+        }
+    }
+});
+console.log('[Rahlat Aman] Firebase connected — parent_feedback ready.');
+</script>
+
+<script>
+/* ============================================================
+   GLOBALS
+   ============================================================ */
+let _meetingReminderTimers = [];   // holds setTimeout IDs so we can clear them
+let _notifCount = 6;               // tracks badge number
+
+/* ============================================================
+   ★ NEW: NOTIFICATION DELETE WITH BUBBLE SOUND
+   ============================================================ */
+function playBubbleSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        // Two short sine pops — classic "bubble" feel
+        [0, 0.12].forEach((delay, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g); g.connect(ctx.destination);
+            o.type = 'sine';
+            o.frequency.setValueAtTime(i === 0 ? 900 : 1100, ctx.currentTime + delay);
+            o.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + delay + 0.18);
+            g.gain.setValueAtTime(0.22, ctx.currentTime + delay);
+            g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.22);
+            o.start(ctx.currentTime + delay);
+            o.stop(ctx.currentTime + delay + 0.25);
+        });
+    } catch(e) {}
+}
+
+function deleteNotification(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    playBubbleSound();
+
+    // Animate out
+    el.classList.add('removing');
+    setTimeout(() => {
+        el.remove();
+        _notifCount = Math.max(0, _notifCount - 1);
+        document.getElementById('notifyCount').textContent = _notifCount;
+        if (_notifCount === 0) document.getElementById('notifyCount').style.display = 'none';
+    }, 420);
+}
+
+/* ============================================================
+   ★ NEW: MEETING REMINDER SYSTEM
+   ============================================================ */
+
+// Called after each successful meeting booking
+function scheduleMeetingReminder(staff, date, time, notes) {
+    // Parse the meeting datetime
+    // time format: "08:00 AM" etc.
+    const meetingDate = new Date(date);
+    const [timePart, meridiem] = time.split(' ');
+    let [hours, minutes] = timePart.split(':').map(Number);
+    if (meridiem === 'PM' && hours !== 12) hours += 12;
+    if (meridiem === 'AM' && hours === 12) hours = 0;
+    meetingDate.setHours(hours, minutes, 0, 0);
+
+    // Reminder fires 5 minutes before
+    const reminderTime = new Date(meetingDate.getTime() - 5 * 60 * 1000);
+    const msUntilReminder = reminderTime.getTime() - Date.now();
+
+    if (msUntilReminder <= 0) {
+        // Meeting already passed or < 5 min away — show immediately
+        console.log('[Reminder] Meeting is imminent or past — showing now.');
+        showMeetingReminder(staff, date, time, notes);
+        return;
+    }
+
+    console.log(`[Reminder] Scheduled for ${reminderTime.toLocaleTimeString()} (in ${Math.round(msUntilReminder/60000)} min)`);
+
+    const timerId = setTimeout(() => {
+        showMeetingReminder(staff, date, time, notes);
+    }, msUntilReminder);
+
+    _meetingReminderTimers.push(timerId);
+}
+
+function showMeetingReminder(staff, date, time, notes) {
+    // Fill reminder box
+    document.getElementById('rem-staff').textContent = staff;
+    document.getElementById('rem-date').textContent  = date;
+    document.getElementById('rem-time').textContent  = time;
+    document.getElementById('rem-notes').textContent = notes
+        ? `📝 ${notes}`
+        : 'No additional notes were added for this meeting.';
+
+    // Show overlay
+    document.getElementById('meetingReminderOverlay').classList.add('active');
+
+    // Play notification sound
+    document.getElementById('notificationSound').play().catch(()=>{});
+
+    // Also show toast
+    displayToast('⏰ Meeting Reminder', `You have a meeting with ${staff} in 5 minutes!`, 'var(--gold)');
+}
+
+function dismissReminder(confirmed) {
+    document.getElementById('meetingReminderOverlay').classList.remove('active');
+    if (confirmed) {
+        displayToast('✅ All the best!', 'Your meeting is starting soon. Be prepared!', 'var(--green)');
+    } else {
+        displayToast('❌ Meeting Cancelled', 'You dismissed the meeting reminder.', 'var(--red)');
+    }
+}
+
+/* ============================================================
+   FIREBASE HELPERS (unchanged)
+   ============================================================ */
+function getParentProfile() {
+    return window._parentProfile || { uid:'guest', id:'guest', name:'Parent (Guest)', email:'', role:'parent' };
+}
+
+function buildFeedbackBase(type) {
+    const p = getParentProfile();
+    return {
+        parentUid: p.uid, parentId: p.id, parentName: p.name,
+        parentEmail: p.email, parentRole: p.role,
+        feedbackType: type, source: 'Parent Reports Page',
+        createdAt: new Date().toISOString(), timestamp: null
+    };
+}
+
+async function rateActivity(starIcon, count) {
+    const parentContainer = starIcon.parentElement;
+    const activityTitle   = parentContainer.getAttribute('data-title');
+    const activityId      = parentContainer.getAttribute('data-activity-id');
+    const stars           = parentContainer.querySelectorAll('i');
+    stars.forEach((star, i) => { star.className = i < count ? 'fas fa-star active-star' : 'far fa-star'; });
+    document.getElementById('successAlertSound').play().catch(()=>{});
+    try {
+        const docData = { ...buildFeedbackBase('activity_rating'), activityId:activityId||'unknown', activityTitle:activityTitle||'Unknown', rating:count, maxRating:5, ratingLabel:`${count}/5 stars`, timestamp:serverTimestamp() };
+        await addDoc(collection(db,'parent_feedback'), docData);
+        displayToast('Rating Saved ✓', `"${activityTitle}" rated ${count} stars — stored in Firebase.`, 'var(--gold)');
+        const existing = parentContainer.parentElement.querySelector('.fb-saved-badge');
+        if (existing) existing.remove();
+        const badge = document.createElement('span');
+        badge.className = 'fb-saved-badge';
+        badge.innerHTML = '<i class="fas fa-cloud-arrow-up"></i> Saved to Firebase';
+        parentContainer.parentElement.appendChild(badge);
+    } catch(e) { displayToast('Save Error', 'Could not save rating.', 'var(--red)'); }
+}
+
+async function dispatchFeedbackToFirebase() {
+    const text = document.getElementById('parentFeedbackArea').value.trim();
+    if (!text) { displayToast('Notice', 'Please write feedback before sending.', 'var(--red)'); return; }
+    try {
+        await addDoc(collection(db,'parent_feedback'), { ...buildFeedbackBase('feedback'), feedbackText:text, characterCount:text.length, status:'new', timestamp:serverTimestamp() });
+        document.getElementById('successAlertSound').play().catch(()=>{});
+        displayToast('Feedback Sent ✓', 'Stored in parent_feedback — Firebase.', 'var(--green)');
+        document.getElementById('parentFeedbackArea').value = '';
+    } catch(e) { displayToast('Error', 'Unable to send feedback.', 'var(--red)'); }
+}
+
+/* ── confirmMeetingSlot: now ALSO schedules the reminder ── */
+async function confirmMeetingSlot() {
+    const staff = document.getElementById('meetingDept').value;
+    const date  = document.getElementById('meetingDate').value;
+    const time  = document.getElementById('selectedTimeSlot').value;
+    const notes = document.getElementById('meetingNotes').value;
+    if (!date || !time) { displayToast('Missing Data', 'Please select a date and time slot.', 'var(--red)'); return; }
+    try {
+        await addDoc(collection(db,'parent_feedback'), {
+            ...buildFeedbackBase('meeting'),
+            selectedStaff:staff, meetingDate:date, meetingTime:time,
+            meetingNotes:notes||'', meetingStatus:'pending', timestamp:serverTimestamp()
+        });
+        await addDoc(collection(db,'meetings'), {
+            staff, date, time, notes,
+            requestedBy:getParentProfile().name, parentId:getParentProfile().id,
+            status:'pending', createdAt:serverTimestamp()
+        });
+        displayToast('Meeting Booked ✓', `${staff} on ${date} at ${time} — saved to Firebase.`, 'var(--green)');
+        closeMeetingModal();
+        loadMeetings();
+
+        // ★ Schedule the 5-minute reminder
+        scheduleMeetingReminder(staff, date, time, notes);
+
+    } catch(e) { displayToast('Error', 'Unable to save meeting.', 'var(--red)'); }
+}
+
+async function loadMeetings() {
+    const snapshot  = await getDocs(collection(db,'meetings'));
+    const panel     = document.getElementById('dashboardMeetingsPanel');
+    const container = document.getElementById('dashboardMeetingItem');
+    container.innerHTML = '';
+    snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        container.innerHTML += `
+            <div class="meeting-list-item">
+                <div>
+                    <strong>${data.staff}</strong>
+                    <data>${data.date} | ${data.time}</data>
+                    <p>${data.notes||''}</p>
+                </div>
+                <div><button class="mini-btn btn-danger" onclick="deleteMeeting('${docSnap.id}')">Delete</button></div>
+            </div>`;
+    });
+    panel.style.display = 'block';
+}
+
+async function deleteMeeting(id) {
+    try {
+        await deleteDoc(doc(db,'meetings',id));
+        displayToast('Deleted','Meeting removed.','var(--red)');
+        loadMeetings();
+    } catch(e) { console.error(e); }
+}
+
+/* ============================================================
+   REMAINING UNCHANGED FUNCTIONS
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+    loadMeetings();
+    evaluateSmartDateActivities();
+});
+
+function evaluateSmartDateActivities() {
+    const today = new Date();
+    const y=today.getFullYear(), m=String(today.getMonth()+1).padStart(2,'0'), d=String(today.getDate()).padStart(2,'0');
+    const currentDateStr = `${y}-${m}-${d}`;
+    ['2026-06-25','2026-07-01'].forEach(eventDate => {
+        const cardEl=document.getElementById(`event-${eventDate}`);
+        const statusEl=document.getElementById(`status-${eventDate}`);
+        const actionsEl=document.getElementById(`actions-${eventDate}`);
+        if (!cardEl) return;
+        if (currentDateStr >= eventDate) {
+            cardEl.classList.remove('locked-event');
+            statusEl.className='activity-status'; statusEl.innerText='Active Today';
+            actionsEl.innerHTML=`<div style="display:flex;gap:10px;"><button class="btn btn-success" style="padding:8px 16px;font-size:0.8rem;" onclick="submitAttendance('${eventDate}','Attending')"><i class="fas fa-check"></i> Attend</button><button class="btn btn-danger" style="padding:8px 16px;font-size:0.8rem;" onclick="submitAttendance('${eventDate}','Declined')"><i class="fas fa-xmark"></i> Decline</button></div>`;
+        } else { cardEl.classList.add('locked-event'); }
+    });
+}
+
+function submitAttendance(date,status){
+    document.getElementById('notificationSound').play().catch(()=>{});
+    displayToast('Attendance Shared',`Your request [${status}] for event ${date} synchronized on cloud.`,'var(--blue)');
+}
+
+function toggleNotifications(){ document.getElementById('notificationPanel').classList.toggle('active'); }
+
+function displayToast(title,message,color){
+    const toast=document.getElementById('toastAlert');
+    document.getElementById('toastTitle').innerText=title;
+    document.getElementById('toastMessage').innerText=message;
+    toast.style.borderLeftColor=color;
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),4000);
+}
+
+function openAppAlert(title,message,type,actionHtml){
+    const overlay=document.getElementById('appAlertDialog');
+    const iconContainer=document.getElementById('appAlertIconContainer');
+    const icon=document.getElementById('appAlertIcon');
+    document.getElementById('appAlertTitle').innerText=title;
+    document.getElementById('appAlertMsg').innerText=message;
+    document.getElementById('appAlertActions').innerHTML=actionHtml;
+    if(type==='alarm'){ iconContainer.className='app-alert-icon alarm'; icon.className='fas fa-triangle-exclamation'; document.getElementById('loudLoudAlarm').play().catch(()=>{}); }
+    else { iconContainer.className='app-alert-icon'; icon.className='fas fa-bell'; document.getElementById('notificationSound').play().catch(()=>{}); }
+    overlay.classList.add('active');
+}
+
+function closeAppAlert(){ document.getElementById('appAlertDialog').classList.remove('active'); document.getElementById('loudLoudAlarm').pause(); document.getElementById('loudLoudAlarm').currentTime=0; }
+
+function triggerAppPdfConfirmation(){
+    openAppAlert('Master Security Ledger PDF Download','Do you want to export the complete Rahlat Aman monthly safety report as a PDF?','prompt',`<button class="btn btn-success" onclick="executeTruePdfDownload()">Yes, I am sure</button><button class="btn btn-secondary" onclick="closeAppAlert()">Cancel</button>`);
+}
+
+function executeTruePdfDownload(){
+    closeAppAlert();
+    displayToast('Generating File','Compiling analytics modules into PDF structure...','var(--blue)');
+    const element=document.getElementById('printableDashboard');
+    const options={margin:10,filename:'Rahlat_Aman_Safety_Report_2026.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,backgroundColor:'#07111f',useCORS:true},jsPDF:{unit:'mm',format:'a3',orientation:'portrait'}};
+    html2pdf().set(options).from(element).save().then(()=>{
+        document.getElementById('successAlertSound').play().catch(()=>{});
+        displayToast('Download Complete','Monthly report sheet successfully written to storage downloads.','var(--green)');
+    });
+}
+
+function openMeetingModal(){
+    document.getElementById('meetingModal').classList.add('active');
+    if(!document.getElementById('meetingDate').value) document.getElementById('meetingDate').value='2026-05-24';
+    generateDynamicSlots();
+}
+function closeMeetingModal(){ document.getElementById('meetingModal').classList.remove('active'); }
+
+function generateDynamicSlots(){
+    const staff=document.getElementById('meetingDept').value;
+    const dateValue=document.getElementById('meetingDate').value;
+    const matrixContainer=document.getElementById('slotsMatrix');
+    matrixContainer.innerHTML=''; document.getElementById('selectedTimeSlot').value='';
+    if(!dateValue) return;
+    ['08:00 AM','09:30 AM','11:00 AM','12:30 PM','01:45 PM','03:00 PM'].forEach((time,index)=>{
+        const slot=document.createElement('div');
+        slot.innerText=time;
+        const isBooked=(staff.length+index+new Date(dateValue).getDate())%3===0;
+        if(isBooked){ slot.className='slot-box booked'; }
+        else {
+            slot.className='slot-box available';
+            slot.onclick=function(){ document.querySelectorAll('.slot-box.available').forEach(el=>el.classList.remove('selected')); slot.classList.add('selected'); document.getElementById('selectedTimeSlot').value=time; };
+        }
+        matrixContainer.appendChild(slot);
+    });
+}
+
+function showActivityDetails(title,date,status,description,notes){
+    document.getElementById('detailsTitle').innerText=title; document.getElementById('detailsDate').innerText=date;
+    document.getElementById('detailsStatus').innerText=status; document.getElementById('detailsDescription').innerText=description;
+    document.getElementById('detailsNotes').innerText=notes; document.getElementById('detailsModal').classList.add('active');
+}
+function closeDetailsModal(){ document.getElementById('detailsModal').classList.remove('active'); }
+
+window.addEventListener('click',function(e){
+    if(e.target===document.getElementById('meetingModal'))  closeMeetingModal();
+    if(e.target===document.getElementById('detailsModal'))  closeDetailsModal();
+});
+
+new Chart(document.getElementById('safetyChart'),{
+    type:'doughnut',
+    data:{datasets:[{data:[94,6],backgroundColor:['#10B981','#1e293b'],borderWidth:0}]},
+    options:{cutout:'85%',plugins:{legend:{display:false}}}
+});
+
+new Chart(document.getElementById('behaviorChart'),{
+    type:'bar',
+    data:{labels:['Safety','Punctuality','Leadership','Conduct','Participation'],datasets:[{data:[94,96,88,85,92],borderRadius:12,backgroundColor:['#38BDF8','#10B981','#D4AF37','#F59E0B','#60A5FA']}]},
+    options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{color:'#94A3B8'},grid:{color:'rgba(255,255,255,0.05)'}},x:{ticks:{color:'#94A3B8'},grid:{display:false}}}}
+});
+</script>
+</body>
+</html>

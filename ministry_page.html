@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rahlat Aman | Admin — Ministry Inbox</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+  getFirestore, collection, query,
+  onSnapshot, addDoc, updateDoc, deleteDoc,
+  doc, serverTimestamp, orderBy, getDocs, getDoc
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const cfg = {
+  apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+  authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+  projectId: "rahlataman-bus-safety-app",
+  storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+  messagingSenderId: "1088859717905",
+  appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+const app = initializeApp(cfg);
+const db  = getFirestore(app);
+
+window._db  = db;
+window._fb  = { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, orderBy, getDocs, getDoc };
+window._fbReady = true;
+document.dispatchEvent(new Event("fbReady"));
+</script>
+
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS  —  Admin Ministry Inbox  (Rahlat Aman)
+   Mirrors Ministry Portal palette but with distinct
+   admin accent: indigo/violet instead of teal — same
+   structure, different authority identity.
+═══════════════════════════════════════════════════ */
+:root{
+  --ink:    #050d1a;
+  --deep:   #091222;
+  --panel:  #0c1a30;
+  --glass:  rgba(255,255,255,.04);
+  --rim:    rgba(255,255,255,.08);
+  --rim2:   rgba(255,255,255,.12);
+
+  --violet: #a78bfa;
+  --violet-d: rgba(167,139,250,.13);
+  --teal:   #2dd4bf;
+  --teal-d: rgba(45,212,191,.13);
+  --amber:  #f59e0b;
+  --amber-d:rgba(245,158,11,.13);
+  --sky:    #38bdf8;
+  --sky-d:  rgba(56,189,248,.12);
+  --mint:   #10b981;
+  --mint-d: rgba(16,185,129,.12);
+  --rose:   #fb7185;
+  --rose-d: rgba(251,113,133,.12);
+  --pearl:  #e2eaf5;
+  --muted:  #5e7399;
+
+  --font:   'Sora', sans-serif;
+  --mono:   'Space Mono', monospace;
+  --r:      18px;
+  --r-sm:   10px;
+  --sh:     0 20px 60px rgba(0,0,0,.5);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  font-family:var(--font);
+  background:var(--ink);
+  color:var(--pearl);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:'';
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 8% 8%,  rgba(167,139,250,.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 55% at 90% 88%, rgba(45,212,191,.04) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 50% 50%, rgba(56,189,248,.025) 0%, transparent 60%);
+}
+
+::-webkit-scrollbar{ width:4px; }
+::-webkit-scrollbar-track{ background:var(--deep); }
+::-webkit-scrollbar-thumb{ background:rgba(167,139,250,.3); border-radius:10px; }
+
+/* ── LOADING OVERLAY ───────────────────────── */
+.loader-overlay{
+  position:fixed; inset:0; z-index:9999;
+  background:rgba(5,13,26,.96);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:18px;
+}
+.loader-ring{
+  width:56px; height:56px;
+  border:3px solid rgba(167,139,250,.15);
+  border-top-color:var(--violet);
+  border-radius:50%;
+  animation:spin .9s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.loader-text{ font-size:13px; color:var(--violet); font-weight:600; letter-spacing:1px; }
+
+/* ── HEADER ────────────────────────────────── */
+header{
+  position:sticky; top:0; z-index:500;
+  background:rgba(5,13,26,.88);
+  backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--rim);
+  padding:0 36px; height:66px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.h-logo{ display:flex; align-items:center; gap:14px; }
+.logo-emblem{
+  width:38px; height:38px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg,var(--violet),#7c3aed);
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; color:#fff;
+  box-shadow:0 0 20px rgba(167,139,250,.3);
+}
+.logo-wordmark{ font-size:15px; font-weight:700; letter-spacing:.6px; }
+.logo-wordmark span{ color:var(--violet); }
+.h-right{ display:flex; align-items:center; gap:16px; }
+.live-pill{
+  display:flex; align-items:center; gap:7px;
+  background:rgba(167,139,250,.1);
+  border:1px solid rgba(167,139,250,.25);
+  padding:6px 14px; border-radius:30px;
+  font-size:12px; font-weight:700; color:var(--violet);
+}
+.live-pill::before{
+  content:''; width:7px; height:7px; border-radius:50%;
+  background:var(--violet);
+  box-shadow:0 0 8px var(--violet);
+  animation:liveblink 1.5s infinite;
+}
+@keyframes liveblink{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
+.clock-chip{
+  font-family:var(--mono); font-size:13px; color:var(--sky);
+  background:var(--sky-d); border:1px solid rgba(56,189,248,.2);
+  padding:6px 12px; border-radius:8px; letter-spacing:.5px;
+}
+.back-btn{
+  display:flex; align-items:center; gap:7px;
+  text-decoration:none; color:var(--muted);
+  background:var(--glass); border:1px solid var(--rim);
+  padding:8px 14px; border-radius:10px;
+  font-size:13px; font-weight:600; transition:.25s;
+}
+.back-btn:hover{ color:var(--violet); border-color:var(--violet); background:var(--violet-d); }
+
+/* ── TOAST ──────────────────────────────────── */
+.toast-stack{
+  position:fixed; top:80px; right:24px; z-index:9998;
+  display:flex; flex-direction:column; gap:10px; pointer-events:none;
+}
+.toast{
+  background:#0c1a30; border:1px solid var(--rim);
+  border-left:3px solid var(--violet);
+  padding:13px 18px; border-radius:13px;
+  min-width:270px; max-width:360px;
+  box-shadow:var(--sh);
+  display:flex; align-items:center; gap:12px;
+  pointer-events:all;
+  animation:toastIn .35s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes toastIn{ from{ transform:translateX(30px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+@keyframes toastOut{ to{ transform:translateX(30px); opacity:0; } }
+.toast-icon{ font-size:20px; flex-shrink:0; }
+.toast-body h4{ font-size:13px; font-weight:700; margin-bottom:2px; }
+.toast-body p{ font-size:12px; color:var(--muted); }
+
+/* ── PAGE LAYOUT ────────────────────────────── */
+.page{ position:relative; z-index:1; max-width:1560px; margin:auto; padding:30px 36px; }
+
+/* ── HERO BAND ──────────────────────────────── */
+.hero-band{
+  background:linear-gradient(135deg, rgba(167,139,250,.09), rgba(45,212,191,.05), rgba(56,189,248,.04));
+  border:1px solid rgba(167,139,250,.2);
+  border-radius:22px;
+  padding:28px 34px;
+  margin-bottom:28px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center; gap:24px;
+  position:relative; overflow:hidden;
+}
+.hero-band::after{
+  content:'';
+  position:absolute; right:-40px; top:-40px;
+  width:220px; height:220px; border-radius:50%;
+  background:radial-gradient(circle,rgba(167,139,250,.1),transparent 70%);
+  pointer-events:none;
+}
+.hero-date-time{ font-size:12px; color:var(--muted); font-family:var(--mono); margin-bottom:6px; }
+.hero-title{
+  font-size:26px; font-weight:800; line-height:1.2; margin-bottom:10px;
+  background:linear-gradient(90deg,#fff 40%,var(--violet));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.hero-desc{ font-size:13.5px; color:#8da5c4; line-height:1.7; max-width:700px; }
+.hero-badge-group{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; flex-shrink:0; }
+.hero-badge{
+  font-size:11px; font-weight:700; letter-spacing:.5px;
+  padding:8px 16px; border-radius:30px; white-space:nowrap;
+}
+.badge-violet{ background:var(--violet-d); border:1px solid rgba(167,139,250,.3); color:var(--violet); }
+.badge-teal{ background:var(--teal-d); border:1px solid rgba(45,212,191,.3); color:var(--teal); }
+
+/* ── STAT CRESTS ─────────────────────────────── */
+.crest-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px; margin-bottom:30px;
+}
+.crest{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:var(--r);
+  padding:20px 18px 18px;
+  border-left:3px solid var(--accent,var(--violet));
+  position:relative; overflow:hidden;
+  transition:.3s;
+}
+.crest:hover{ transform:translateY(-4px); border-color:var(--accent,var(--violet)); box-shadow:0 12px 36px rgba(0,0,0,.35); }
+.crest-label{ font-size:11px; color:var(--muted); font-weight:600; letter-spacing:.5px; text-transform:uppercase; margin-bottom:10px; }
+.crest-num{
+  font-size:34px; font-weight:800; font-family:var(--mono);
+  color:var(--accent,var(--violet));
+  transition:.4s;
+}
+.crest-num.pop{ transform:scale(1.15); color:#fff; }
+.crest-sub{ font-size:11px; color:var(--muted); margin-top:6px; }
+.crest-icon{ position:absolute; right:14px; top:50%; transform:translateY(-50%); font-size:28px; opacity:.07; }
+
+/* ── SECTION LABEL ─────────────────────────── */
+.section-label{
+  display:flex; align-items:center; gap:12px;
+  font-size:13px; font-weight:700; letter-spacing:.5px;
+  color:var(--muted); text-transform:uppercase;
+  margin-bottom:16px;
+}
+.section-label::before, .section-label::after{
+  content:''; flex:1; height:1px; background:var(--rim);
+}
+
+/* ── INBOX PANEL ────────────────────────────── */
+.inbox-grid{
+  display:grid;
+  grid-template-columns:1fr 1.15fr;
+  gap:20px;
+  margin-bottom:28px;
+}
+
+.inbox-panel, .reply-panel{
+  background:var(--panel); border:1px solid var(--rim);
+  border-radius:22px; padding:26px 28px;
+}
+
+.panel-title{
+  font-size:16px; font-weight:800;
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:20px;
+}
+.panel-title-icon{ color:var(--violet); font-size:15px; }
+
+/* ── FILTER TABS ──────────────────────────── */
+.filter-tabs{ display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.ftab{
+  padding:7px 14px; border-radius:9px; cursor:pointer;
+  background:var(--glass); border:1px solid var(--rim);
+  color:var(--muted); font-size:12px; font-weight:600;
+  font-family:var(--font); transition:.2s;
+}
+.ftab:hover, .ftab.active{
+  background:var(--violet-d); border-color:rgba(167,139,250,.35); color:var(--violet);
+}
+.ftab .badge-count{
+  display:inline-flex; align-items:center; justify-content:center;
+  background:var(--violet); color:#fff;
+  width:18px; height:18px; border-radius:50%;
+  font-size:10px; font-weight:800; margin-left:4px;
+}
+
+/* ── MESSAGE CARDS ──────────────────────────── */
+.msg-list{ display:flex; flex-direction:column; gap:10px; max-height:600px; overflow-y:auto; padding-right:4px; }
+
+.msg-card{
+  background:var(--glass); border:1px solid var(--rim);
+  border-radius:14px; padding:15px 17px;
+  cursor:pointer; transition:.25s; position:relative;
+  border-left:3px solid transparent;
+}
+.msg-card:hover{ background:rgba(255,255,255,.05); border-color:var(--rim2); }
+.msg-card.selected{ border-left-color:var(--violet); background:var(--violet-d); }
+.msg-card.unread{ border-left-color:var(--amber); }
+.msg-card.replied{ border-left-color:var(--mint); }
+
+.msg-card-head{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:10px; margin-bottom:6px;
+}
+.msg-card-title{ font-size:13px; font-weight:700; line-height:1.3; }
+.msg-card-title.unread-text{ color:#fff; }
+.msg-badge{
+  font-size:10px; font-weight:700; letter-spacing:.4px;
+  padding:3px 9px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+}
+.badge-unread{ background:var(--amber-d); color:var(--amber); border:1px solid rgba(245,158,11,.3); }
+.badge-read{ background:var(--sky-d); color:var(--sky); border:1px solid rgba(56,189,248,.25); }
+.badge-replied{ background:var(--mint-d); color:var(--mint); border:1px solid rgba(16,185,129,.25); }
+.badge-archived{ background:rgba(94,115,153,.15); color:var(--muted); border:1px solid rgba(94,115,153,.2); }
+
+.msg-card-type{ font-size:11px; color:var(--muted); margin-bottom:4px; }
+.msg-card-preview{ font-size:12px; color:#7a94b5; line-height:1.5;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.msg-card-meta{ font-size:10px; color:var(--muted); font-family:var(--mono); margin-top:6px; }
+.unread-dot{
+  position:absolute; top:14px; right:14px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 8px var(--amber);
+  animation:liveblink 1.5s infinite;
+}
+
+/* ── REPLY PANEL ─────────────────────────── */
+.selected-msg-view{
+  background:rgba(167,139,250,.05);
+  border:1px solid rgba(167,139,250,.15);
+  border-radius:14px; padding:18px 20px;
+  margin-bottom:18px;
+}
+.smv-from{ font-size:11px; color:var(--muted); font-weight:700; letter-spacing:.5px; margin-bottom:6px; }
+.smv-title{ font-size:16px; font-weight:800; margin-bottom:6px; }
+.smv-type{
+  font-size:11px; font-weight:700;
+  padding:3px 11px; border-radius:20px; display:inline-block;
+  margin-bottom:10px;
+  background:var(--violet-d); color:var(--violet); border:1px solid rgba(167,139,250,.25);
+}
+.smv-body{ font-size:13px; color:#8da5c4; line-height:1.7; }
+.smv-file{ font-size:12px; color:var(--teal); margin-top:8px; display:flex; align-items:center; gap:6px; }
+.smv-rating{ color:var(--amber); font-size:13px; margin-top:6px; }
+.smv-meta{ font-size:11px; color:var(--muted); font-family:var(--mono); margin-top:8px; }
+.empty-inbox{ text-align:center; padding:48px 20px; color:var(--muted); }
+.empty-inbox i{ font-size:40px; display:block; margin-bottom:14px; opacity:.3; }
+
+/* Reply form fields */
+.field-label{
+  font-size:11px; font-weight:700; letter-spacing:.5px;
+  color:var(--muted); text-transform:uppercase; margin-bottom:7px; display:block;
+}
+.text-input{
+  width:100%; background:#07101f;
+  border:1px solid var(--rim);
+  border-radius:11px; padding:13px 16px;
+  color:var(--pearl); font-size:14px; font-family:var(--font);
+  outline:none; transition:.25s; box-sizing:border-box;
+}
+.text-input:focus{ border-color:var(--violet); background:rgba(167,139,250,.04); }
+.text-input::placeholder{ color:var(--muted); }
+textarea.text-input{ resize:none; min-height:110px; }
+
+.form-row-1{ margin-bottom:14px; }
+
+/* Reply type buttons */
+.type-grid{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
+.type-btn{
+  padding:8px 13px; border-radius:10px; cursor:pointer;
+  background:var(--glass); border:1px solid var(--rim);
+  color:var(--muted); font-size:11px; font-weight:600;
+  font-family:var(--font); transition:.2s;
+  display:flex; align-items:center; gap:5px; white-space:nowrap;
+}
+.type-btn:hover,.type-btn.sel{
+  background:var(--violet-d); border-color:rgba(167,139,250,.35); color:var(--violet);
+}
+.type-btn i{ font-size:12px; }
+
+/* File zone */
+.file-zone{
+  border:1.5px dashed rgba(167,139,250,.25);
+  border-radius:12px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:.25s; margin-bottom:14px;
+  background:rgba(167,139,250,.03);
+}
+.file-zone:hover{ border-color:var(--violet); background:var(--violet-d); }
+.file-zone-icon{ font-size:18px; color:var(--violet); flex-shrink:0; }
+.file-zone-text{ font-size:12px; color:var(--muted); }
+.file-zone-text b{ color:var(--pearl); }
+#fileInput{ display:none; }
+.file-preview{
+  display:none; margin-bottom:12px;
+  background:rgba(167,139,250,.06); border:1px solid rgba(167,139,250,.2);
+  border-radius:10px; padding:10px 14px;
+}
+.file-preview.show{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.file-preview span{ font-size:12px; color:var(--violet); font-weight:600; }
+.file-remove{ background:none; border:none; color:var(--rose); cursor:pointer; font-size:16px; }
+
+/* Send button */
+.send-btn{
+  width:100%; padding:14px;
+  background:linear-gradient(135deg,var(--violet),#7c3aed);
+  border:none; border-radius:13px;
+  color:#fff; font-size:14px; font-weight:800;
+  cursor:pointer; letter-spacing:.3px;
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  transition:.3s;
+  box-shadow:0 6px 24px rgba(167,139,250,.25);
+  font-family:var(--font);
+}
+.send-btn:hover{ transform:translateY(-2px); box-shadow:0 10px 32px rgba(167,139,250,.35); }
+.send-btn:active{ transform:translateY(0) scale(.98); }
+.send-btn:disabled{ opacity:.5; cursor:not-allowed; transform:none; }
+
+/* ── MSG ACTIONS ROW ─────────────────────── */
+.msg-action-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.btn{
+  border:none; cursor:pointer; font-family:var(--font);
+  font-weight:600; font-size:12px; letter-spacing:.3px;
+  border-radius:9px; transition:.2s;
+  display:flex; align-items:center; gap:6px; padding:7px 12px;
+}
+.btn:hover{ transform:scale(1.04); }
+.btn-violet{ background:var(--violet-d); color:var(--violet); border:1px solid rgba(167,139,250,.25); }
+.btn-violet:hover{ background:var(--violet); color:#fff; }
+.btn-teal{ background:var(--teal-d); color:var(--teal); border:1px solid rgba(45,212,191,.25); }
+.btn-teal:hover{ background:var(--teal); color:#000; }
+.btn-amber{ background:var(--amber-d); color:var(--amber); border:1px solid rgba(245,158,11,.25); }
+.btn-amber:hover{ background:var(--amber); color:#000; }
+.btn-rose{ background:var(--rose-d); color:var(--rose); border:1px solid rgba(251,113,133,.25); }
+.btn-rose:hover{ background:var(--rose); color:#fff; }
+.btn-muted{ background:var(--glass); color:var(--muted); border:1px solid var(--rim); }
+
+/* ── REPLIES LOG ─────────────────────────── */
+.replies-panel{
+  background:var(--panel); border:1px solid var(--rim);
+  border-radius:22px; padding:26px 28px;
+  margin-bottom:28px;
+}
+.reply-item{
+  background:var(--glass); border:1px solid var(--rim);
+  border-radius:14px; padding:16px 18px;
+  margin-bottom:10px; transition:.25s;
+  border-left:3px solid var(--violet);
+}
+.reply-item:hover{ background:rgba(255,255,255,.05); }
+.ri-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px; flex-wrap:wrap; }
+.ri-title{ font-size:14px; font-weight:700; }
+.ri-type-badge{
+  font-size:10px; font-weight:700; letter-spacing:.4px;
+  padding:3px 10px; border-radius:20px; white-space:nowrap; flex-shrink:0;
+  background:var(--violet-d); color:var(--violet); border:1px solid rgba(167,139,250,.25);
+}
+.ri-ref{ font-size:11px; color:var(--muted); margin-bottom:6px; font-style:italic; }
+.ri-body{ font-size:13px; color:#8da5c4; line-height:1.6; margin-bottom:8px; }
+.ri-file{ font-size:12px; color:var(--violet); display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+.ri-meta{ font-size:11px; color:var(--muted); font-family:var(--mono); }
+.ri-actions{ display:flex; gap:7px; margin-top:10px; flex-wrap:wrap; }
+.edit-area{ display:none; margin-top:12px; }
+.edit-area.open{ display:block; animation:fadeSlide .25s ease; }
+@keyframes fadeSlide{ from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:translateY(0); } }
+
+/* ── CHARTS ROW ─────────────────────────── */
+.charts-duo{
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:18px; margin-bottom:28px;
+}
+.chart-card{
+  background:var(--panel); border:1px solid var(--rim);
+  border-radius:var(--r); padding:22px; transition:.25s;
+}
+.chart-card:hover{ border-color:var(--rim2); }
+.chart-card-title{
+  display:flex; align-items:center; gap:10px;
+  font-size:14px; font-weight:700; margin-bottom:16px;
+}
+.chart-icon{
+  width:32px; height:32px; border-radius:9px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+canvas{ max-height:210px; }
+
+/* ── NOTIFICATION MODAL ─────────────────────── */
+.notif-overlay{
+  position:fixed; inset:0; z-index:9998;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.notif-overlay.show{ opacity:1; pointer-events:all; }
+.notif-box{
+  background:#0c1a30; border:1px solid rgba(255,255,255,.15);
+  border-radius:22px; padding:32px;
+  width:90%; max-width:440px; text-align:center;
+  box-shadow:var(--sh);
+  transform:scale(.9) translateY(20px);
+  transition:.35s cubic-bezier(.34,1.56,.64,1);
+  opacity:0;
+}
+.notif-overlay.show .notif-box{ transform:scale(1) translateY(0); opacity:1; }
+.notif-icon-big{ font-size:50px; margin-bottom:14px; }
+.notif-title-txt{ font-size:18px; font-weight:800; margin-bottom:10px; }
+.notif-msg-txt{ font-size:14px; color:#8da5c4; line-height:1.6; margin-bottom:22px; }
+.notif-actions{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.notif-btn{
+  padding:12px 24px; border-radius:12px; border:none;
+  font-size:14px; font-weight:700; cursor:pointer;
+  font-family:var(--font); transition:.2s;
+}
+.notif-btn:hover{ transform:translateY(-2px); }
+.notif-btn-primary{ background:linear-gradient(135deg,var(--violet),#7c3aed); color:#fff; }
+.notif-btn-secondary{ background:var(--glass); color:var(--muted); border:1px solid var(--rim); }
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media(max-width:1200px){
+  .inbox-grid{ grid-template-columns:1fr; }
+  .charts-duo{ grid-template-columns:1fr; }
+  .crest-row{ grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:860px){
+  .page{ padding:20px 18px; }
+  header{ padding:0 18px; }
+  .hero-band{ grid-template-columns:1fr; }
+  .hero-badge-group{ align-items:flex-start; }
+  .crest-row{ grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Loading Ministry Inbox — Admin Channel…</div>
+</div>
+
+<!-- Toast stack -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- Notification modal -->
+<div class="notif-overlay" id="notifOverlay">
+  <div class="notif-box" id="notifBox">
+    <div class="notif-icon-big" id="notifIcon">✅</div>
+    <div class="notif-title-txt" id="notifTitle"></div>
+    <div class="notif-msg-txt" id="notifMsg"></div>
+    <div class="notif-actions" id="notifActions"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="h-logo">
+    <a href="admin_dashboard.html" class="back-btn"><i class="fa fa-arrow-left"></i> Dashboard</a>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="logo-emblem"><i class="fa fa-inbox"></i></div>
+      <div class="logo-wordmark">RAHLAT <span>AMAN</span></div>
+    </div>
+  </div>
+  <div class="h-right">
+    <div class="live-pill">ADMIN PORTAL</div>
+    <div class="clock-chip" id="clock">00:00:00</div>
+  </div>
+</header>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero-band">
+    <div>
+      <div class="hero-date-time" id="heroDate">—</div>
+      <div class="hero-title">Ministry Inbox — Direct Communication Center</div>
+      <div class="hero-desc">
+        Receive and respond to official correspondence from the Ministry of Education and the Ministry of Transport & Communications of the Sultanate. All messages are logged in real-time via Firebase. Respond promptly to maintain transparent and efficient ministerial coordination.
+      </div>
+    </div>
+    <div class="hero-badge-group">
+      <div class="hero-badge badge-violet"><i class="fa fa-shield-halved"></i> &nbsp;School Administration</div>
+      <div class="hero-badge badge-teal"><i class="fa fa-paper-plane"></i> &nbsp;Ministry Response Channel</div>
+    </div>
+  </div>
+
+  <!-- STAT CRESTS -->
+  <div class="crest-row">
+    <div class="crest" style="--accent:var(--violet);">
+      <div class="crest-label">Total Messages</div>
+      <div class="crest-num" id="cTotal">—</div>
+      <div class="crest-sub">Received from Ministry</div>
+      <i class="fa fa-envelope crest-icon"></i>
+    </div>
+    <div class="crest" style="--accent:var(--amber);">
+      <div class="crest-label">Unread</div>
+      <div class="crest-num" id="cUnread">—</div>
+      <div class="crest-sub">Awaiting your attention</div>
+      <i class="fa fa-envelope-open crest-icon"></i>
+    </div>
+    <div class="crest" style="--accent:var(--mint);">
+      <div class="crest-label">Replied</div>
+      <div class="crest-num" id="cReplied">—</div>
+      <div class="crest-sub">Responses sent</div>
+      <i class="fa fa-reply crest-icon"></i>
+    </div>
+    <div class="crest" style="--accent:var(--rose);">
+      <div class="crest-label">Pending Reply</div>
+      <div class="crest-num" id="cPending">—</div>
+      <div class="crest-sub">Awaiting response</div>
+      <i class="fa fa-clock crest-icon"></i>
+    </div>
+  </div>
+
+  <!-- INBOX + REPLY GRID -->
+  <div class="section-label">Ministry Messages & Admin Response</div>
+
+  <div class="inbox-grid">
+
+    <!-- LEFT: Inbox list -->
+    <div class="inbox-panel">
+      <div class="panel-title">
+        <i class="fa fa-inbox panel-title-icon"></i>
+        Ministry Messages
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="filter-tabs">
+        <button class="ftab active" onclick="filterMsgs('all',this)">All <span class="badge-count" id="tabAll">0</span></button>
+        <button class="ftab" onclick="filterMsgs('unread',this)">Unread <span class="badge-count" id="tabUnread">0</span></button>
+        <button class="ftab" onclick="filterMsgs('replied',this)">Replied <span class="badge-count" id="tabReplied">0</span></button>
+        <button class="ftab" onclick="filterMsgs('pending',this)">Pending <span class="badge-count" id="tabPending">0</span></button>
+        <button class="ftab" onclick="filterMsgs('archived',this)">Archived <span class="badge-count" id="tabArchived">0</span></button>
+      </div>
+
+      <div class="msg-list" id="msgList">
+        <div class="empty-inbox">
+          <i class="fa fa-inbox"></i>
+          <p>Loading ministry messages…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Reply form -->
+    <div class="reply-panel">
+      <div class="panel-title">
+        <i class="fa fa-reply panel-title-icon"></i>
+        Reply to Ministry
+      </div>
+
+      <!-- Selected message preview -->
+      <div id="selectedMsgView">
+        <div class="empty-inbox" style="padding:30px 20px;">
+          <i class="fa fa-hand-pointer" style="font-size:32px;"></i>
+          <p>Select a message from the inbox to reply.</p>
+        </div>
+      </div>
+
+      <!-- Reply form (hidden until message selected) -->
+      <div id="replyForm" style="display:none;">
+        <div class="form-row-1">
+          <label class="field-label">Reply Title</label>
+          <input class="text-input" id="replyTitle" type="text" placeholder="e.g. Response to Monthly Report Request">
+        </div>
+
+        <div class="form-row-1">
+          <label class="field-label">Reply Type</label>
+          <div class="type-grid" id="replyTypeGrid">
+            <button class="type-btn sel" onclick="selReplyType(this,'Acknowledgement')"><i class="fa fa-check"></i>Acknowledgement</button>
+            <button class="type-btn" onclick="selReplyType(this,'Clarification')"><i class="fa fa-question-circle"></i>Clarification</button>
+            <button class="type-btn" onclick="selReplyType(this,'Report Submitted')"><i class="fa fa-chart-bar"></i>Report Submitted</button>
+            <button class="type-btn" onclick="selReplyType(this,'Action Taken')"><i class="fa fa-bolt"></i>Action Taken</button>
+            <button class="type-btn" onclick="selReplyType(this,'Request for Extension')"><i class="fa fa-calendar-plus"></i>Extension Request</button>
+            <button class="type-btn" onclick="selReplyType(this,'Compliance Confirmed')"><i class="fa fa-circle-check"></i>Compliance</button>
+            <button class="type-btn" onclick="selReplyType(this,'Escalation')"><i class="fa fa-arrow-up"></i>Escalation</button>
+            <button class="type-btn" onclick="selReplyType(this,'Rejection')"><i class="fa fa-ban"></i>Rejection</button>
+            <button class="type-btn" onclick="selReplyType(this,'Other')" id="replyBtnOther"><i class="fa fa-plus-circle"></i>Other</button>
+          </div>
+        </div>
+
+        <div id="replyOtherBox" style="display:none; margin-bottom:14px;">
+          <label class="field-label">Specify Reply Type</label>
+          <input class="text-input" id="replyOtherType" type="text" placeholder="Describe the reply type…">
+        </div>
+
+        <div class="form-row-1">
+          <label class="field-label">Reply Message</label>
+          <textarea class="text-input" id="replyBody" placeholder="Write your official response to the Ministry…"></textarea>
+        </div>
+
+        <div class="file-zone" onclick="document.getElementById('fileInput').click()">
+          <i class="fa fa-paperclip file-zone-icon"></i>
+          <div class="file-zone-text"><b>Attach a file</b> (optional) — click to browse</div>
+        </div>
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xlsx,.png,.jpg,.jpeg">
+        <div class="file-preview" id="filePreview">
+          <span id="fileName">—</span>
+          <button class="file-remove" onclick="removeFile()"><i class="fa fa-xmark"></i></button>
+        </div>
+
+        <button class="send-btn" id="sendReplyBtn" onclick="sendReply()">
+          <i class="fa fa-reply"></i> Send Reply to Ministry
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- REPLIES LOG -->
+  <div class="section-label">Your Sent Replies — Admin Log</div>
+  <div class="replies-panel">
+    <div class="panel-title">
+      <i class="fa fa-paper-plane panel-title-icon"></i>
+      Replies Sent by School Administration
+    </div>
+    <div id="repliesList">
+      <div class="empty-inbox">
+        <i class="fa fa-paper-plane"></i>
+        <p>No replies sent yet. Respond to ministry messages above.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="section-label">Analytics — Message & Rating Overview</div>
+  <div class="charts-duo">
+    <div class="chart-card">
+      <div class="chart-card-title">
+        <div class="chart-icon" style="background:var(--violet-d);color:var(--violet);"><i class="fa fa-envelope"></i></div>
+        <span>Message Status Distribution</span>
+      </div>
+      <canvas id="chartMessages"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">
+        <div class="chart-icon" style="background:var(--amber-d);color:var(--amber);"><i class="fa fa-star"></i></div>
+        <span>Ministry Ratings Overview</span>
+      </div>
+      <canvas id="chartRatings"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- SCRIPTS -->
+<script>
+/* ── AUDIO ──────────────────────────────────── */
+let _ctx;
+function beep(type='click'){
+  try{
+    if(!_ctx) _ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o=_ctx.createOscillator(), g=_ctx.createGain();
+    o.connect(g); g.connect(_ctx.destination);
+    const mp={
+      click:  { freqs:[900],        dur:.07, vol:.12, shape:'sine' },
+      send:   { freqs:[660,880],    dur:.12, vol:.20, shape:'sine' },
+      success:{ freqs:[523,659,784],dur:.10, vol:.18, shape:'sine' },
+      error:  { freqs:[300,200],    dur:.15, vol:.22, shape:'sawtooth' },
+      notify: { freqs:[700,900],    dur:.09, vol:.15, shape:'sine' },
+      file:   { freqs:[800,1000],   dur:.08, vol:.13, shape:'sine' },
+      select: { freqs:[600,750],    dur:.07, vol:.12, shape:'sine' }
+    };
+    const p=mp[type]||mp.click;
+    o.type=p.shape;
+    let t=_ctx.currentTime;
+    p.freqs.forEach((f,i)=>o.frequency.setValueAtTime(f, t+i*(p.dur/p.freqs.length)));
+    g.gain.setValueAtTime(p.vol,t);
+    g.gain.exponentialRampToValueAtTime(.001, t+p.dur+.1);
+    o.start(t); o.stop(t+p.dur+.12);
+  }catch(_){}
+}
+
+/* ── TOAST ──────────────────────────────────── */
+const colors={ success:['var(--mint)','✅'], error:['var(--rose)','❌'], info:['var(--sky)','ℹ️'], warn:['var(--amber)','⚠️'] };
+function toast(title, msg='', type='info', dur=3800){
+  const [col,ico]=colors[type]||colors.info;
+  const stack=document.getElementById('toastStack');
+  const el=document.createElement('div');
+  el.className='toast';
+  el.style.borderLeftColor=col;
+  el.innerHTML=`<span class="toast-icon">${ico}</span>
+    <div class="toast-body"><h4>${title}</h4>${msg?`<p>${msg}</p>`:''}</div>`;
+  stack.appendChild(el);
+  beep(type==='error'?'error':'notify');
+  setTimeout(()=>{
+    el.style.animation='toastOut .3s ease forwards';
+    setTimeout(()=>el.remove(),300);
+  }, dur);
+}
+
+/* ── NOTIFICATION MODAL ─────────────────────── */
+function showNotif(icon,title,msg,buttons){
+  return new Promise(resolve=>{
+    const ov=document.getElementById('notifOverlay');
+    document.getElementById('notifIcon').textContent=icon;
+    document.getElementById('notifTitle').textContent=title;
+    document.getElementById('notifMsg').textContent=msg;
+    const acts=document.getElementById('notifActions');
+    acts.innerHTML='';
+    (buttons||[{label:'OK',primary:true,val:true}]).forEach(b=>{
+      const btn=document.createElement('button');
+      btn.className='notif-btn '+(b.primary?'notif-btn-primary':'notif-btn-secondary');
+      btn.textContent=b.label;
+      btn.onclick=()=>{ ov.classList.remove('show'); resolve(b.val); };
+      acts.appendChild(btn);
+    });
+    ov.classList.add('show');
+    beep('notify');
+  });
+}
+
+/* ── CLOCK ──────────────────────────────────── */
+function tick(){
+  const now=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Muscat'}));
+  document.getElementById('clock').textContent=now.toLocaleTimeString('en-US',{hour12:true});
+  document.getElementById('heroDate').textContent=
+    now.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+tick(); setInterval(tick,1000);
+
+/* ── STATE ──────────────────────────────────── */
+let allMessages=[];
+let allReplies=[];
+let selectedMsg=null;
+let selectedReplyType='Acknowledgement';
+let selectedFile=null;
+let currentFilter='all';
+let chartMessages=null, chartRatings=null;
+
+/* ── TYPE SELECTOR ──────────────────────────── */
+function selReplyType(el, type){
+  beep('click');
+  selectedReplyType=type;
+  document.querySelectorAll('#replyTypeGrid .type-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  const ob=document.getElementById('replyOtherBox');
+  if(type==='Other'){ ob.style.display='block'; }
+  else { ob.style.display='none'; document.getElementById('replyOtherType').value=''; }
+}
+
+/* ── FILE ───────────────────────────────────── */
+document.getElementById('fileInput').addEventListener('change',function(){
+  selectedFile=this.files[0]||null;
+  const fp=document.getElementById('filePreview');
+  if(selectedFile){
+    document.getElementById('fileName').textContent=selectedFile.name;
+    fp.classList.add('show');
+    beep('file');
+    toast('File Attached','Ready to include with your reply.','info');
+  }
+});
+function removeFile(){
+  beep('click');
+  selectedFile=null;
+  document.getElementById('fileInput').value='';
+  document.getElementById('filePreview').classList.remove('show');
+}
+
+/* ── FILTER ─────────────────────────────────── */
+function filterMsgs(filter, el){
+  beep('click');
+  currentFilter=filter;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderMsgList();
+}
+
+/* ── LOAD MESSAGES ──────────────────────────── */
+async function loadMessages(){
+  try{
+    const { collection:col, getDocs, query:q, orderBy } = window._fb;
+    const snap=await getDocs(q(col(window._db,'ministry_messages'), orderBy('sentAt','desc')));
+    allMessages=[];
+    snap.forEach(d=>allMessages.push({id:d.id,...d.data()}));
+    updateCounts();
+    renderMsgList();
+    buildCharts();
+    document.getElementById('loaderOverlay').style.display='none';
+    toast('Inbox Loaded',`${allMessages.length} ministry message(s) found.`,'success');
+  }catch(e){
+    document.getElementById('loaderOverlay').style.display='none';
+    document.getElementById('msgList').innerHTML=`<div class="empty-inbox"><i class="fa fa-database"></i><p>Error: ${e.message}</p></div>`;
+    toast('Load Error',e.message,'error');
+  }
+}
+
+/* ── LOAD REPLIES ───────────────────────────── */
+async function loadReplies(){
+  try{
+    const { collection:col, getDocs, query:q, orderBy } = window._fb;
+    const snap=await getDocs(q(col(window._db,'ministry_replies'), orderBy('sentAt','desc')));
+    allReplies=[];
+    snap.forEach(d=>allReplies.push({id:d.id,...d.data()}));
+    renderReplies();
+  }catch(e){ /* silent */ }
+}
+
+/* ── UPDATE COUNTS ──────────────────────────── */
+function updateCounts(){
+  const unread  = allMessages.filter(m=>!m.readByAdmin).length;
+  const replied = allMessages.filter(m=>m.repliedByAdmin).length;
+  const pending = allMessages.filter(m=>m.readByAdmin && !m.repliedByAdmin && !m.archived).length;
+  const archived= allMessages.filter(m=>m.archived).length;
+  const total   = allMessages.length;
+
+  animNum('cTotal',   total);
+  animNum('cUnread',  unread);
+  animNum('cReplied', replied);
+  animNum('cPending', pending);
+
+  document.getElementById('tabAll').textContent      = total;
+  document.getElementById('tabUnread').textContent   = unread;
+  document.getElementById('tabReplied').textContent  = replied;
+  document.getElementById('tabPending').textContent  = pending;
+  document.getElementById('tabArchived').textContent = archived;
+
+  if(unread>0) toast(`${unread} Unread Message${unread>1?'s':''}`, 'From the Ministry — awaiting your review.','warn',5000);
+}
+
+/* ── RENDER MSG LIST ────────────────────────── */
+function renderMsgList(){
+  let list=allMessages;
+  if(currentFilter==='unread')   list=allMessages.filter(m=>!m.readByAdmin);
+  if(currentFilter==='replied')  list=allMessages.filter(m=>m.repliedByAdmin);
+  if(currentFilter==='pending')  list=allMessages.filter(m=>m.readByAdmin&&!m.repliedByAdmin&&!m.archived);
+  if(currentFilter==='archived') list=allMessages.filter(m=>m.archived);
+
+  const box=document.getElementById('msgList');
+  if(!list.length){
+    box.innerHTML=`<div class="empty-inbox"><i class="fa fa-inbox"></i><p>No messages in this category.</p></div>`;
+    return;
+  }
+
+  box.innerHTML=list.map(m=>{
+    const d=m.sentAt ? new Date(m.sentAt.seconds*1000).toLocaleString('en-US',{dateStyle:'short',timeStyle:'short'}) : '—';
+    const isUnread=!m.readByAdmin;
+    const isReplied=!!m.repliedByAdmin;
+    const isArchived=!!m.archived;
+    const isSelected=selectedMsg&&selectedMsg.id===m.id;
+
+    let statusBadge='', cardClass='';
+    if(isArchived){ statusBadge=`<span class="msg-badge badge-archived">Archived</span>`; cardClass=''; }
+    else if(isReplied){ statusBadge=`<span class="msg-badge badge-replied">Replied</span>`; cardClass='replied'; }
+    else if(isUnread){ statusBadge=`<span class="msg-badge badge-unread">Unread</span>`; cardClass='unread'; }
+    else { statusBadge=`<span class="msg-badge badge-read">Read</span>`; }
+
+    return `
+    <div class="msg-card ${cardClass}${isSelected?' selected':''}" id="mc-${m.id}" onclick="selectMsg('${m.id}')">
+      ${isUnread&&!isArchived?'<div class="unread-dot"></div>':''}
+      <div class="msg-card-head">
+        <div class="msg-card-title${isUnread?' unread-text':''}">${m.title||'(no title)'}</div>
+        ${statusBadge}
+      </div>
+      <div class="msg-card-type"><i class="fa fa-tag" style="font-size:10px;margin-right:4px;"></i>${m.type||'General'}</div>
+      <div class="msg-card-preview">${m.body||''}</div>
+      <div class="msg-card-meta"><i class="fa fa-clock"></i> ${d}${m.rating>0?' &nbsp;·&nbsp; '+'★'.repeat(m.rating):''}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── SELECT MESSAGE ─────────────────────────── */
+async function selectMsg(id){
+  beep('select');
+  selectedMsg=allMessages.find(m=>m.id===id);
+  if(!selectedMsg) return;
+
+  // Mark as read
+  if(!selectedMsg.readByAdmin){
+    try{
+      const { doc:docRef, updateDoc } = window._fb;
+      await updateDoc(docRef(window._db,'ministry_messages',id),{ readByAdmin:true });
+      selectedMsg.readByAdmin=true;
+      updateCounts();
+      renderMsgList();
+    }catch(_){}
+  }
+
+  // Highlight selected card
+  document.querySelectorAll('.msg-card').forEach(c=>c.classList.remove('selected'));
+  const card=document.getElementById('mc-'+id);
+  if(card){ card.classList.add('selected'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+
+  // Show preview
+  const d=selectedMsg.sentAt ? new Date(selectedMsg.sentAt.seconds*1000).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}) : '—';
+  const stars=selectedMsg.rating>0 ? '★'.repeat(selectedMsg.rating)+'☆'.repeat(5-selectedMsg.rating) : null;
+  document.getElementById('selectedMsgView').innerHTML=`
+    <div class="selected-msg-view">
+      <div class="smv-from">📨 FROM: MINISTRY — Official Channel</div>
+      <div class="smv-title">${selectedMsg.title||'(no title)'}</div>
+      <div class="smv-type">${selectedMsg.type||'General'}</div>
+      <div class="smv-body">${selectedMsg.body||''}</div>
+      ${selectedMsg.fileName?`<div class="smv-file"><i class="fa fa-paperclip"></i>${selectedMsg.fileName}</div>`:''}
+      ${stars?`<div class="smv-rating">${stars}</div>`:''}
+      <div class="smv-meta"><i class="fa fa-clock"></i> Received ${d}</div>
+      <div class="msg-action-row">
+        ${!selectedMsg.archived?`<button class="btn btn-muted" onclick="archiveMsg('${id}')"><i class="fa fa-box-archive"></i> Archive</button>`:''}
+        ${selectedMsg.repliedByAdmin?`<span style="font-size:12px;color:var(--mint);display:flex;align-items:center;gap:5px;"><i class="fa fa-circle-check"></i>Reply sent</span>`:''}
+      </div>
+    </div>`;
+
+  // Pre-fill reply title
+  document.getElementById('replyTitle').value = `RE: ${selectedMsg.title||''}`;
+
+  document.getElementById('replyForm').style.display='block';
+}
+
+/* ── ARCHIVE MESSAGE ─────────────────────────── */
+async function archiveMsg(id){
+  beep('click');
+  const ok=await showNotif('📦','Archive Message','Move this message to the archive?',[
+    {label:'Archive',primary:true,val:true},
+    {label:'Cancel',primary:false,val:false}
+  ]);
+  if(!ok) return;
+  try{
+    const { doc:docRef, updateDoc } = window._fb;
+    await updateDoc(docRef(window._db,'ministry_messages',id),{ archived:true });
+    const idx=allMessages.findIndex(m=>m.id===id);
+    if(idx>-1) allMessages[idx].archived=true;
+    updateCounts(); renderMsgList();
+    document.getElementById('selectedMsgView').innerHTML=`<div class="empty-inbox" style="padding:30px 20px;"><i class="fa fa-box-archive" style="font-size:32px;"></i><p>Message archived.</p></div>`;
+    document.getElementById('replyForm').style.display='none';
+    toast('Archived','Message moved to archive.','info');
+    buildCharts();
+  }catch(e){ toast('Error',e.message,'error'); }
+}
+
+/* ── SEND REPLY ─────────────────────────────── */
+async function sendReply(){
+  if(!selectedMsg){ toast('No Message Selected','Please select a message first.','warn'); return; }
+
+  const title=(document.getElementById('replyTitle').value||'').trim();
+  const body =(document.getElementById('replyBody').value||'').trim();
+  const other=(document.getElementById('replyOtherType').value||'').trim();
+  const type = selectedReplyType==='Other' ? (other||'Other') : selectedReplyType;
+
+  if(!title||!body){
+    beep('error');
+    toast('Required Fields','Please fill in the reply title and message.','error');
+    return;
+  }
+
+  const btn=document.getElementById('sendReplyBtn');
+  btn.disabled=true;
+  btn.innerHTML='<i class="fa fa-circle-notch fa-spin"></i> Sending…';
+
+  try{
+    const { collection:col, addDoc, doc:docRef, updateDoc, serverTimestamp } = window._fb;
+
+    // Save reply to ministry_replies
+    await addDoc(col(window._db,'ministry_replies'),{
+      replyTitle: title,
+      replyBody: body,
+      replyType: type,
+      fileName: selectedFile ? selectedFile.name : null,
+      originalMsgId: selectedMsg.id,
+      originalMsgTitle: selectedMsg.title||'',
+      originalMsgType: selectedMsg.type||'',
+      sentAt: serverTimestamp(),
+      sentBy: 'Admin'
+    });
+
+    // Mark original as replied
+    await updateDoc(docRef(window._db,'ministry_messages', selectedMsg.id),{ repliedByAdmin:true });
+    const idx=allMessages.findIndex(m=>m.id===selectedMsg.id);
+    if(idx>-1) allMessages[idx].repliedByAdmin=true;
+
+    beep('send');
+    await showNotif('✅','Reply Sent','Your response has been recorded and sent to the Ministry.',
+      [{label:'Perfect!',primary:true,val:true}]);
+    toast('Reply Sent ✓','Saved to Firebase — ministry_replies collection.','success');
+
+    // Reset form
+    document.getElementById('replyTitle').value='';
+    document.getElementById('replyBody').value='';
+    document.getElementById('replyOtherType').value='';
+    document.getElementById('replyOtherBox').style.display='none';
+    document.querySelectorAll('#replyTypeGrid .type-btn').forEach(b=>b.classList.remove('sel'));
+    document.querySelector('#replyTypeGrid .type-btn').classList.add('sel');
+    selectedReplyType='Acknowledgement'; selectedFile=null;
+    document.getElementById('filePreview').classList.remove('show');
+    document.getElementById('fileInput').value='';
+
+    updateCounts(); renderMsgList(); buildCharts();
+    await loadReplies();
+
+    // Refresh selected view
+    selectMsg(selectedMsg.id);
+  }catch(e){
+    beep('error');
+    toast('Send Failed',e.message,'error');
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='<i class="fa fa-reply"></i> Send Reply to Ministry';
+  }
+}
+
+/* ── RENDER REPLIES ─────────────────────────── */
+function renderReplies(){
+  const box=document.getElementById('repliesList');
+  if(!allReplies.length){
+    box.innerHTML=`<div class="empty-inbox"><i class="fa fa-paper-plane"></i><p>No replies sent yet.</p></div>`;
+    return;
+  }
+  box.innerHTML=allReplies.map(r=>{
+    const d=r.sentAt ? new Date(r.sentAt.seconds*1000).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}) : '—';
+    return `
+    <div class="reply-item" id="ri-${r.id}">
+      <div class="ri-head">
+        <div class="ri-title">${r.replyTitle||'(no title)'}</div>
+        <span class="ri-type-badge">${r.replyType||'General'}</span>
+      </div>
+      <div class="ri-ref"><i class="fa fa-reply" style="margin-right:5px;"></i>In reply to: "${r.originalMsgTitle||'—'}"</div>
+      <div class="ri-body">${r.replyBody||''}</div>
+      ${r.fileName?`<div class="ri-file"><i class="fa fa-paperclip"></i>${r.fileName}</div>`:''}
+      <div class="ri-meta"><i class="fa fa-clock"></i> Sent ${d}</div>
+      <div class="ri-actions">
+        <button class="btn btn-violet" onclick="editReply('${r.id}')"><i class="fa fa-pen"></i> Edit</button>
+        <button class="btn btn-rose" onclick="deleteReply('${r.id}')"><i class="fa fa-trash"></i> Delete</button>
+      </div>
+      <div class="edit-area" id="rea-${r.id}">
+        <label class="field-label" style="margin-top:10px;">Edit Reply</label>
+        <textarea class="text-input" id="ret-${r.id}" style="margin-bottom:10px;">${r.replyBody||''}</textarea>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-violet" onclick="saveEditReply('${r.id}')"><i class="fa fa-floppy-disk"></i> Save</button>
+          <button class="btn btn-amber" onclick="cancelEditReply('${r.id}')">Cancel</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function editReply(id){ beep('click'); document.querySelectorAll('.edit-area').forEach(e=>e.classList.remove('open')); document.getElementById('rea-'+id).classList.add('open'); }
+function cancelEditReply(id){ beep('click'); document.getElementById('rea-'+id).classList.remove('open'); }
+async function saveEditReply(id){
+  const newBody=(document.getElementById('ret-'+id).value||'').trim();
+  if(!newBody){ toast('Empty','Write something first.','warn'); return; }
+  try{
+    beep('send');
+    const { doc:docRef, updateDoc } = window._fb;
+    await updateDoc(docRef(window._db,'ministry_replies',id),{ replyBody:newBody });
+    toast('Updated ✓','Reply edited successfully.','success');
+    document.getElementById('rea-'+id).classList.remove('open');
+    await loadReplies();
+  }catch(e){ toast('Error',e.message,'error'); }
+}
+async function deleteReply(id){
+  beep('click');
+  const ok=await showNotif('🗑️','Delete Reply','Permanently delete this reply?',[
+    {label:'Delete',primary:true,val:true},
+    {label:'Cancel',primary:false,val:false}
+  ]);
+  if(!ok) return;
+  try{
+    const { doc:docRef, deleteDoc } = window._fb;
+    await deleteDoc(docRef(window._db,'ministry_replies',id));
+    beep('error');
+    toast('Deleted','Reply removed.','info');
+    await loadReplies();
+  }catch(e){ toast('Error',e.message,'error'); }
+}
+
+/* ── CHARTS ─────────────────────────────────── */
+function buildCharts(){
+  const unread   = allMessages.filter(m=>!m.readByAdmin).length;
+  const replied  = allMessages.filter(m=>m.repliedByAdmin).length;
+  const archived = allMessages.filter(m=>m.archived).length;
+  const pending  = allMessages.filter(m=>m.readByAdmin&&!m.repliedByAdmin&&!m.archived).length;
+  const read     = allMessages.filter(m=>m.readByAdmin&&!m.repliedByAdmin&&!m.archived).length;
+
+  // Message status chart
+  const ctx1=document.getElementById('chartMessages').getContext('2d');
+  if(chartMessages) chartMessages.destroy();
+  chartMessages=new Chart(ctx1,{
+    type:'doughnut',
+    data:{
+      labels:['Unread','Read (Pending)','Replied','Archived'],
+      datasets:[{
+        data:[unread,pending,replied,archived],
+        backgroundColor:['rgba(245,158,11,.75)','rgba(56,189,248,.75)','rgba(16,185,129,.75)','rgba(94,115,153,.55)'],
+        borderWidth:0, hoverOffset:8
+      }]
+    },
+    options:{
+      plugins:{ legend:{ labels:{ color:'#8da5c4', padding:14, font:{size:11} } } },
+      cutout:'60%',
+      animation:{ animateRotate:true, duration:900 }
+    }
+  });
+
+  // Ratings chart
+  const ratingCounts=[0,0,0,0,0];
+  allMessages.forEach(m=>{ if(m.rating>=1&&m.rating<=5) ratingCounts[m.rating-1]++; });
+  const ctx2=document.getElementById('chartRatings').getContext('2d');
+  if(chartRatings) chartRatings.destroy();
+  chartRatings=new Chart(ctx2,{
+    type:'bar',
+    data:{
+      labels:['★ 1','★★ 2','★★★ 3','★★★★ 4','★★★★★ 5'],
+      datasets:[{
+        label:'Messages',
+        data:ratingCounts,
+        backgroundColor:[
+          'rgba(251,113,133,.7)','rgba(245,158,11,.7)',
+          'rgba(56,189,248,.7)','rgba(45,212,191,.7)','rgba(167,139,250,.7)'
+        ],
+        borderRadius:8, borderSkipped:false
+      }]
+    },
+    options:{
+      plugins:{ legend:{ display:false } },
+      scales:{
+        y:{ ticks:{ color:'#5e7399' }, grid:{ color:'rgba(255,255,255,.04)' }, beginAtZero:true, precision:0 },
+        x:{ ticks:{ color:'#8da5c4' }, grid:{ display:false } }
+      },
+      animation:{ duration:900 }
+    }
+  });
+}
+
+/* ── ANIMATE NUMBER ─────────────────────────── */
+function animNum(id, target){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const from=parseInt(el.textContent)||0;
+  if(from===target) return;
+  const steps=20, diff=target-from;
+  let s=0;
+  const t=setInterval(()=>{
+    s++;
+    el.textContent=Math.round(from+diff*(s/steps));
+    if(s>=steps){
+      el.textContent=target;
+      el.classList.add('pop');
+      setTimeout(()=>el.classList.remove('pop'),400);
+      clearInterval(t);
+    }
+  },25);
+}
+
+/* ── BOOT ───────────────────────────────────── */
+document.addEventListener('fbReady', async ()=>{
+  await loadMessages();
+  await loadReplies();
+});
+if(window._fbReady){
+  loadMessages().then(loadReplies);
+}
+</script>
+</body>
+</html>

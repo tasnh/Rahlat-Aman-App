@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driver chat  (Connect)  | Rahlat Aman system</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --navy: #0F172A; 
+    --dark-blue: #060b13; 
+    --blue: #38BDF8;
+    --gold: #FFD700; 
+    --white: #F8FAFC; 
+    --slate: #1E293B; 
+    --emerald: #10B981;
+    --danger: #ef4444;
+    --glass: rgba(15, 23, 42, 0.65);
+    --border: rgba(255, 255, 255, 0.08);
+}
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+}
+body { 
+    background: radial-gradient(circle at center, #111e36 0%, var(--dark-blue) 100%); 
+    height: 100vh; 
+    color: var(--white); 
+    overflow: hidden; 
+}
+
+/* Academic System Header Banner */
+.top-academic-banner {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.platform-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.platform-brand i {
+    color: var(--blue);
+    font-size: 24px;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+.platform-title {
+    font-size: 20px;
+    font-weight: 800;
+    background: linear-gradient(to right, #fff, var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.page-info-tag {
+    font-size: 13px;
+    color: #94a3b8;
+    background: rgba(255,255,255,0.03);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(19, 12, 12, 0.05);
+}
+
+/* Dashboard Home Back Button */
+.back-to-dash { 
+    background: var(--glass); 
+    color: var(--gold);
+    width: 44px; 
+    height: 44px; 
+    border-radius: 14px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    text-decoration: none; 
+    border: 1px solid var(--border); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.back-to-dash:hover {
+    background: var(--gold);
+    color: var(--navy);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Master Grid Wrapper */
+.main-wrapper { 
+    display: flex; 
+    height: calc(100vh - 75px); 
+}
+
+/* Sidebar Styling */
+.sidebar { 
+    width: 380px; 
+    background: var(--navy); 
+    border-right: 1px solid var(--border); 
+    display: flex; 
+    flex-direction: column; 
+}
+.sidebar-header { 
+    padding: 20px; 
+    border-bottom: 1px solid var(--border); 
+}
+.sidebar-header h2 { 
+    color: var(--white); 
+    font-size: 1.4rem; 
+    font-weight: 800;
+    margin-bottom: 15px; 
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sidebar-header h2 span {
+    color: var(--gold);
+}
+.search-container-box {
+    background: var(--dark-blue); 
+    padding: 12px 16px; 
+    border-radius: 16px; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px;
+    border: 1px solid rgba(255,255,255,0.03);
+    transition: all 0.3s;
+}
+.search-container-box:focus-within {
+    border-color: var(--blue);
+}
+.search-container-box input { 
+    background: none; 
+    border: none; 
+    color: white; 
+    outline: none; 
+    width: 100%; 
+    font-size: 14px;
+}
+
+.chat-list { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 12px; 
+}
+.chat-card { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    padding: 16px; 
+    border-radius: 18px; 
+    cursor: pointer; 
+    margin-bottom: 10px; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    border-left: 4px solid transparent;
+    background: rgba(255,255,255,0.01);
+    position: relative;
+}
+.chat-card:hover { 
+    background: rgba(255,255,255,0.04); 
+    transform: translateY(-2px);
+}
+.chat-card.active { 
+    background: rgba(56, 189, 248, 0.08); 
+    border-left-color: var(--blue); 
+}
+
+.avatar-frame { position: relative; }
+.online-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--emerald);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border: 2px solid var(--navy);
+}
+
+/* Chat Main View Window */
+.chat-area { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    background: #070c14; 
+    position: relative; 
+}
+
+/* Weekend Alert Banner */
+.weekend-alert-banner {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.2) 0%, rgba(15, 23, 42, 0.8) 100%);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.4);
+    padding: 12px 25px;
+    font-size: 13px;
+    color: #fca5a5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeInDown 0.5s;
+}
+
+.chat-header { 
+    padding: 18px 25px; 
+    background: var(--navy); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid var(--border); 
+}
+
+.messages-container { 
+    flex: 1; 
+    padding: 25px; 
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+    background: radial-gradient(rgba(15, 23, 42, 0.9), rgba(7, 12, 20, 0.98)), url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); 
+}
+
+/* Date separator UI styling */
+.date-separator {
+    align-self: center;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--blue);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 10px 0;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    text-transform: uppercase;
+}
+
+/* 3D Glassmorphic Bubbles & Action Tools */
+.bubble { 
+    max-width: 65%; 
+    padding: 14px 18px; 
+    border-radius: 20px; 
+    font-size: 14px; 
+    line-height: 1.5; 
+    position: relative; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    animation: fadeInUp 0.3s ease;
+}
+.bubble.me { 
+    align-self: flex-end; 
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); 
+    color: white; 
+    border-bottom-right-radius: 4px;
+}
+.bubble.them { 
+    align-self: flex-start; 
+    background: var(--slate); 
+    color: white; 
+    border: 1px solid rgba(255,255,255,0.06); 
+    border-bottom-left-radius: 4px;
+}
+
+/* Message Management Action Triggers */
+.bubble-actions {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    gap: 8px;
+    background: var(--navy);
+    padding: 4px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    z-index: 5;
+}
+.bubble:hover .bubble-actions {
+    display: flex;
+}
+.bubble.me .bubble-actions {
+    left: -85px;
+}
+.bubble.them .bubble-actions {
+    right: -85px;
+}
+.bubble-actions i {
+    cursor: pointer;
+    font-size: 12px;
+    color: #94a3b8;
+    transition: color 0.2s;
+}
+.bubble-actions i:hover {
+    color: var(--gold);
+}
+.bubble-actions i.fa-trash:hover {
+    color: var(--danger);
+}
+
+/* Advanced Voice Waveform Interface Controls */
+.voice-message-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    min-width: 240px;
+}
+.voice-play-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s;
+}
+.voice-play-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+.waveform-simulation {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 30px;
+}
+.wave-bar {
+    flex: 1;
+    height: 60%;
+    background: rgba(255,255,255,0.4);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+.bubble.me .wave-bar { background: rgba(255,255,255,0.6); }
+
+.playing .wave-bar {
+    animation: voiceWaveKeyframes 0.6s ease-in-out infinite alternate;
+}
+.playing .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.playing .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+.playing .wave-bar:nth-child(5) { animation-delay: 0.15s; }
+.playing .wave-bar:nth-child(6) { animation-delay: 0.25s; }
+
+@keyframes voiceWaveKeyframes {
+    0% { height: 20%; }
+    100% { height: 100%; }
+}
+
+.media-attachment-preview {
+    margin-top: 8px;
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    border: 1px dashed rgba(255,255,255,0.1);
+}
+
+/* Inputs, Quick Trays & Action Bars */
+.input-section { 
+    padding: 20px; 
+    background: var(--navy); 
+    border-top: 1px solid var(--border);
+    position: relative;
+}
+.toolbar { 
+    display: flex; 
+    gap: 22px; 
+    margin-bottom: 12px; 
+    color: #94a3b8; 
+    padding-left: 10px; 
+}
+.toolbar i { 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+    font-size: 16px;
+}
+.toolbar i:hover { 
+    color: var(--blue); 
+    transform: scale(1.15);
+}
+.recording-active {
+    color: var(--danger) !important;
+    animation: pulse 1s infinite alternate;
+}
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; transform: scale(1.2); }
+}
+
+.input-row { 
+    display: flex; 
+    align-items: center; 
+    gap: 14px; 
+}
+.field-group { 
+    flex: 1; 
+    background: var(--dark-blue); 
+    border-radius: 30px; 
+    padding: 6px 20px; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    border: 1px solid var(--border);
+}
+.field-group input { 
+    flex: 1; 
+    background: none; 
+    border: none; 
+    padding: 10px 0; 
+    color: white; 
+    outline: none; 
+    font-size: 15px;
+}
+.action-icon { 
+    color: #94a3b8; 
+    cursor: pointer; 
+    font-size: 1.2rem; 
+}
+.action-icon:hover { color: var(--gold); }
+
+.send-btn { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 50%; 
+    background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%); 
+    border: none; 
+    color: white; 
+    cursor: pointer; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+.send-btn:hover { transform: scale(1.05); }
+
+#emojiPicker { 
+    display: none; 
+    position: absolute; 
+    bottom: 125px; 
+    left: 25px; 
+    background: var(--slate); 
+    padding: 16px; 
+    border-radius: 20px; 
+    border: 1px solid var(--border); 
+    z-index: 100; 
+    grid-template-columns: repeat(6, 1fr); 
+    gap: 12px; 
+}
+#emojiPicker.active { display: grid; animation: fadeInUp 0.25s ease; }
+.emoji-item { cursor: pointer; font-size: 1.5rem; }
+.emoji-item:hover { transform: scale(1.25); }
+
+.quick-bar { 
+    display: flex; 
+    gap: 10px; 
+    padding: 12px 25px; 
+    background: rgba(15, 23, 42, 0.4); 
+    overflow-x: auto; 
+}
+.quick-tag { 
+    background: rgba(30, 41, 59, 0.7); 
+    padding: 8px 16px; 
+    border-radius: 20px; 
+    font-size: 12px; 
+    font-weight: 600;
+    border: 1px solid rgba(56, 189, 248, 0.25); 
+    cursor: pointer; 
+    white-space: nowrap; 
+}
+.quick-tag:hover { background: rgba(56, 189, 248, 0.15); color: var(--blue); }
+
+.msg-counter-badge {
+    background: var(--slate);
+    color: var(--blue);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+}
+</style>
+</head>
+<body>
+
+<audio id="sendSound" src="https://assets.mixkit.co/active_storage/sfx/2753/2753-84.wav" preload="auto"></audio>
+<audio id="receiveSound" src="https://assets.mixkit.co/active_storage/sfx/2357/2357-84.wav" preload="auto"></audio>
+
+<div class="top-academic-banner">
+    <div class="platform-brand">
+        <i class="fas fa-shield-alt"></i>
+        <span class="platform-title">Rahlat Aman System</span>
+    </div>
+    <div class="page-info-tag">
+        <i class="fas fa-comments"></i> Live Communication Hub
+    </div>
+    <a href="driver_dashboard.html" class="back-to-dash" title="Back to Dashboard">
+        <i class="fas fa-home"></i>
+    </a>
+</div>
+
+<div class="main-wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Chat <span>Rahlat Aman </span></h2>
+            <div class="search-container-box">
+                <i class="fas fa-search" style="color:#64748b"></i>
+                <input type="text" id="chatSearchInput" onkeyup="filterChats()" placeholder="Search users or groups...">
+            </div>
+        </div>
+        <div class="chat-list" id="chatList"></div>
+    </aside>
+
+    <main class="chat-area">
+        <div class="weekend-alert-banner" id="weekendBanner" style="display: none;">
+            <i class="fas fa-calendar-times" style="color: var(--danger); font-size: 16px;"></i>
+            <span><strong>Weekend Status Active (Friday - Saturday):</strong> System is currently on standby. Please limit text transmissions to emergency safety metrics only. 🙏</span>
+        </div>
+
+        <div class="chat-header">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div class="avatar-frame">
+                    <div id="activeAvatar" style="width:48px; height:48px; border-radius:50%; background:var(--slate); display:flex; align-items:center; justify-content:center; border:2px solid var(--blue); color:var(--blue); font-weight:bold; font-size: 18px;">?</div>
+                    <div class="online-dot"></div>
+                </div>
+                <div>
+                    <h4 id="activeName">Select Channel </h4>
+                    <small id="statusText" style="color:#94a3b8">Channels synchronized and ready</small>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:20px; color: #94a3b8;">
+                <div class="msg-counter-badge" id="messageCounter">0 Messages</div>
+                <i class="fas fa-phone action-icon" onclick="window.playSendSound(); alert('Initiating Secure Encrypted Voice Call...')"></i>
+                <i class="fas fa-video action-icon" onclick="window.playSendSound(); alert('Initiating Live HD Camera Stream Link...')"></i>
+            </div>
+        </div>
+
+        <div class="quick-bar" id="quickBar">
+            <div class="quick-tag" onclick="quickMsg('Where is the school bus now? 📍')">Need location?</div>
+            <div class="quick-tag" onclick="quickMsg('My student is ready at boarding point ✅')">The Student is a  Ready? </div>
+            <div class="quick-tag" onclick="quickMsg('The student will be absent today ⚠️')">Absent Today</div>
+            <div class="quick-tag" onclick="quickMsg('Thank you for ensuring student safety! 🙏')">Thank You </div>
+        </div>
+
+        <div class="messages-container" id="msgBox"></div>
+
+        <div id="emojiPicker">
+            <span class="emoji-item" onclick="addEmoji('😊')">😊</span>
+            <span class="emoji-item" onclick="addEmoji('✅')">✅</span>
+            <span class="emoji-item" onclick="addEmoji('📍')">📍</span>
+            <span class="emoji-item" onclick="addEmoji('🚌')">🚌</span>
+            <span class="emoji-item" onclick="addEmoji('🚨')">🚨</span>
+            <span class="emoji-item" onclick="addEmoji('🙏')">🙏</span>
+            <span class="emoji-item" onclick="addEmoji('😰')">😰</span>
+            <span class="emoji-item" onclick="addEmoji('❤')">❤</span>
+            <span class="emoji-item" onclick="addEmoji('🏡')">🏡</span>
+        </div>
+
+        <div class="input-section">
+            <div class="toolbar">
+                <i class="fas fa-camera" onclick="triggerCamera()" title="Capture from Device Camera"></i>
+                <i class="fas fa-image" onclick="document.getElementById('fileIn').click()" title="Send Image Assets"></i>
+                <i class="fas fa-paperclip" onclick="document.getElementById('fileIn').click()" title="Attach Document Asset"></i>
+                <i class="fas fa-microphone" id="micIcon" onclick="triggerVoiceCapture()" title="Transmit Voice Message Stream" style="color: var(--blue);"></i>
+            </div>
+            <input type="file" id="fileIn" style="display:none" onchange="handleFile(this)">
+             
+            <div class="input-row">
+                <div class="field-group">
+                    <i class="far fa-face-smile action-icon" onclick="toggleEmoji()"></i>
+                    <input type="text" id="iMsg" placeholder="Write a secure transmission message..." onkeypress="if(event.key==='Enter') send()">
+                </div>
+                <button class="send-btn" onclick="send()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    getDocs,
+    doc,
+    deleteDoc,
+    updateDoc,
+    serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// تصحيح مفاتيح السيرفر لحذف الرقم 9 الزائد لمنع انهيار الاتصال
+const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:108885971705:web:e65d7054db709e274dccb0",
+    measurementId: "G-SRY2J762GZ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// قراءة بيانات المستخدم الحالي المسجل حقيقياً من النظام
+let loggedInUser = { name: "driver (Salim)", id: "P-180", role: "driver" };
+try {
+    const localUserData = localStorage.getItem("currentUser");
+    if(localUserData) {
+        const driver = JSON.parse(localUserData);
+        loggedInUser = {
+            name:driver.fullName || driver.name || "driver User",
+            id: driver.id || localStorage.getItem("currentUserId") || "UnknownID",
+            role: driver.role || "driver"
+        };
+    }
+} catch(e) { console.log("Session sync fallbacks triggered."); }
+
+const groupChannels = [
+    { n: "driver' Group Chat", 
+    g: true, id: "parent_group", 
+    subtitle: "All Registered Driver", 
+    icon: "fas fa-users" },
+    { n: "Safety Journey Group", 
+    g: true, 
+    id: "safety_group", 
+    subtitle: "Driver & Fleet Drivers ", 
+    icon: "fas fa-shield-alt" }
+];
+
+let activeChannel = groupChannels[0]; 
+let dynamicUsersList = []; 
+let messagesListenerUnsubscribe = null; 
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+
+window.playSendSound = function() {
+    const sound = document.getElementById('sendSound');
+    if(sound) { sound.currentTime = 0; sound.play().catch(() => {}); }
+}
+window.playReceiveSound = function() {
+    const sound = document.getElementById('receiveSound');
+    if(sound) { sound.currentTime = 0; sound.play().catch(() => {}); }
+}
+
+function applyRealtimeWeekendMetrics() {
+    let currentDay = new Date().getDay(); // 5 = الجمعة، 6 = السبت
+    const banner = document.getElementById('weekendBanner');
+    if(currentDay === 5 || currentDay === 6) {
+        banner.style.background = "linear-gradient(90deg, rgba(239, 68, 68, 0.25) 0%, rgba(15, 23, 42, 0.9) 100%)";
+        banner.style.display = 'flex';
+    } else {
+        banner.style.display = 'none';
+    }
+}
+
+async function loadCloudRegisteredUsers() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        dynamicUsersList = [];
+        querySnapshot.forEach((docSnap) => {
+            const uData = docSnap.data();
+        if (
+                uData.role !== "driver" &&
+                uData.role !== "parent"
+                
+            )    {
+                return;
+            }
+            if (docSnap.id !== loggedInUser.id) {
+                let displaySub = "Registered Node";
+                let iconClass = "fas fa-user-shield";
+                if(uData.role === 'driver') { displaySub = "Fleet Bus Driver"; iconClass = "fas fa-bus"; }
+                if(uData.role === 'parent') { displaySub = "Verified Parent Node"; iconClass = "fas fa-user"; }
+                
+                
+                dynamicUsersList.push({
+                    n: uData.fullName || uData.name || "Aman User",
+                    g: false,
+                    id: docSnap.id,
+                    role: uData.role || "Driver",
+                    subtitle: displaySub,
+                    icon: iconClass
+                });
+            }
+        });
+        buildMasterSidebarChannels();
+    } catch (err) {
+        console.error("Cloud synchronizer down: ", err);
+        buildMasterSidebarChannels(); 
+    }
+}
+
+function buildMasterSidebarChannels() {
+    const listContainer = document.getElementById('chatList');
+    const allAvailableChannels = [...groupChannels, ...dynamicUsersList];
+    
+    listContainer.innerHTML = allAvailableChannels.map(ch => {
+        let activeClass = (activeChannel.id === ch.id) ? 'active' : '';
+        return `
+            <div class="chat-card ${activeClass}" onclick="window.switchActiveChannelHub('${ch.id}', ${ch.g})">
+                <div style="width:46px; height:46px; border-radius:50%; background:var(--slate); display:flex; align-items:center; justify-content:center; border:1px solid var(--blue); color:var(--blue); font-size:16px;">
+                    <i class="${ch.icon}"></i>
+                </div>
+                <div style="flex:1">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+                        <h4 style="font-size:14px; font-weight:700; color:white;">${ch.n}</h4>
+                    </div>
+                    <small style="color:var(--gold); font-size:11px; font-weight:500;">${ch.subtitle}</small>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.filterChats = function() {
+    let queryStr = document.getElementById('chatSearchInput').value.toLowerCase().trim();
+    let cards = document.querySelectorAll('.chat-card');
+    cards.forEach(card => {
+        let nameText = card.querySelector('h4').innerText.toLowerCase();
+        let subText = card.querySelector('small').innerText.toLowerCase();
+        card.style.display = (nameText.includes(queryStr) || subText.includes(queryStr)) ? 'flex' : 'none';
+    });
+}
+
+window.switchActiveChannelHub = function(channelId, isGroupChannel) {
+    if(messagesListenerUnsubscribe) messagesListenerUnsubscribe(); 
+    
+    const allAvailableChannels = [...groupChannels, ...dynamicUsersList];
+    const selected = allAvailableChannels.find(c => c.id === channelId);
+    if(!selected) return;
+    
+    activeChannel = selected;
+    document.getElementById('activeName').innerText = selected.n;
+    document.getElementById('activeAvatar').innerHTML = `<i class="${selected.icon}"></i>`;
+    document.getElementById('statusText').innerHTML = `🟢 Live Sync Channel | Verification Secure`;
+    
+    buildMasterSidebarChannels();
+    establishLiveCloudStreaming();
+}
+
+function establishLiveCloudStreaming() {
+    let cloudQuery;
+  if (activeChannel.g) {
+    cloudQuery = query(collection(db, "group_chats"), orderBy("timestamp", "asc"));
+} else {
+    cloudQuery = query(collection(db, "direct_chats"), orderBy("timestamp", "asc"));
+}
+    
+    messagesListenerUnsubscribe = onSnapshot(cloudQuery, (snapshot) => {
+        const box = document.getElementById('msgBox');
+        const totalCountNode = document.getElementById('messageCounter');
+        let renderedHTML = '';
+        let lastRenderedDate = '';
+        let validMessageIndex = 0;
+        
+        snapshot.docs.forEach((docDoc) => {
+            const m = docDoc.data();
+            
+            if(activeChannel.g) {
+                if(m.channelId !== activeChannel.id) return;
+            } else {
+                const conversationLinkMatched = (
+                    (m.senderId === loggedInUser.id && m.receiverId === activeChannel.id) ||
+                    (m.senderId === activeChannel.id && m.receiverId === loggedInUser.id)
+                );
+                if(!conversationLinkMatched) return;
+            }
+            
+            validMessageIndex++;
+            // تصحيح فحص الهوية لفرز الرسائل الصادرة والواردة بشكل صحيح لكل مستخدم
+            let currentMsgType = (m.senderId === loggedInUser.id) ? 'me' : 'them';
+            let messageDate = m.date || new Date().toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            if(messageDate !== lastRenderedDate) {
+                renderedHTML += `<div class="date-separator"><i class="far fa-calendar-alt"></i> ${messageDate}</div>`;
+                lastRenderedDate = messageDate;
+            }
+            
+            let innerBody = `<div style="word-break: break-word;">${m.text}</div>`;
+            
+            if(m.msgType === 'voice') {
+                innerBody = `
+                    <div class="voice-message-container" onclick="window.toggleVoicePlayback(this, '${m.text}')">
+                        <div class="voice-play-btn"><i class="fas fa-play"></i></div>
+                        <div class="waveform-simulation">
+                            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                            <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+                        </div>
+                        <span style="font-size:11px; opacity:0.8; font-weight:600;">Stream Voice</span>
+                    </div>`;
+            } else if(m.msgType === 'media' && m.media) {
+                innerBody = `
+                    <div style="word-break: break-word; font-weight:600;">${m.text}</div>
+                    <div class="media-attachment-preview">
+                        <i class="${m.media.icon}" style="color:var(--gold)"></i>
+                        <span>${m.media.filename}</span>
+                    </div>`;
+            }
+            
+            let actionTools = '';
+            if(currentMsgType === 'me') {
+                let escapedText = (m.text || '').replace(/'/g, "\\'");
+                actionTools = `
+                    <div class="bubble-actions">
+                        <i class="fas fa-pen" onclick="window.editCloudPacketText('${docDoc.id}', '${escapedText}')" title="Edit packet"></i>
+                        <i class="fas fa-trash" onclick="window.deleteCloudPacketDoc('${docDoc.id}')" title="Delete packet"></i>
+                    </div>`;
+            }
+            
+            renderedHTML += `
+                <div class="bubble ${currentMsgType} animate__animated animate__fadeInUp animate__faster" style="position:relative;">
+                    ${actionTools}
+                    <small style="display:block; font-size:11px; font-weight:800; opacity:0.9; margin-bottom:5px; color:var(--gold);">${m.senderName}</small>
+                    ${innerBody}
+                    <small style="display:block; text-align:right; font-size:10px; margin-top:6px; opacity:0.6; font-weight:500;">${m.time || 'Now'} ${currentMsgType==='me'?'✓✓ Seen':''}</small>
+                </div>`;
+        });
+        
+        // نظام الإشعارات الصوتية التلقائي عند استقبال أي حزمة بيانات جديدة من طرف آخر
+        if(snapshot.docChanges().length > 0 && !snapshot.metadata.hasPendingWrites) {
+            let lastChange = snapshot.docChanges()[snapshot.docChanges().length - 1];
+            if(lastChange.type === "added") {
+                let addedData = lastChange.doc.data();
+                if(addedData.senderId !== loggedInUser.id) window.playReceiveSound();
+            }
+        }
+        
+        totalCountNode.innerText = `${validMessageIndex} Messages`;
+        box.innerHTML = renderedHTML;
+        box.scrollTop = box.scrollHeight;
+    });
+}
+
+window.send = async function() {
+    const input = document.getElementById('iMsg');
+    const textVal = input.value.trim();
+    if(!textVal) return;
+    
+    input.value = '';
+    window.playSendSound();
+    await transmitPayloadToCloudFirestore(textVal, 'text');
+}
+
+window.quickMsg = async function(txt) {
+    window.playSendSound();
+    await transmitPayloadToCloudFirestore(txt, 'text');
+}
+
+window.triggerCamera = async function() {
+    window.playSendSound();
+    await transmitPayloadToCloudFirestore("📸 Live Snapshot Capture uploaded successfully via Mobile Node", 'media', {
+        filename: "snapshot_rectify.jpg",
+        icon: "fas fa-camera"
+    });
+}
+
+window.handleFile = async function(inputNode) {
+    if(inputNode.files[0]) {
+        let file = inputNode.files[0];
+        let assetIcon = 'fas fa-file-alt';
+        if(file.type.startsWith('image/')) assetIcon = 'fas fa-image';
+        if(file.type.startsWith('video/')) assetIcon = 'fas fa-video';
+        
+        window.playSendSound();
+        await transmitPayloadToCloudFirestore(`📁 Attached File Secure Node:`, 'media', {
+            filename: file.name,
+            icon: assetIcon
+        });
+    }
+}
+
+async function transmitPayloadToCloudFirestore(textContent, messageMode = 'text', mediaObject = null) {
+    const collectionTarget = activeChannel.g ? "group_chats" : "direct_chats";
+    let now = new Date();
+    
+    let payload = {
+        text: textContent,
+        msgType: messageMode,
+        senderId: loggedInUser.id,
+        senderName: loggedInUser.name,
+        time: now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}),
+        date: now.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }),
+        timestamp: serverTimestamp(),
+        clientTimestamp: Date.now(),
+        media: mediaObject
+    };
+    
+    if(activeChannel.g) {
+        payload.channelId = activeChannel.id;
+    } else {
+        payload.receiverId = activeChannel.id;
+    }
+    
+    try {
+        await addDoc(collection(db, collectionTarget), payload);
+    } catch (err) {
+        console.error("Transmission error packet drop: ", err);
+    }
+}
+
+window.deleteCloudPacketDoc = async function(docId) {
+    if(!confirm("Are you sure you want to delete this transmission packet from server?")) return;
+    const targetTable = activeChannel.g ? "group_chats" : "direct_chats";
+    try {
+        await deleteDoc(doc(db, targetTable, docId));
+    } catch(err) { console.error("Deletion failed: ", err); }
+}
+
+window.editCloudPacketText = async function(docId, currentText) {
+    let updatedText = prompt("Update your transmission metrics in live database:", currentText);
+    if(!updatedText || !updatedText.trim()) return;
+    const targetTable = activeChannel.g ? "group_chats" : "direct_chats";
+    try {
+        await updateDoc(doc(db, targetTable, docId), {
+            text: updatedText.trim()
+        });
+    } catch(err) { console.error("Update database packet failed: ", err); }
+}
+
+window.triggerVoiceCapture = function() {
+    const micIcon = document.getElementById('micIcon');
+    if (!isRecording) {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = ev => audioChunks.push(ev.data);
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = async () => {
+                        window.playSendSound();
+                        await transmitPayloadToCloudFirestore(reader.result, 'voice');
+                    }
+                };
+                mediaRecorder.start();
+                isRecording = true;
+                micIcon.classList.add('recording-active');
+            }).catch(() => {
+                alert("Microphone node activation error. Simulating Voice Feature instead.");
+                transmitPayloadToCloudFirestore("🎙️ Simulated Security Voice Note Stream acknowledged.", 'voice');
+            });
+    } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        micIcon.classList.remove('recording-active');
+    }
+}
+
+window.toggleVoicePlayback = function(element, audioDataUrl) {
+    element.classList.toggle('playing');
+    let icon = element.querySelector('.voice-play-btn i');
+    let nativeAudio = element.querySelector('audio');
+    
+    if(!nativeAudio && audioDataUrl) {
+        nativeAudio = document.createElement('audio');
+        nativeAudio.src = audioDataUrl;
+        element.appendChild(nativeAudio);
+    }
+    if(element.classList.contains('playing')) {
+        icon.className = 'fas fa-pause';
+        if(nativeAudio) {
+            nativeAudio.play();
+            nativeAudio.onended = () => { element.classList.remove('playing'); icon.className = 'fas fa-play'; };
+        }
+    } else {
+        icon.className = 'fas fa-play';
+        if(nativeAudio) nativeAudio.pause();
+    }
+}
+
+window.toggleEmoji = function() { document.getElementById('emojiPicker').classList.toggle('active'); }
+window.addEmoji = function(e) { document.getElementById('iMsg').value += e; document.getElementById('emojiPicker').classList.remove('active'); }
+
+applyRealtimeWeekendMetrics();
+loadCloudRegisteredUsers();
+establishLiveCloudStreaming();
+</script>
+</body>
+</html>

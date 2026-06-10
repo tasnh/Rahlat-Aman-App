@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Profile | Rahlat Aman</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #74b2ec;
+            --dark-blue: #4489bb;
+            --bg-color: #EEF7F4;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-color: #2c3e50;
+        }
+
+        /* وضع القيادة الليلي */
+        body.night-mode {
+            --bg-color: #1a2634;
+            --card-bg: rgba(44, 62, 80, 0.9);
+            --text-color: #ecf0f1;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: 0.5s;
+            font-weight: bold;
+        }
+
+        /* Header & Back Button */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--dark-blue));
+            padding: 40px 20px;
+            border-radius: 0 0 40px 40px;
+            color: white;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            font-size: 30px;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .driver-avatar-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .driver-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            object-fit: cover;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #2ecc71;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        /* Main Content */
+        .container { padding: 20px; margin-top: -30px; }
+
+        .section-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item { margin-bottom: 10px; }
+        .info-item label { font-size: 20px; opacity: 0.7; display: block; }
+        .info-item span { font-size: 18px; display: block; margin-top: 2px; }
+
+        /* Route Management List */
+        .route-list { list-style: none; padding: 0; margin: 0; }
+        .route-item {
+            background: rgba(154, 204, 250, 0.1);
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        /* Smart Controls */
+        .toggle-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .switch {
+            position: relative; display: inline-block; width: 50px; height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        .btn-save {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(154, 204, 250, 0.4);
+        }
+
+        /* استايل إضافي للرسالة المودال والمدخلات الجديدة */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 999;
+        }
+        .success-card {
+            background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%;
+        }
+        .update-input {
+            width: 90%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="modalMsg">
+        <div class="success-card">
+            <h2 style="color: #2ecc71;">Done!</h2>
+            <p id="modalTxt">Update Successful</p>
+            <button class="btn-save" style="padding: 10px;" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <div class="profile-header">
+        <a href="driver_dashboard.html" class="back-btn">⬅BACK</a>
+       <div class="driver-avatar-container">
+    <img src="my.png" class="driver-avatar" id="profImg" onclick="document.getElementById('imgInp').click()" style="cursor:pointer" onerror="this.src='https://via.placeholder.com/110'">
+    
+    <label for="imgInp" style="position: absolute; bottom: 3px; right: 3px; background: white; color: #2d648a; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <i class="fas fa-camera" style="font-size: 16px;"></i>
+    </label>
+    <input type="file" id="imgInp" hidden accept="image/*" onchange="updatePhoto(event)">
+    <div class="status-badge"></div>
+</div>
+        <h2 id="pName" style="margin: 10px 0 5px 0;">Captain Name</h2>
+        <span id="pID" style="opacity: 0.8; font-size: 16px;">ID: DRV-0000</span>
+    </div>
+
+    <div class="container">
+        <div class="section-card">
+            <div class="section-title">👤 Personal Identity</div>
+            <div class="info-grid">
+                <div class="info-item"><label>Email Address</label><span id="pEmail">driver@rahlataman.com</span></div>
+                <div class="info-item"><label>Age</label><span id="pAge">-- Years</span></div>
+                <div class="info-item"><label>Governorate</label><span id="pGov">Muscat</span></div>
+                <div class="info-item"><label>Wilayat</label><span id="pWil">Seeb</span></div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">🚌 Job & Vehicle Details</div>
+            <div class="info-grid">
+                <div class="info-item"><label>Assigned School</label><span id="pSchool">Loading...</span></div>
+                <div class="info-item"><label>Bus Plate No.</label><span id="pBus">BUS-7766</span></div>
+                <div class="info-item"><label>Students Count</label><span>32 Students</span></div>
+                <div class="info-item"><label>Next Service</label><span style="color: #e67e22;">In 12 Days</span></div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">
+                <span>📍 Route Stops Management</span>
+                <i class="fas fa-plus-circle" style="cursor: pointer;" onclick="alert('Add New Location')"></i>
+            </div>
+            <ul class="route-list" id="stopsList">
+                <li class="route-item"><span>1. Al-Kawthar</span> <i class="fas fa-trash" style="font-size: 12px; cursor: pointer;" onclick="this.parentElement.remove()"></i></li>
+                <li class="route-item"><span>2. Seeb Souq</span> <i class="fas fa-trash" style="font-size: 12px; cursor: pointer;" onclick="this.parentElement.remove()"></i></li>
+                <li class="route-item"><span>3. Wadi Al-Bahais</span> <i class="fas fa-trash" style="font-size: 12px; cursor: pointer;" onclick="this.parentElement.remove()"></i></li>
+                <li class="route-item"><span>4. Sur Al-Hadid</span> <i class="fas fa-trash" style="font-size: 12px; cursor: pointer;" onclick="this.parentElement.remove()"></i></li>
+                <li class="route-item"><span>5. Hillat Al-Qala'a</span> <i class="fas fa-trash" style="font-size: 12px; cursor: pointer;" onclick="this.parentElement.remove()"></i></li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">⚙️ Smart Controls</div>
+            <div class="toggle-box">
+                <span>Night Driving Mode</span>
+                <label class="switch">
+                    <input type="checkbox" id="nightToggle" onclick="toggleNightMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-box">
+                <span>Share Live Location</span>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">📝 Daily Notes</div>
+            <textarea id="dailyNote" placeholder="Write your note here..." style="width: 100%; height: 60px; border-radius: 12px; border: 1px solid #ddd; padding: 10px; font-family: inherit; font-weight: bold;"></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn-save" style="padding: 10px; font-size: 16px;" onclick="saveNote()">Save Note</button>
+                <button class="btn-save" style="padding: 10px; font-size: 16px; background: #ff7675;" onclick="deleteNote()">Delete Note</button>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">🔄 Update My Data</div>
+            <div class="info-grid">
+                <div class="info-item"><label>New Email</label><input type="text" id="newEmail" class="update-input" placeholder="example@mail.com"></div>
+                <div class="info-item"><label>New Phone</label><input type="text" id="newPhone" class="update-input" placeholder="+968 XXXX"></div>
+                <div class="info-item"><label>New Password</label><input type="password" id="newPass" class="update-input" placeholder="********"></div>
+            </div>
+            <button class="btn-save" style="margin-top: 15px;" onclick="triggerUpdate()">Update Profile Details</button>
+        </div>
+
+        <button class="btn-save" onclick="saveProfile()" style="margin-top: 10px; opacity: 0.5;">System Sync</button>
+    </div>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+projectId: "rahlataman-bus-safety-app",
+storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+messagingSenderId: "1088859717905",
+appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+measurementId: "G-SRY2J762GZ"
+};
+
+const app = initializeApp(firebaseConfig);
+
+window.db = getFirestore(app);
+window.doc = doc;
+window.getDoc = getDoc;
+window.setDoc = setDoc;
+
+</script>
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+        const driverDocId =
+(currentUser.email || "")
+.toLowerCase()
+.replace(/[.#$[\]]/g,"_");
+        const userId = currentUser.email;
+        const userProfile = JSON.parse(localStorage.getItem("profile_" + userId)) || {};
+
+        function calculateAge(dob) {
+            if(!dob) return "28"; 
+            const diff = Date.now() - new Date(dob).getTime();
+            const ageDate = new Date(diff);
+            return Math.abs(ageDate.getUTCFullYear() - 1970);
+        }
+
+        window.onload = async () => {
+await loadDriverProfile();
+            document.getElementById('pName').innerText = userProfile.name || "Captain Driver";
+            document.getElementById('pEmail').innerText = userId || "No Email Found";
+            document.getElementById('pSchool').innerText = userProfile.school || "Al Seeb School";
+            document.getElementById('pAge').innerText = calculateAge(userProfile.dob) + " Years";
+            document.getElementById('pID').innerText = "ID: DRV-" + (userId ? userId.length + "88" : "001");
+
+            if(localStorage.getItem('nightMode') === 'enabled') {
+                document.body.classList.add('night-mode');
+                document.getElementById('nightToggle').checked = true;
+            }
+            // استرجاع الملاحظة المحفوظة
+            document.getElementById('dailyNote').value = localStorage.getItem('lastNote') || "";
+        };
+async function loadDriverProfile() {
+
+try {
+
+const userRef = window.doc(
+window.db,
+"users",
+driverDocId
+);
+
+const userSnap = await window.getDoc(userRef);
+
+if(userSnap.exists()) {
+
+const userData = userSnap.data();
+
+document.getElementById("pName").innerText =
+userData.fullName || "Driver";
+
+document.getElementById("pEmail").innerText =
+userData.email || "";
+
+document.getElementById("pSchool").innerText =
+userData.school || "";
+
+document.getElementById("pGov").innerText =
+userData.governorate || "";
+
+document.getElementById("pWil").innerText =
+userData.wilayat || "";
+
+document.getElementById("pAge").innerText =
+calculateAge(userData.dob) + " Years";
+
+}
+
+const profileRef = window.doc(
+window.db,
+"driver_profile",
+driverDocId
+);
+
+const profileSnap = await window.getDoc(profileRef);
+
+if(profileSnap.exists()) {
+
+const profileData = profileSnap.data();
+
+document.getElementById("pBus").innerText =
+profileData.busNumber || "BUS-7766";
+
+document.getElementById("dailyNote").value =
+profileData.notes || "";
+
+if(profileData.avatar){
+
+document.getElementById("profImg").src =
+profileData.avatar;
+
+}
+
+}
+
+} catch(err){
+
+console.error(err);
+
+}
+
+}
+async function updatePhoto(event) {
+const file = event.target.files[0];
+if(file){
+const reader = new FileReader();
+reader.onload = async function(e){
+const img = e.target.result;
+document.getElementById(
+'profImg'
+).src = img;
+localStorage.setItem(
+'saved_profile_img',
+img
+);
+
+await window.setDoc(
+window.doc(
+window.db,
+"driver_profile",
+driverDocId
+),
+{
+avatar:img
+},
+{merge:true}
+);
+
+openModal(
+"Profile Photo Updated!"
+);
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+}
+
+        function toggleNightMode() {
+            document.body.classList.toggle('night-mode');
+            localStorage.setItem('nightMode', document.body.classList.contains('night-mode') ? 'enabled' : 'disabled');
+        }
+
+        // دوال الملاحظات
+async function saveNote(){
+
+const note =
+document.getElementById("dailyNote").value;
+
+await window.setDoc(
+window.doc(
+window.db,
+"driver_profile",
+driverDocId
+),
+{
+notes:note
+},
+{merge:true}
+);
+
+openModal(
+"Note Saved Successfully!"
+);
+
+}       
+async function deleteNote(){
+
+document.getElementById(
+"dailyNote"
+).value = "";
+
+await window.setDoc(
+window.doc(
+window.db,
+"driver_profile",
+driverDocId
+),
+{
+notes:""
+},
+{merge:true}
+);
+
+openModal(
+"Note Deleted!"
+);
+
+}
+
+        // دالة التحديث مع الرسالة
+async function triggerUpdate(){
+
+const email =
+document.getElementById("newEmail").value;
+
+const phone =
+document.getElementById("newPhone").value;
+
+const password =
+document.getElementById("newPass").value;
+
+await window.setDoc(
+window.doc(
+window.db,
+"driver_profile",
+driverDocId
+),
+{
+email:email,
+phone:phone,
+password:password
+},
+{merge:true}
+);
+
+openModal(
+"Profile Data Updated Successfully!"
+);
+
+}
+        function openModal(txt) {
+            document.getElementById('modalTxt').innerText = txt;
+            document.getElementById('modalMsg').style.display = "flex";
+        }
+        function closeModal() {
+            document.getElementById('modalMsg').style.display = "none";
+        }
+
+async function saveProfile(){
+
+await window.setDoc(
+window.doc(
+window.db,
+"driver_profile",
+driverDocId
+),
+{
+lastSync:new Date().toISOString()
+},
+{merge:true}
+);
+
+openModal(
+"Profile Synced With Firebase"
+);
+
+}
+        function updatePhoto(event) {
+    const file = event.target.files[0]; // الحصول على الملف المختار
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // تغيير مصدر الصورة (src) في الصفحة لتظهر الصورة الجديدة
+            document.getElementById('profImg').src = e.target.result;
+            
+            // (اختياري) حفظ الصورة في ذاكرة المتصفح لتبقى موجودة حتى بعد التحديث
+            localStorage.setItem('saved_profile_img', e.target.result);
+        }
+        reader.readAsDataURL(file);
+    }
+}
+    </script>
+</body>
+</html>

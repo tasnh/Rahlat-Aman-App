@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman | Check Driver</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+  authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+  projectId: "rahlataman-bus-safety-app",
+  storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+  messagingSenderId: "1088859717905",
+  appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window.db = db;
+window.fb = { collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp };
+</script>
+
+<style>
+:root {
+  --sky: #E8F4FD;
+  --blue: #2E86DE;
+  --blue-mid: #4FA3E0;
+  --blue-light: #90CAF9;
+  --teal: #00B4D8;
+  --green: #06D6A0;
+  --green-mid: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --white: #FFFFFF;
+  --text: #1E3A5F;
+  --text-mid: #4A6FA5;
+  --text-soft: #8AAED4;
+  --card-bg: rgba(255,255,255,0.82);
+  --card-border: rgba(255,255,255,0.95);
+  --shadow-sm: 0 4px 16px rgba(46,134,222,0.10);
+  --shadow-md: 0 10px 40px rgba(46,134,222,0.14);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: linear-gradient(160deg, #EBF5FD 0%, #D4ECFA 40%, #E8F7F0 100%);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 5%, rgba(46,134,222,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(0,180,216,0.07) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px 14px;
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(235,245,253,0.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(46,134,222,0.1);
+}
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  background: linear-gradient(145deg, #ffffff, #e8f4fd);
+  border: 1.5px solid rgba(46,134,222,0.2);
+  border-radius: 14px;
+  color: var(--blue);
+  font-weight: 700; font-size: 14px;
+  cursor: pointer; text-decoration: none;
+  box-shadow: 0 4px 12px rgba(46,134,222,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: 0.2s;
+}
+.back-btn:active { transform: scale(0.97); }
+.brand-area { text-align: right; }
+.brand-name { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; color:var(--blue); }
+.brand-date { font-size:12px; color:var(--text-soft); margin-top:2px; }
+
+/* ── HERO ── */
+.page-hero { padding: 26px 20px 0; position:relative; z-index:1; }
+.hero-tag {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(46,134,222,0.1); border:1px solid rgba(46,134,222,0.2);
+  border-radius:30px; padding:6px 14px;
+  font-size:12px; font-weight:700; color:var(--blue);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;
+}
+.hero-title { font-family:'Syne',sans-serif; font-size:30px; font-weight:800; color:var(--text); margin-bottom:10px; }
+.hero-title span { color:var(--blue); }
+.hero-desc { font-size:14px; color:var(--text-mid); line-height:1.7; max-width:480px; }
+
+/* ── STATUS BANNER ── */
+.status-banner {
+  margin:18px 20px 0; padding:13px 18px; border-radius:16px;
+  font-size:14px; font-weight:600; display:flex; align-items:center; gap:10px;
+  position:relative; overflow:hidden; z-index:1;
+}
+.status-banner::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+  animation:shimmer 2.5s infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.banner-workday {
+  background:linear-gradient(135deg,rgba(6,214,160,0.12),rgba(6,214,160,0.04));
+  border:1.5px solid rgba(6,214,160,0.3); color:var(--green-mid);
+}
+.banner-weekend {
+  background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.03));
+  border:1.5px solid rgba(239,68,68,0.25); color:var(--red);
+}
+
+/* ── SECTION ── */
+.section { margin:22px 20px 0; position:relative; z-index:1; }
+.section-title {
+  font-family:'Syne',sans-serif; font-size:18px; font-weight:800; color:var(--text);
+  display:flex; align-items:center; gap:10px; margin-bottom:14px;
+}
+.s-icon { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+
+/* ── CARD ── */
+.card {
+  background:var(--card-bg); backdrop-filter:blur(20px);
+  border:1.5px solid var(--card-border); border-radius:22px; padding:18px;
+  box-shadow:var(--shadow-md); position:relative; overflow:hidden; margin-bottom:14px;
+}
+.card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,1),transparent);
+}
+
+/* ── PERIOD TABS ── */
+.period-tabs { display:flex; gap:8px; margin-bottom:16px; }
+.ptab {
+  flex:1; padding:10px; border-radius:13px;
+  border:1.5px solid rgba(46,134,222,0.2); background:rgba(255,255,255,0.6);
+  color:var(--text-soft); font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer; transition:0.2s;
+}
+.ptab.active {
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  border-color:transparent; color:white;
+  box-shadow:0 4px 14px rgba(46,134,222,0.3);
+}
+
+/* ── MESSAGE ROW ── */
+.msg-list { display:flex; flex-direction:column; gap:10px; }
+.msg-row {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:13px 14px; border-radius:16px;
+  background:rgba(255,255,255,0.72);
+  border:1.5px solid rgba(46,134,222,0.07);
+  transition:0.25s; position:relative; overflow:hidden;
+}
+.msg-row.sent {
+  background:linear-gradient(135deg,rgba(6,214,160,0.09),rgba(6,214,160,0.03));
+  border-color:rgba(6,214,160,0.28);
+}
+.msg-row.sent::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--green); border-radius:0 2px 2px 0;
+}
+.msg-time-badge {
+  min-width:58px; height:42px;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  border-radius:11px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  box-shadow:0 4px 12px rgba(46,134,222,0.25);
+}
+.msg-time-badge .t { font-size:13px; font-weight:800; color:white; line-height:1; }
+.msg-time-badge .p { font-size:9px; font-weight:700; color:rgba(255,255,255,0.8); text-transform:uppercase; }
+.msg-body { flex:1; }
+.msg-text { font-size:13px; font-weight:600; color:var(--text); line-height:1.5; }
+.msg-sub  { font-size:11px; color:var(--text-soft); margin-top:3px; }
+.rcpt-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px;
+  text-transform:uppercase; letter-spacing:0.5px; margin-top:5px;
+}
+.rcpt-parent { background:rgba(245,158,11,0.12); color:var(--amber); border:1px solid rgba(245,158,11,0.25); }
+.rcpt-student { background:rgba(46,134,222,0.1); color:var(--blue); border:1px solid rgba(46,134,222,0.2); }
+
+/* ── 3D SEND BUTTON ── */
+.btn-send {
+  min-width:68px; padding:10px 12px; border:none; border-radius:13px;
+  font-family:'Plus Jakarta Sans',sans-serif; font-size:12px; font-weight:700;
+  cursor:pointer; position:relative; overflow:hidden;
+  transition:transform 0.15s,box-shadow 0.15s; flex-shrink:0; text-align:center;
+}
+.btn-send::before { content:''; position:absolute;top:0;left:0;right:0;height:45%; background:linear-gradient(to bottom,rgba(255,255,255,0.32),transparent); border-radius:13px 13px 0 0; pointer-events:none; }
+.btn-send.unsent {
+  background:linear-gradient(145deg,#4FA3E0,#2E86DE);
+  box-shadow:0 5px 0 #1A5FA6,0 7px 14px rgba(46,134,222,0.4),inset 0 1px 0 rgba(255,255,255,0.3);
+  color:white; border:1px solid rgba(255,255,255,0.15);
+}
+.btn-send.unsent:active { transform:translateY(4px); box-shadow:0 1px 0 #1A5FA6; }
+.btn-send.done {
+  background:linear-gradient(145deg,#10B981,#06D6A0);
+  box-shadow:0 5px 0 #047857,0 7px 14px rgba(6,214,160,0.35),inset 0 1px 0 rgba(255,255,255,0.3);
+  color:white; border:1px solid rgba(255,255,255,0.15); cursor:default;
+}
+
+/* ── FINAL ALERT ── */
+.final-alert-box {
+  display:none; padding:18px; border-radius:18px; margin-top:12px;
+  background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.03));
+  border:2px solid rgba(239,68,68,0.4); text-align:center;
+  animation:alertPulse 2s ease infinite;
+}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0.08)}}
+.fat { font-family:'Syne',sans-serif; font-size:16px; font-weight:800; color:var(--red); margin-bottom:6px; }
+.fad { font-size:13px; color:#B91C1C; line-height:1.6; }
+.fa-btns { display:flex; gap:10px; margin-top:14px; }
+.fa-btn {
+  flex:1; padding:12px; border:none; border-radius:13px;
+  font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13px;
+  cursor:pointer; transition:0.2s; position:relative; overflow:hidden;
+}
+.fa-btn::before { content:''; position:absolute;top:0;left:0;right:0;height:42%; background:linear-gradient(to bottom,rgba(255,255,255,0.3),transparent); pointer-events:none; }
+.fa-safe {
+  background:linear-gradient(145deg,#10B981,#059669);
+  box-shadow:0 5px 0 #065F46,0 7px 14px rgba(5,150,105,0.3); color:white;
+}
+.fa-safe:active { transform:translateY(4px); box-shadow:0 1px 0 #065F46; }
+.fa-warn {
+  background:linear-gradient(145deg,#F59E0B,#D97706);
+  box-shadow:0 5px 0 #92400E,0 7px 14px rgba(217,119,6,0.3); color:white;
+}
+.fa-warn:active { transform:translateY(4px); box-shadow:0 1px 0 #92400E; }
+
+/* ── ATTENDANCE TABLE ── */
+.att-lock-notice {
+  display:none; background:rgba(245,158,11,0.08);
+  border:1.5px dashed rgba(245,158,11,0.4); border-radius:13px;
+  padding:11px 16px; font-size:13px; font-weight:600; color:var(--amber);
+  margin-bottom:14px; text-align:center;
+}
+.tbl-wrap { overflow-x:auto; border-radius:14px; }
+table { width:100%; border-collapse:separate; border-spacing:0; font-size:13px; }
+thead th {
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  color:white; padding:12px 14px; text-align:left;
+  font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.6px;
+}
+thead th:first-child { border-radius:13px 0 0 0; }
+thead th:last-child  { border-radius:0 13px 0 0; }
+tbody td {
+  padding:11px 14px; border-bottom:1px solid rgba(46,134,222,0.06);
+  background:rgba(255,255,255,0.7); vertical-align:middle;
+}
+.sid {
+  width:30px; height:30px; border-radius:9px; display:inline-flex;
+  align-items:center; justify-content:center;
+  background:linear-gradient(135deg,rgba(46,134,222,0.1),rgba(0,180,216,0.08));
+  border:1.5px solid rgba(46,134,222,0.15);
+  font-size:12px; font-weight:800; color:var(--blue);
+}
+.att-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:4px 11px; border-radius:20px;
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px;
+}
+.att-p { background:rgba(6,214,160,0.12); color:var(--green-mid); border:1px solid rgba(6,214,160,0.25); }
+.att-a { background:rgba(239,68,68,0.1); color:var(--red); border:1px solid rgba(239,68,68,0.2); }
+.att-u { background:rgba(107,114,128,0.1); color:#6B7280; border:1px solid rgba(107,114,128,0.15); }
+.dab-btns { display:flex; gap:6px; }
+.dab {
+  padding:7px 11px; border:none; border-radius:11px;
+  font-family:'Plus Jakarta Sans',sans-serif; font-size:11px; font-weight:700;
+  cursor:pointer; transition:0.15s; position:relative; overflow:hidden;
+}
+.dab::before { content:''; position:absolute;top:0;left:0;right:0;height:40%; background:linear-gradient(to bottom,rgba(255,255,255,0.32),transparent); pointer-events:none; }
+.dab-p { background:linear-gradient(145deg,#10B981,#059669); box-shadow:0 3px 0 #065F46,0 5px 10px rgba(5,150,105,0.28); color:white; }
+.dab-p:active { transform:translateY(3px); box-shadow:0 0 0 #065F46; }
+.dab-m { background:linear-gradient(145deg,#EF4444,#DC2626); box-shadow:0 3px 0 #991B1B,0 5px 10px rgba(220,38,38,0.28); color:white; }
+.dab-m:active { transform:translateY(3px); box-shadow:0 0 0 #991B1B; }
+
+/* ── READY LIST ── */
+.ready-list { display:flex; flex-direction:column; gap:8px; }
+.ready-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 14px; border-radius:13px;
+  background:rgba(255,255,255,0.7);
+  border:1.5px solid rgba(46,134,222,0.08);
+}
+.ready-name { font-size:14px; font-weight:700; color:var(--text); }
+.rbadge {
+  padding:4px 12px; border-radius:20px;
+  font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:0.3px;
+}
+.r-yes { background:rgba(6,214,160,0.12); color:var(--green-mid); border:1px solid rgba(6,214,160,0.25); }
+.r-no  { background:rgba(245,158,11,0.1); color:var(--amber); border:1px solid rgba(245,158,11,0.25); }
+
+/* ── CHARTS ── */
+.charts-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.chart-card {
+  background:rgba(255,255,255,0.88); border:1.5px solid var(--card-border);
+  border-radius:18px; padding:14px; box-shadow:var(--shadow-sm);
+}
+.chart-lbl {
+  font-size:11px; font-weight:700; color:var(--text-mid);
+  text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px;
+  display:flex; align-items:center; gap:6px;
+}
+
+/* ── SUPPORT FOOTER ── */
+.support-footer {
+  margin:22px 20px 40px;
+  background:linear-gradient(135deg,rgba(46,134,222,0.09),rgba(0,180,216,0.06));
+  border:1.5px solid rgba(46,134,222,0.14); border-radius:22px;
+  padding:24px 20px; text-align:center; position:relative; overflow:hidden; z-index:1;
+}
+.support-footer::before {
+  content:''; position:absolute; top:-30px; right:-30px;
+  width:110px; height:110px; border-radius:50%;
+  background:radial-gradient(circle,rgba(46,134,222,0.1),transparent);
+}
+.sf-emoji { font-size:34px; margin-bottom:10px; }
+.sf-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; color:var(--text); margin-bottom:8px; }
+.sf-text { font-size:13px; color:var(--text-mid); line-height:1.7; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(30,58,95,0.5);
+  backdrop-filter:blur(14px); display:none; justify-content:center; align-items:center; z-index:9999;
+}
+.modal-overlay.active { display:flex; }
+.modal-box {
+  background:white; border-radius:26px; padding:26px 22px;
+  width:88%; max-width:380px; text-align:center;
+  box-shadow:0 30px 80px rgba(30,58,95,0.3);
+  animation:mIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes mIn{from{opacity:0;transform:scale(0.85)}to{opacity:1;transform:scale(1)}}
+.m-icon { font-size:42px; margin-bottom:10px; }
+.m-title { font-family:'Syne',sans-serif; font-size:19px; font-weight:800; color:var(--text); margin-bottom:8px; }
+.m-text  { font-size:14px; color:var(--text-mid); line-height:1.6; margin-bottom:18px; }
+.m-options { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+.m-opt {
+  padding:13px; border-radius:13px; border:1.5px solid rgba(46,134,222,0.15);
+  background:rgba(46,134,222,0.04); color:var(--text); font-weight:600; font-size:14px;
+  cursor:pointer; text-align:left; transition:0.2s;
+}
+.m-opt:hover { background:rgba(46,134,222,0.1); border-color:rgba(46,134,222,0.3); }
+.m-btns { display:flex; gap:10px; }
+.mbtn {
+  flex:1; padding:12px; border:none; border-radius:13px;
+  font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; cursor:pointer; transition:0.2s;
+}
+.mbtn-ok { background:linear-gradient(135deg,var(--blue),var(--teal)); color:white; box-shadow:0 4px 14px rgba(46,134,222,0.35); }
+.mbtn-cancel { background:rgba(107,114,128,0.1); color:#6B7280; }
+.mbtn:active { transform:scale(0.97); }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; top:-80px; left:50%; transform:translateX(-50%);
+  padding:12px 22px; border-radius:30px;
+  background:rgba(30,58,95,0.94); color:white; font-weight:700; font-size:14px;
+  z-index:99999; transition:top 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+  white-space:nowrap; box-shadow:0 10px 30px rgba(0,0,0,0.2);
+  display:flex; align-items:center; gap:8px;
+}
+.toast.show { top:22px; }
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="m-icon" id="mIcon">ℹ️</div>
+    <div class="m-title" id="mTitle"></div>
+    <div class="m-text" id="mText"></div>
+    <div class="m-options" id="mOptions" style="display:none"></div>
+    <div class="m-btns" id="mBtns">
+      <button class="mbtn mbtn-ok" id="mOk">OK</button>
+      <button class="mbtn mbtn-cancel" id="mCancel" style="display:none">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="driver_dashboard.html" class="back-btn" onclick="playClick()">
+    <i class="fas fa-arrow-left"></i> Back
+  </a>
+  <div class="brand-area">
+    <div class="brand-name">Rahlat Aman</div>
+    <div class="brand-date" id="todayDate">—</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="hero-tag"><i class="fas fa-shield-halved"></i> Safety Operations</div>
+  <h1 class="hero-title">Check <span>Driver</span></h1>
+  <p class="hero-desc">Send real-time trip notifications to parents &amp; students, confirm student boarding, and monitor daily attendance — all from one command center.</p>
+</div>
+
+<!-- STATUS BANNER -->
+<div id="statusBanner" class="status-banner"></div>
+
+<!-- ═══ SECTION 1 — PARENT MESSAGES ═══ -->
+<div class="section">
+  <div class="section-title">
+    <div class="s-icon" style="background:rgba(245,158,11,0.1)">👨‍👩‍👦</div>
+    Parent Notifications
+  </div>
+  <div class="card">
+    <div class="period-tabs">
+      <button class="ptab active" id="ptab-pm" onclick="switchPeriod('parent','morning')">🌅 Morning</button>
+      <button class="ptab" id="ptab-pe" onclick="switchPeriod('parent','evening')">🌆 Evening</button>
+    </div>
+    <div class="msg-list" id="parentMsgList"></div>
+    <div id="parentFinalAlert" class="final-alert-box">
+      <div class="fat">⚠️ End-of-Route Safety Check</div>
+      <div class="fad">Confirm ALL students have safely exited the school bus. No exceptions allowed.</div>
+      <div class="fa-btns">
+        <button class="fa-btn fa-safe" onclick="confirmSafe('parent')">✅ All Clear — Bus Empty</button>
+        <button class="fa-btn fa-warn" onclick="confirmUnsure('parent')">⚠️ Not Sure Yet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 2 — STUDENT MESSAGES ═══ -->
+<div class="section">
+  <div class="section-title">
+    <div class="s-icon" style="background:rgba(46,134,222,0.1)">🎒</div>
+    Student Notifications
+  </div>
+  <div class="card">
+    <div class="period-tabs">
+      <button class="ptab active" id="ptab-sm" onclick="switchPeriod('student','morning')">🌅 Morning</button>
+      <button class="ptab" id="ptab-se" onclick="switchPeriod('student','evening')">🌆 Evening</button>
+    </div>
+    <div class="msg-list" id="studentMsgList"></div>
+    <div id="studentFinalAlert" class="final-alert-box">
+      <div class="fat">⚠️ End-of-Route Safety Check</div>
+      <div class="fad">Confirm ALL students have safely exited the school bus before leaving the vehicle.</div>
+      <div class="fa-btns">
+        <button class="fa-btn fa-safe" onclick="confirmSafe('student')">✅ All Clear — Bus Empty</button>
+        <button class="fa-btn fa-warn" onclick="confirmUnsure('student')">⚠️ Not Sure Yet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3 — ATTENDANCE ═══ -->
+<div class="section">
+  <div class="section-title">
+    <div class="s-icon" style="background:rgba(6,214,160,0.12)">📋</div>
+    Student Attendance Confirmation
+  </div>
+  <div class="card">
+    <div class="att-lock-notice" id="attLockNotice">
+      <i class="fas fa-lock"></i> Attendance is only open from 5:00 AM to 3:00 PM on school days
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student Name</th>
+            <th>Parent Status</th>
+            <th>Driver Action</th>
+          </tr>
+        </thead>
+        <tbody id="attBody">
+          <tr><td colspan="4" style="text-align:center;padding:28px;color:var(--text-soft)">Loading students…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 4 — READY STATUS ═══ -->
+<div class="section">
+  <div class="section-title">
+    <div class="s-icon" style="background:rgba(0,180,216,0.1)">🟢</div>
+    Student Ready Status
+  </div>
+  <div class="card">
+    <p style="font-size:13px;color:var(--text-soft);margin-bottom:12px">Students who pressed "I'm Ready" for today's trip:</p>
+    <div class="ready-list" id="readyList">
+      <p style="color:var(--text-soft);font-size:13px;text-align:center;padding:18px">Loading…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 5 — CHARTS ═══ -->
+<div class="section">
+  <div class="section-title">
+    <div class="s-icon" style="background:rgba(46,134,222,0.1)">📊</div>
+    Weekly Analytics
+  </div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-lbl"><i class="fas fa-paper-plane" style="color:var(--blue)"></i> Messages Sent</div>
+      <canvas id="msgChart" height="180"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-lbl"><i class="fas fa-calendar-check" style="color:var(--green-mid)"></i> Attendance</div>
+      <canvas id="attChart" height="180"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPORT FOOTER -->
+<div class="support-footer">
+  <div class="sf-emoji">🛡️</div>
+  <div class="sf-title">You Are the Guardian of Their Journey</div>
+  <div class="sf-text">Dear Captain — every route you complete is a promise kept to each family. Your dedication ensures every child reaches their destination safely. Rahlat Aman is proud to have you. Thank you for being the backbone of every family's trust. 🚌💙</div>
+</div>
+
+<!-- ══════════════ SCRIPTS ══════════════ -->
+<script>
+/* ── AUDIO ── */
+let AC;
+function getAC(){ if(!AC) AC=new(window.AudioContext||window.webkitAudioContext)(); return AC; }
+function playClick(){
+  try{ const c=getAC(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=800;
+  g.gain.setValueAtTime(0.07,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.07);
+  o.start();o.stop(c.currentTime+0.08);}catch(e){}
+}
+function playBubbles(){
+  try{ for(let i=0;i<5;i++) setTimeout(()=>{
+    const c=getAC(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='sine';
+    o.frequency.setValueAtTime(500+Math.random()*500,c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(200+Math.random()*200,c.currentTime+0.22);
+    g.gain.setValueAtTime(0.12,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.26);
+    o.start();o.stop(c.currentTime+0.28);
+  },i*85);}catch(e){}
+}
+function playSuccess(){
+  try{[523,659,784].forEach((f,i)=>setTimeout(()=>{
+    const c=getAC(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='triangle';o.frequency.value=f;
+    g.gain.setValueAtTime(0.1,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.start();o.stop(c.currentTime+0.35);
+  },i*130));}catch(e){}
+}
+function playWarning(){
+  try{const c=getAC(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type='sawtooth';
+  o.frequency.setValueAtTime(440,c.currentTime);o.frequency.setValueAtTime(220,c.currentTime+0.15);
+  g.gain.setValueAtTime(0.1,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.4);
+  o.start();o.stop(c.currentTime+0.45);}catch(e){}
+}
+function playAlarm(){
+  try{for(let i=0;i<3;i++) setTimeout(()=>{
+    const c=getAC(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='square';o.frequency.value=880;
+    g.gain.setValueAtTime(0.09,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.3);
+    o.start();o.stop(c.currentTime+0.35);
+  },i*200);}catch(e){}
+}
+function playConfirm(){
+  try{[440,550,660,880].forEach((f,i)=>setTimeout(()=>{
+    const c=getAC(),o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(0.08,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);
+    o.start();o.stop(c.currentTime+0.3);
+  },i*100));}catch(e){}
+}
+
+/* ── DATE ── */
+const NOW=new Date();
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+document.getElementById('todayDate').textContent=`${DAYS[NOW.getDay()]}, ${NOW.getDate()} ${MONTHS[NOW.getMonth()]} ${NOW.getFullYear()}`;
+
+function isWeekend(){ const d=new Date().getDay(); return d===5||d===6; }
+function isAttLocked(){ const t=new Date().getHours()*60+new Date().getMinutes(); return t<300||t>=900; }
+
+/* ── TOAST ── */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.innerHTML=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ── MODAL ── */
+function showModal({icon,title,text,options,cancel,onOk}){
+  document.getElementById('mIcon').textContent=icon||'ℹ️';
+  document.getElementById('mTitle').textContent=title||'';
+  document.getElementById('mText').textContent=text||'';
+  const opts=document.getElementById('mOptions');
+  if(options&&options.length){
+    opts.style.display='flex';
+    opts.innerHTML=options.map((o,i)=>`<div class="m-opt" onclick="pickOpt(${i})">${o}</div>`).join('');
+    document.getElementById('mBtns').style.display='none';
+  } else {
+    opts.style.display='none';
+    document.getElementById('mBtns').style.display='flex';
+  }
+  document.getElementById('mCancel').style.display=cancel?'block':'none';
+  document.getElementById('mOk').onclick=()=>{ document.getElementById('modalOverlay').classList.remove('active'); if(onOk)onOk(); };
+  document.getElementById('mCancel').onclick=()=>document.getElementById('modalOverlay').classList.remove('active');
+  document.getElementById('modalOverlay').classList.add('active');
+}
+window.pickOpt=function(i){
+  document.getElementById('modalOverlay').classList.remove('active');
+  if(window._optCb) window._optCb(i);
+};
+
+/* ── BANNER ── */
+function updateBanner(){
+  const b=document.getElementById('statusBanner');
+  if(isWeekend()){
+    b.className='status-banner banner-weekend';
+    b.innerHTML='🔴 &nbsp;Weekend Mode — No scheduled trips today. All trip functions are paused.';
+  } else {
+    b.className='status-banner banner-workday';
+    b.innerHTML='🟢 &nbsp;Active Working Day — Official school trip schedule is running. Stay safe, Captain!';
+  }
+}
+
+/* ── MESSAGES ── */
+const userId=JSON.parse(localStorage.getItem('currentUser'))?.email||'driver';
+function sentKey(id){ return 'msgSent_'+userId+'_'+id; }
+function isSent(id){ return localStorage.getItem(sentKey(id))==='1'; }
+function markSent(id){ localStorage.setItem(sentKey(id),'1'); }
+
+const MSGS={
+  parent:{
+    morning:[
+      {id:'pm1',time:'06:15',p:'AM',text:'The bus has departed from the station and is preparing to begin the morning route.',sub:'Departure Notice'},
+      {id:'pm2',time:'06:30',p:'AM',text:'The bus has arrived at the designated pickup area and is now collecting students.',sub:'Pickup Zone Arrival'},
+      {id:'pm3',time:'06:45',p:'AM',text:'All assigned students have successfully boarded. Journey to school has begun.',sub:'All Students Onboard'},
+      {id:'pm4',time:'07:15',p:'AM',text:'The bus has safely arrived at school and all students entered the campus successfully.',sub:'Safe School Arrival',isFinal:true}
+    ],
+    evening:[
+      {id:'pe1',time:'01:30',p:'PM',text:'The school day has ended. Students have boarded the bus for the return journey.',sub:'Dismissal & Boarding'},
+      {id:'pe2',time:'02:15',p:'PM',text:"Your child has arrived home safely. Today's journey was completed successfully!",sub:'Safe Home Arrival',isFinal:true}
+    ]
+  },
+  student:{
+    morning:[
+      {id:'sm1',time:'06:15',p:'AM',text:'🚌 Your bus has departed! Please be ready at your pickup point.',sub:'Departure Alert'},
+      {id:'sm2',time:'06:30',p:'AM',text:'📍 Bus is now at the collection area. Please come down immediately.',sub:'Pickup Alert'},
+      {id:'sm3',time:'06:45',p:'AM',text:'✅ All students onboard! Journey to school has started. Sit safely.',sub:'Trip Started'},
+      {id:'sm4',time:'07:15',p:'AM',text:'🏫 We have arrived at school safely! Collect your belongings and exit carefully.',sub:'School Arrival',isFinal:true}
+    ],
+    evening:[
+      {id:'se1',time:'01:30',p:'PM',text:'🏠 Time to go home! Board the bus now. Your driver is waiting.',sub:'Return Trip'},
+      {id:'se2',time:'02:15',p:'PM',text:'🏠 You have arrived home safely. Rest well! See you tomorrow! 🌟',sub:'Home Safe',isFinal:true}
+    ]
+  }
+};
+
+let pPeriod='morning', sPeriod='morning';
+
+function switchPeriod(who,period){
+  playClick();
+  if(who==='parent'){
+    pPeriod=period;
+    document.getElementById('ptab-pm').classList.toggle('active',period==='morning');
+    document.getElementById('ptab-pe').classList.toggle('active',period==='evening');
+  } else {
+    sPeriod=period;
+    document.getElementById('ptab-sm').classList.toggle('active',period==='morning');
+    document.getElementById('ptab-se').classList.toggle('active',period==='evening');
+  }
+  renderMsgs(who);
+}
+
+function renderMsgs(who){
+  const isP=who==='parent';
+  const period=isP?pPeriod:sPeriod;
+  const list=MSGS[who][period];
+  const el=document.getElementById(isP?'parentMsgList':'studentMsgList');
+  const rcptClass=isP?'rcpt-parent':'rcpt-student';
+  const rcptLbl=isP?'👨‍👩‍👦 Parents':'🎒 Students';
+  el.innerHTML=list.map(m=>{
+    const s=isSent(m.id);
+    return `<div class="msg-row${s?' sent':''}" id="row_${m.id}">
+      <div class="msg-time-badge"><span class="t">${m.time}</span><span class="p">${m.p}</span></div>
+      <div class="msg-body">
+        <div class="msg-text">${m.text}</div>
+        <div class="msg-sub">${m.sub}</div>
+        <span class="rcpt-badge ${rcptClass}">${rcptLbl}</span>
+      </div>
+      <button id="btn_${m.id}" class="btn-send ${s?'done':'unsent'}" onclick="sendMsg('${m.id}','${who}')">${s?'✓ Sent':'Send'}</button>
+    </div>`;
+  }).join('');
+}
+
+async function sendMsg(id,who){
+  if(isSent(id)){ showToast('✓ Already sent'); return; }
+  if(isWeekend()){ playWarning(); showToast('⛔ Weekend — no active trips'); return; }
+  playBubbles();
+  const allList=[...MSGS.parent.morning,...MSGS.parent.evening,...MSGS.student.morning,...MSGS.student.evening];
+  const def=allList.find(m=>m.id===id);
+  markSent(id);
+  renderMsgs(who);
+  playSuccess();
+  showToast('📨 Message sent to all '+(who==='parent'?'parents':'students'));
+  updateMsgChart();
+  // Firebase
+  try{
+    const today=new Date().toISOString().split('T')[0];
+    await window.fb.setDoc(window.fb.doc(window.db,'check_driver',userId+'_'+id+'_'+today),{
+      driverId:userId,messageId:id,recipient:who,
+      messageText:def?def.text:'',sentAt:new Date().toISOString(),
+      period:who==='parent'?pPeriod:sPeriod,date:today
+    });
+  }catch(e){console.warn(e);}
+  if(def&&def.isFinal){
+    setTimeout(()=>{
+      playAlarm();
+      document.getElementById(who==='parent'?'parentFinalAlert':'studentFinalAlert').style.display='block';
+      showModal({icon:'⚠️',title:'Safety Check Required!',
+        text:'You just sent the final message for this route. Please make absolutely sure ALL students have exited the bus safely.',
+        cancel:false,onOk:()=>{}});
+    },900);
+  }
+}
+
+function confirmSafe(who){
+  playConfirm();
+  document.getElementById(who==='parent'?'parentFinalAlert':'studentFinalAlert').style.display='none';
+  showModal({icon:'✅',title:'Thank You, Captain!',
+    text:"Your care for every student's safety is what makes Rahlat Aman trustworthy. Drive safe and we'll see you on the next route! 🚌💙",
+    cancel:false,onOk:()=>{}});
+}
+function confirmUnsure(who){
+  playAlarm();
+  showModal({icon:'🚨',title:'Return to Bus Now!',
+    text:'Walk through the ENTIRE bus — check every seat, floor, and under each bench. Do not leave until you are 100% certain the bus is empty.',
+    cancel:false,onOk:()=>{ document.getElementById(who==='parent'?'parentFinalAlert':'studentFinalAlert').style.display='block'; }});
+}
+
+/* ── ATTENDANCE ── */
+async function loadStudents(){
+  const tbody=document.getElementById('attBody');
+  const locked=isAttLocked()||isWeekend();
+  document.getElementById('attLockNotice').style.display=locked?'block':'none';
+  try{
+    const {collection,query,where,getDocs,doc,getDoc}=window.fb;
+    const snap=await getDocs(query(collection(window.db,'users'),where('role','==','student')));
+    if(snap.empty){ tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:26px;color:var(--text-soft)">No students registered</td></tr>'; return; }
+    const today=new Date().toISOString().split('T')[0];
+    let html='',idx=1;
+    for(const d of snap.docs){
+      const s=d.data(), uid=d.id, name=s.fullName||s.name||'Student';
+      let parentSt='unknown';
+      try{
+        const aSnap=await getDoc(doc(window.db,'Admin_Attendance_Hub',uid,'logs',today));
+        if(aSnap.exists()) parentSt=aSnap.data().status||'unknown';
+      }catch(e){}
+      const dAct=localStorage.getItem('dAtt_'+userId+'_'+uid+'_'+today)||'';
+      const pBadge=parentSt==='present'?'<span class="att-badge att-p">✓ Present</span>':
+                   parentSt==='absent'?'<span class="att-badge att-a">✗ Absent</span>':
+                   '<span class="att-badge att-u">— Unknown</span>';
+      const dBtns=locked?'<span style="font-size:12px;color:var(--text-soft)">Locked</span>':
+        dAct==='picked'?'<span class="att-badge att-p">🚌 Onboard</span>':
+        dAct==='missed'?'<span class="att-badge att-a">✗ Missed</span>':
+        `<div class="dab-btns">
+          <button class="dab dab-p" onclick="dPick('${uid}','${name}','picked')">✓ Onboard</button>
+          <button class="dab dab-m" onclick="dPick('${uid}','${name}','missed')">✗ Missed</button>
+        </div>`;
+      html+=`<tr><td><div class="sid">${idx}</div></td><td><b>${name}</b></td><td>${pBadge}</td><td>${dBtns}</td></tr>`;
+      idx++;
+    }
+    tbody.innerHTML=html;
+  }catch(e){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:26px;color:var(--red)">Firebase error — check connection</td></tr>';
+    console.error(e);
+  }
+}
+
+window.dPick=function(uid,name,action){
+  playBubbles();
+  const today=new Date().toISOString().split('T')[0];
+  if(action==='picked'){
+    showModal({icon:'🚌',title:'Confirm Boarding',text:`Confirm that ${name} has boarded the bus?`,cancel:true,
+      onOk:async()=>{
+        playSuccess();
+        localStorage.setItem('dAtt_'+userId+'_'+uid+'_'+today,'picked');
+        await saveBoardFB(uid,name,'picked',today,'');
+        loadStudents(); updateAttChart();
+        showToast('✅ '+name+' marked onboard');
+      }});
+  } else {
+    playWarning();
+    window._optCb=(i)=>{
+      const reasons=['Parent confirmed absence','Student was late','Student not found at pickup point'];
+      localStorage.setItem('dAtt_'+userId+'_'+uid+'_'+today,'missed');
+      saveBoardFB(uid,name,'missed',today,reasons[i]);
+      loadStudents(); updateAttChart();
+      showToast('⚠️ '+name+' — '+reasons[i]);
+    };
+    showModal({icon:'⚠️',title:`Why was ${name} not picked?`,text:'Select the reason:',
+      options:['👨‍👩‍👦 Parent confirmed absence','⏰ Student was late at pickup','📍 Student not found at pickup point']});
+  }
+};
+
+async function saveBoardFB(uid,name,action,today,reason){
+  try{
+    await window.fb.setDoc(window.fb.doc(window.db,'check_driver','boarding_'+uid+'_'+today),{
+      driverId:userId,studentId:uid,studentName:name,action,reason,
+      timestamp:new Date().toISOString(),date:today
+    });
+  }catch(e){console.warn(e);}
+}
+
+/* ── READY STATUS ── */
+async function loadReady(){
+  const el=document.getElementById('readyList');
+  try{
+    const {collection,query,where,getDocs,doc,getDoc}=window.fb;
+    const snap=await getDocs(query(collection(window.db,'users'),where('role','==','student')));
+    if(snap.empty){ el.innerHTML='<p style="color:var(--text-soft);font-size:13px;text-align:center;padding:18px">No students found</p>'; return; }
+    let html='';
+    for(const d of snap.docs){
+      const s=d.data(), uid=d.id, name=s.fullName||s.name||'Student';
+      let ready=false;
+      try{
+        const ts=await getDoc(doc(window.db,'trip_status',uid.toLowerCase().replace(/[.#$[\]]/g,'_')));
+        if(ts.exists()&&ts.data().status==="I'm Ready") ready=true;
+      }catch(e){}
+      html+=`<div class="ready-row">
+        <span class="ready-name">👤 ${name}</span>
+        <span class="rbadge ${ready?'r-yes':'r-no'}">${ready?'✓ Ready':'Waiting'}</span>
+      </div>`;
+    }
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<p style="color:var(--red);font-size:13px;padding:14px">Could not load</p>';
+  }
+}
+
+/* ── CHARTS ── */
+let msgChart, attChart;
+function getWeekKey(){ const s=new Date();s.setDate(s.getDate()-s.getDay());s.setHours(0,0,0,0);return 'cw_'+s.toISOString(); }
+function checkReset(){
+  const wk=getWeekKey();
+  if(localStorage.getItem('cdWk_'+userId)!==wk){
+    localStorage.setItem('cdMsg_'+userId,'[0,0,0,0,0]');
+    localStorage.setItem('cdAtt_'+userId,'[0,0,0,0,0]');
+    localStorage.setItem('cdWk_'+userId,wk);
+  }
+}
+function getMD(){ checkReset(); return JSON.parse(localStorage.getItem('cdMsg_'+userId)||'[0,0,0,0,0]'); }
+function getAD(){ return JSON.parse(localStorage.getItem('cdAtt_'+userId)||'[0,0,0,0,0]'); }
+function updateMsgChart(){
+  const d=getMD(),day=new Date().getDay();
+  if(day>=0&&day<=4){d[day]=(d[day]||0)+1;localStorage.setItem('cdMsg_'+userId,JSON.stringify(d));}
+  if(msgChart){msgChart.data.datasets[0].data=d;msgChart.update();}
+}
+function updateAttChart(){
+  const d=getAD(),day=new Date().getDay();
+  if(day>=0&&day<=4){d[day]=(d[day]||0)+1;localStorage.setItem('cdAtt_'+userId,JSON.stringify(d));}
+  if(attChart){attChart.data.datasets[0].data=d;attChart.update();}
+}
+function buildCharts(){
+  const labels=['Sun','Mon','Tue','Wed','Thu'];
+  const tickCfg={color:'#8AAED4',font:{family:'Plus Jakarta Sans',size:11}};
+  const gridCfg=(c)=>({color:`rgba(${c},0.06)`});
+  const ctx1=document.getElementById('msgChart').getContext('2d');
+  msgChart=new Chart(ctx1,{type:'bar',data:{labels,datasets:[{label:'Msgs',data:getMD(),
+    backgroundColor:(c)=>{const g=c.chart.ctx.createLinearGradient(0,0,0,150);g.addColorStop(0,'rgba(46,134,222,0.9)');g.addColorStop(1,'rgba(0,180,216,0.25)');return g;},
+    borderRadius:8,borderSkipped:false}]},
+    options:{plugins:{legend:{display:false}},scales:{x:{grid:gridCfg('46,134,222'),ticks:tickCfg},y:{beginAtZero:true,grid:gridCfg('46,134,222'),ticks:{...tickCfg,stepSize:1}}}}});
+  const ctx2=document.getElementById('attChart').getContext('2d');
+  attChart=new Chart(ctx2,{type:'bar',data:{labels,datasets:[{label:'Att',data:getAD(),
+    backgroundColor:(c)=>{const g=c.chart.ctx.createLinearGradient(0,0,0,150);g.addColorStop(0,'rgba(6,214,160,0.9)');g.addColorStop(1,'rgba(6,214,160,0.2)');return g;},
+    borderRadius:8,borderSkipped:false}]},
+    options:{plugins:{legend:{display:false}},scales:{x:{grid:gridCfg('6,214,160'),ticks:tickCfg},y:{beginAtZero:true,grid:gridCfg('6,214,160'),ticks:{...tickCfg,stepSize:1}}}}});
+}
+
+/* ── FIREBASE SESSION LOG ── */
+async function logSession(){
+  try{
+    const today=new Date().toISOString().split('T')[0];
+    await window.fb.setDoc(window.fb.doc(window.db,'check_driver','session_'+userId+'_'+today),{
+      driverId:userId,date:today,sessionStart:new Date().toISOString(),
+      platform:'check_driver',isWeekend:isWeekend()
+    },{merge:true});
+  }catch(e){console.warn(e);}
+}
+
+/* ── INIT ── */
+window.onload=async()=>{
+  updateBanner();
+  renderMsgs('parent');
+  renderMsgs('student');
+  buildCharts();
+  await loadStudents();
+  await loadReady();
+  await logSession();
+};
+</script>
+</body>
+</html>

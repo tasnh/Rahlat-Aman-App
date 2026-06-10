@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman - Activities Game</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+
+:root{
+--main:#0A6AA1;
+--main2:#4FB4E8;
+--bg:#EEF6FC;
+--white:#fff;
+--dark:#17384D;
+--shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(to bottom,#EEF6FC,#DCEFFF);
+color:var(--dark);
+overflow-x:hidden;
+}
+
+/* HEADER */
+
+.hero{
+position:relative;
+height:320px;
+overflow:hidden;
+border-radius:0 0 35px 35px;
+box-shadow:var(--shadow);
+}
+
+.hero img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.hero-overlay{
+position:absolute;
+inset:0;
+background:linear-gradient(to top,rgba(0,0,0,0.75),rgba(0,0,0,0.2));
+display:flex;
+flex-direction:column;
+justify-content:flex-end;
+padding:28px;
+color:white;
+}
+
+.top-bar{
+position:absolute;
+top:20px;
+left:20px;
+right:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:10;
+}
+
+.back-btn{
+width:50px;
+height:50px;
+border-radius:16px;
+background:rgba(255,255,255,0.2);
+backdrop-filter:blur(10px);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.back-btn:hover{
+transform:scale(1.08);
+}
+
+.hero-badge{
+padding:10px 18px;
+border-radius:30px;
+background:rgba(255,255,255,0.18);
+backdrop-filter:blur(10px);
+font-size:14px;
+font-weight:600;
+}
+
+.hero-title{
+font-size:38px;
+font-weight:800;
+margin-bottom:10px;
+}
+
+.hero-sub{
+font-size:16px;
+line-height:1.6;
+max-width:500px;
+opacity:0.95;
+}
+
+/* SEARCH */
+
+.search-box{
+margin:22px 18px 10px;
+position:relative;
+}
+
+.search-box input{
+width:100%;
+padding:16px 20px 16px 50px;
+border:none;
+border-radius:18px;
+font-size:16px;
+background:white;
+box-shadow:var(--shadow);
+outline:none;
+}
+
+.search-box i{
+position:absolute;
+left:18px;
+top:18px;
+color:#777;
+font-size:18px;
+}
+
+/* SECTION */
+
+.section-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+margin-top:20px;
+}
+
+.section-title{
+font-size:24px;
+font-weight:800;
+}
+
+.game-count{
+background:#E6F5FD;
+padding:8px 14px;
+border-radius:30px;
+font-size:14px;
+font-weight:700;
+color:var(--main);
+}
+
+/* GAMES */
+
+.games{
+padding:18px;
+padding-bottom:40px;
+}
+
+.card{
+background:white;
+border-radius:26px;
+padding:16px;
+display:flex;
+align-items:center;
+gap:16px;
+margin-bottom:18px;
+cursor:pointer;
+position:relative;
+overflow:hidden;
+box-shadow:var(--shadow);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+}
+
+.card::before{
+content:"";
+position:absolute;
+width:120px;
+height:120px;
+background:rgba(79,180,232,0.08);
+border-radius:50%;
+top:-50px;
+right:-40px;
+}
+
+.game-img{
+width:90px;
+height:90px;
+border-radius:22px;
+object-fit:cover;
+flex-shrink:0;
+}
+
+.game-info{
+flex:1;
+position:relative;
+z-index:2;
+}
+
+.game-title{
+font-size:22px;
+font-weight:800;
+margin-bottom:6px;
+}
+
+.game-desc{
+font-size:14px;
+color:#666;
+line-height:1.5;
+}
+
+.game-bottom{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:12px;
+}
+
+.points{
+background:#FFF4D6;
+color:#D89B00;
+padding:6px 12px;
+border-radius:30px;
+font-size:13px;
+font-weight:700;
+}
+
+.status{
+padding:6px 12px;
+border-radius:30px;
+font-size:12px;
+font-weight:700;
+background:#FFECEC;
+color:#d32f2f;
+}
+
+.status.played{
+background:#DFF7E6;
+color:#01ca4b;
+}
+
+.actions{
+display:flex;
+flex-direction:column;
+gap:14px;
+align-items:center;
+z-index:2;
+}
+
+.like{
+width:46px;
+height:46px;
+border-radius:14px;
+background:#F7FAFD;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.like.active{
+background:#FFE6E6;
+color:red;
+transform:scale(1.1);
+}
+
+.play-btn{
+width:52px;
+height:52px;
+border-radius:16px;
+background:linear-gradient(135deg,var(--main2),var(--main));
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:20px;
+box-shadow:0 10px 20px rgba(10,106,161,0.25);
+}
+
+/* NOTIFY */
+
+.notify{
+position:fixed;
+top:-100px;
+left:50%;
+transform:translateX(-50%);
+background:#00c853;
+color:white;
+padding:14px 30px;
+border-radius:40px;
+font-weight:bold;
+z-index:9999;
+transition:0.5s;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.notify.show{
+top:20px;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+.hero{
+height:280px;
+}
+
+.hero-title{
+font-size:30px;
+}
+
+.game-title{
+font-size:19px;
+}
+
+.card{
+flex-direction:row;
+align-items:center;
+}}
+
+</style>
+</head>
+<body>
+
+<div class="notify" id="notify"></div>
+
+<!-- HERO -->
+<div class="hero">
+<div class="top-bar">
+<div class="back-btn" onclick="goBack()">
+<i class="fas fa-arrow-left"></i>
+</div>
+<div class="hero-badge">
+🎮 Rhlat Aman Learning Games
+</div>
+</div>
+<img src="assetsactivity/hero.png">
+<div class="hero-overlay">
+<div class="hero-title">
+Activities Center
+</div>
+<div class="hero-sub">
+Play educational games, earn rewards, unlock achievements,
+and enjoy your Rahlat Aman journey safely.
+</div>
+</div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-box">
+<i class="fas fa-search"></i>
+<input type="text"
+placeholder="Search activities..."
+onkeyup="searchGame(this.value)">
+</div>
+
+<!-- TITLE -->
+<div class="section-top">
+<div class="section-title">
+Explore Games
+</div>
+<div class="game-count">
+5 Games
+</div>
+</div>
+
+<!-- GAMES -->
+<div class="games">
+
+<!-- GAME 1 -->
+<div class="card" onclick="openGame('game1.html')">
+<img src="assetsactivity/game1.png" class="game-img">
+<div class="game-info">
+<div class="game-title">
+Aman Hero
+</div>
+<div class="game-desc">
+Become a safety hero and protect everyone around you.
+</div>
+<div class="game-bottom">
+<div class="points">
++10 Points
+</div>
+<div class="status" id="g1">
+Not Played
+</div>
+</div>
+</div>
+<div class="actions">
+<div class="like" onclick="like(event,this)">
+<i class="fa-regular fa-heart"></i>
+</div>
+<div class="play-btn">
+<i class="fas fa-play"></i>
+</div>
+</div>
+</div>
+
+<!-- GAME 2 -->
+<div class="card" onclick="openGame('game2.html')">
+<img src="assetsactivity/game2.png" class="game-img">
+<div class="game-info">
+<div class="game-title">
+Puzzle Challenge
+</div>
+<div class="game-desc">
+Solve smart puzzles and connect the right pieces safely.
+</div>
+<div class="game-bottom">
+<div class="points">
++10 Points
+</div>
+<div class="status" id="g2">
+Not Played
+</div>
+</div>
+</div>
+<div class="actions">
+<div class="like" onclick="like(event,this)">
+<i class="fa-regular fa-heart"></i>
+</div>
+<div class="play-btn">
+<i class="fas fa-play"></i>
+</div>
+</div>
+</div>
+
+<!-- GAME 3 -->
+<div class="card" onclick="openGame('game3.html')">
+<img src="assetsactivity/game3.png" class="game-img">
+<div class="game-info">
+<div class="game-title">
+Bus Safety Quest
+</div>
+<div class="game-desc">
+Choose the safest behavior during the school trip.
+</div>
+<div class="game-bottom">
+<div class="points">
++10 Points
+</div>
+<div class="status" id="g3">
+Not Played
+</div>
+</div>
+</div>
+<div class="actions">
+<div class="like" onclick="like(event,this)">
+<i class="fa-regular fa-heart"></i>
+</div>
+<div class="play-btn">
+<i class="fas fa-play"></i>
+</div>
+</div>
+</div>
+
+<!-- GAME 4 -->
+<div class="card" onclick="openGame('game4.html')">
+<img src="assetsactivity/game4.png" class="game-img">
+<div class="game-info">
+<div class="game-title">
+Rahlat Aman Leader
+</div>
+<div class="game-desc">
+Lead your team and become the future safety leader.
+</div>
+<div class="game-bottom">
+<div class="points">
++10 Points
+</div>
+<div class="status" id="g4">
+Not Played
+</div>
+</div>
+</div>
+<div class="actions">
+<div class="like" onclick="like(event,this)">
+<i class="fa-regular fa-heart"></i>
+</div>
+<div class="play-btn">
+<i class="fas fa-play"></i>
+</div>
+</div>
+</div>
+
+<!-- GAME 5 -->
+<div class="card" onclick="openGame('game5.html')">
+<img src="assetsactivity/game5.png" class="game-img">
+<div class="game-info">
+<div class="game-title">
+Safety Assistant
+</div>
+<div class="game-desc">
+Help students and complete important safety missions.
+</div>
+<div class="game-bottom">
+<div class="points">
++10 Points
+</div>
+<div class="status" id="g5">
+Not Played
+</div>
+</div>
+</div>
+<div class="actions">
+<div class="like" onclick="like(event,this)">
+<i class="fa-regular fa-heart"></i>
+</div>
+<div class="play-btn">
+<i class="fas fa-play"></i>
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ══════════════ FIREBASE ══════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getFirestore, doc, getDoc, getDocs, setDoc,
+    updateDoc, collection, query, where,
+    addDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+window.db              = db;
+window.doc             = doc;
+window.getDoc          = getDoc;
+window.getDocs         = getDocs;
+window.setDoc          = setDoc;
+window.updateDoc       = updateDoc;
+window.collection      = collection;
+window.addDoc          = addDoc;
+window.serverTimestamp = serverTimestamp;
+window.query           = query;
+window.where           = where;
+</script>
+
+<!-- ══════════════ LOGIC ══════════════ -->
+<script>
+const likeSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+
+/* ─── أسماء الألعاب للعرض ─── */
+const GAME_NAMES = {
+    game1: 'Aman Hero',
+    game2: 'Puzzle Challenge',
+    game3: 'Bus Safety Quest',
+    game4: 'Rahlat Aman Leader',
+    game5: 'Safety Assistant'
+};
+
+/* ─── userId موحد: email دائماً ─── */
+function getUserId() {
+    const u = JSON.parse(localStorage.getItem("currentUser")) || {};
+    return u.email || u.studentId || u.id || "guest";
+}
+
+/* ─── NOTIFICATION ─── */
+function sendNotify(text, type = "system") {
+    const el = document.getElementById("notify");
+    el.innerText = text;
+    el.classList.add("show");
+    setTimeout(() => el.classList.remove("show"), 3000);
+
+    localStorage.setItem("notifyNow", text);
+    let history = JSON.parse(localStorage.getItem("notiHistory")) || [];
+    history.unshift({ text, type, time: new Date().toLocaleTimeString(), read: false });
+    localStorage.setItem("notiHistory", JSON.stringify(history));
+}
+
+/* ─── BACK ─── */
+function goBack() {
+    window.location.href = "student_dashboard.html";
+}
+
+/* ─── OPEN GAME ─────────────────────────────────────────────────
+   يحفظ في المسار الموحد: StudentActivities/{userId}/games/{gameId}
+   يحفظ: اسم اللعبة، وقت البدء، الحالة "playing"
+   ──────────────────────────────────────────────────────────────── */
+async function openGame(page) {
+    const userId  = getUserId();
+    const gameId  = page.replace(".html", "");
+    const gameName = GAME_NAMES[gameId] || gameId;
+
+    try {
+        // ① حفظ "بدأ اللعب" في المسار الموحد مع كل التفاصيل
+        await window.setDoc(
+            window.doc(window.db, "StudentActivities", userId, "games", gameId),
+            {
+                gameId:        gameId,
+                gameName:      gameName,
+                status:        "playing",
+                lastPlayedAt:  window.serverTimestamp(),
+                // نحافظ على البيانات السابقة (earnedPoints, completed, liked…)
+            },
+            { merge: true }
+        );
+
+        // ② تسجيل بدء النشاط في سجل الداشبورد
+        await window.setDoc(
+            window.doc(window.db, "Student-Dashboard", userId),
+            {
+                lastActivity: "Started: " + gameName,
+                lastGame:     gameId,
+                updatedAt:    window.serverTimestamp()
+            },
+            { merge: true }
+        );
+
+        logStudentActivity("Game", "Started playing: " + gameName);
+        sendNotify("🎮 Started " + gameName + " — Good luck!");
+
+        window.location.href = page;
+
+    } catch (error) {
+        console.error("openGame Error:", error);
+        // حتى لو فشل الحفظ، نفتح اللعبة
+        window.location.href = page;
+    }
+}
+
+/* ─── LIKE ───────────────────────────────────────────────────────
+   يحفظ liked في نفس المسار الموحد مع timestamp
+   ──────────────────────────────────────────────────────────────── */
+async function like(e, el) {
+    e.stopPropagation();
+
+    const userId = getUserId();
+    const card   = el.closest(".card");
+    const page   = card.getAttribute("onclick").match(/'(.*?)'/)[1];
+    const gameId = page.replace(".html", "");
+    const gameName = GAME_NAMES[gameId] || gameId;
+
+    el.classList.toggle("active");
+    const liked = el.classList.contains("active");
+
+    try {
+        // حفظ حالة اللايك في المسار الموحد
+        await window.setDoc(
+            window.doc(window.db, "StudentActivities", userId, "games", gameId),
+            {
+                gameId:    gameId,
+                gameName:  gameName,
+                liked:     liked,
+                likedAt:   liked ? window.serverTimestamp() : null
+            },
+            { merge: true }
+        );
+
+        if (liked) {
+            likeSound.currentTime = 0;
+            likeSound.play();
+            el.innerHTML = '<i class="fa-solid fa-heart"></i>';
+            sendNotify("❤️ Added " + gameName + " to favorites");
+            logStudentActivity("Favorite", "Liked: " + gameName);
+        } else {
+            el.innerHTML = '<i class="fa-regular fa-heart"></i>';
+        }
+
+    } catch (error) {
+        console.error("like Error:", error);
+    }
+}
+
+/* ─── SEARCH ─── */
+function searchGame(val) {
+    document.querySelectorAll(".card").forEach(c => {
+        c.style.display = c.innerText.toLowerCase().includes(val.toLowerCase()) ? "flex" : "none";
+    });
+}
+
+/* ─── LOAD — يقرأ من المسار الموحد ─── */
+window.onload = async () => {
+    sendNotify("🎉 Welcome to Activities");
+
+    const userId = getUserId();
+    const games  = ["game1", "game2", "game3", "game4", "game5"];
+
+    for (let i = 0; i < games.length; i++) {
+        try {
+            const snap = await window.getDoc(
+                window.doc(window.db, "StudentActivities", userId, "games", games[i])
+            );
+
+            if (snap.exists()) {
+                const data = snap.data();
+
+                // تحديث حالة الإتمام
+                const statusEl = document.getElementById("g" + (i + 1));
+                if (data.completed) {
+                    statusEl.classList.add("played");
+                    statusEl.innerText = "✓ Completed";
+                } else if (data.status === "playing") {
+                    statusEl.innerText = "In Progress";
+                }
+
+                // تحديث حالة اللايك
+                const gameCard = document.querySelectorAll('.card')[i];
+                const likeBtn  = gameCard.querySelector('.like');
+                if (data.liked === true) {
+                    likeBtn.classList.add("active");
+                    likeBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+                }
+            }
+        } catch (error) {
+            console.log("Load error for " + games[i], error);
+        }
+    }
+};
+
+/* ─── LOG (local only) ─── */
+function logStudentActivity(type, description) {
+    const userId     = getUserId();
+    let activities   = JSON.parse(localStorage.getItem("studentActivities_" + userId)) || [];
+    activities.unshift({
+        type,
+        description,
+        time: new Date().toLocaleTimeString(),
+        date: new Date().toLocaleDateString()
+    });
+    localStorage.setItem("studentActivities_" + userId, JSON.stringify(activities));
+}
+
+function getLevel(points) {
+    if (points >= 1000) return "Legend 🔥";
+    if (points >= 500)  return "Master 🔴";
+    if (points >= 250)  return "Pro 🟡";
+    if (points >= 100)  return "Explorer 🔵";
+    return "Beginner 🟢";
+}
+
+function getBadge(points) {
+    if (points >= 1000) return "👑";
+    if (points >= 500)  return "🏆";
+    if (points >= 250)  return "🥇";
+    if (points >= 100)  return "🥈";
+    return "🥉";
+}
+</script>
+<script src="js/userSystem.js"></script>
+</body>
+</html>

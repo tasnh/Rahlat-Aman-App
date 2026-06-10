@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahlat Aman The Ultimate Updated Epic</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0;
+         background: #000; 
+         overflow: hidden; 
+         font-family: 'Cairo', 
+         sans-serif; }
+#preStart {
+position: absolute; 
+width: 100%;
+height: 100%;
+background: #000 url('assets/images/hero.png') center/cover;
+display: flex; 
+flex-direction: column;
+justify-content: flex-end;
+align-items: center; 
+z-index: 200;
+padding-bottom: 100px;
+        }
+.game-btn {
+padding: 15px 40px; 
+font-size: 28px; 
+background: #ffcc00; 
+color: #333;
+border: 5px solid #fff;
+border-radius: 50px; 
+cursor: pointer;
+font-weight: 900; 
+box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+transition: 0.3s;
+margin: 5px; pointer-events: auto;
+        }
+.game-btn:hover {
+transform: scale(1.1);
+background: #fff;
+        }
+#ui-layer
+{ position: absolute; 
+           top: 0; 
+           width: 100%;
+           height: 100%; 
+           pointer-events: none; 
+           z-index: 50; display: none; }
+        .stat-box
+         { position: absolute; 
+            top: 30px; 
+            left: 40px; 
+            background: rgba(255,255,255,0.9); 
+            padding: 15px 30px; 
+            border-radius: 20px; 
+            border-left: 10px solid #00d2ff; 
+            font-size: 26px; 
+            font-weight: 900; 
+            color: #001f3f; }
+        #action-container
+         { position: absolute; 
+            bottom: 10%; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            display: none; 
+            gap: 15px; 
+            z-index: 300; 
+            pointer-events: auto; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            width: 90%; }
+        #subtitle-box 
+        { position: absolute; 
+          top: 15%; 
+          left: 50%; 
+          transform: translateX(-50%); 
+          background: rgba(0,0,0,0.85); 
+          color: #fff; 
+          padding: 20px 40px; 
+          border-radius: 50px; 
+          font-size: 26px; 
+          text-align: center; 
+          display: none; 
+          border: 3px solid #ffcc00; 
+          z-index: 400; width: 75%; }
+        #cinematic-overlay { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            background: #000; 
+            z-index: 500; 
+            display: none; 
+            pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<div id="preStart">
+    <button class="game-btn" onclick="startBranding()" >Are you ready? 🚀</button>
+</div>
+
+<div id="ui-layer">
+    <div class="stat-box">⭐ Safety points: <span id="game-score">0</span></div>
+    <div id="subtitle-box"></div>
+</div>
+
+<div id="action-container">
+    <button id="btn-play" class="game-btn" onclick="beginMission()">PLAY ▶️</button>
+    <button id="btn-stop" class="game-btn" style="display:none;" onclick="handleStopAlarm()">STOP 🛑</button>
+    <button id="btn-eating" class="game-btn" style="display:none;" onclick="handleEatBreakfast()">EATING 🍏</button>
+    <button id="btn-next" class="game-btn" style="display:none;" onclick="nextStep()">Next ➡️</button>
+    <button id="btn-go" class="game-btn" style="display:none;" onclick="handleGo()">GO 🚌</button>
+    <button id="btn-correct" class="game-btn" style="display:none; background: #44ff44;" onclick="handleQuiz(true)">YES ✔️</button>
+    <button id="btn-wrong" class="game-btn" style="display:none; background: #ff4444;" onclick="handleQuiz(false)">NO ✖️</button>
+    <button id="btn-climb" class="game-btn" style="display:none;" onclick="handleClimb()"> Get on the bus  🚌</button>
+    <button id="btn-alert" class="game-btn" style="display:none;" onclick="handleAlertDriver()">Driver alert! 📢</button>
+    <button id="btn-help" class="game-btn" style="display:none;" onclick="handleHelpStudent()">Student assistance  🤝</button>
+    <button id="btn-finish-check" class="game-btn" style="display:none;" onclick="handleFinishCheck()"> I have finished the inspection✅</button>
+    <button id="btn-thanks" class="game-btn" style="display:none;" onclick="handleThanksResponse()">You're welcome, it's my duty😊</button>
+    <button id="btn-home" class="game-btn" style="display:none;" onclick="handleGoHome()">Let's go home🏠</button>
+    <button id="btn-final" class="game-btn" style="display:none;" onclick="handleFinalFinish()">End of journey  🏁</button>
+</div>
+
+<div id="cinematic-overlay"></div>
+
+<script type="module">
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+doc,
+setDoc,
+updateDoc,
+getDoc,
+serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+projectId: "rahlataman-bus-safety-app",
+storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+messagingSenderId: "1088859717905",
+appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+window.db = db;
+window.doc = doc;
+window.setDoc = setDoc;
+window.updateDoc = updateDoc;
+window.getDoc = getDoc;
+window.serverTimestamp = serverTimestamp;
+</script>
+
+<script>
+let scene, bg, stars, emojies = [];
+let currentScore = 0;
+let gameSaved = false;
+
+/* ═══════════════════════════════════════════════
+   saveGameProgress — موحّد مع بقية الألعاب
+   المسار: StudentActivities/{userId}/games/game1
+   ═══════════════════════════════════════════════ */
+async function saveGameProgress() {
+    if (gameSaved) return;
+    gameSaved = true;
+
+    // ① نأخذ userId من email دائماً (مفتاح موحد)
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+    const userId = currentUser.email || currentUser.studentId || currentUser.id || "guest";
+    console.log("GAME1 — USER ID:", userId);
+
+    try {
+        // ② تحديث Student-Dashboard (النقاط الكلية)
+        const dashboardRef = window.doc(window.db, "Student-Dashboard", userId);
+        const dashboardSnap = await window.getDoc(dashboardRef);
+        const oldPoints = dashboardSnap.exists() ? (dashboardSnap.data().points || 0) : 0;
+        const newPoints = oldPoints + currentScore;
+
+        await window.setDoc(dashboardRef, {
+            points:       newPoints,
+            level:        getLevel(newPoints),
+            badge:        getBadge(newPoints),
+            lastGame:     "game1",
+            lastScore:    currentScore,
+            lastActivity: "Completed Game 1",
+            updatedAt:    window.serverTimestamp()
+        }, { merge: true });
+
+        // ③ حفظ بيانات اللعبة في المسار الموحد
+        //    StudentActivities/{userId}/games/game1
+        await window.setDoc(
+            window.doc(window.db, "StudentActivities", userId, "games", "game1"),
+            {
+                gameId:      "game1",
+                gameName:    "Aman Hero",
+                earnedPoints: currentScore,
+                completed:   true,
+                liked:       false,
+                parentRating: 0,
+                playedAt:    window.serverTimestamp()
+            },
+            { merge: true }
+        );
+
+        localStorage.setItem("notifyNow", `🎉 +${currentScore} XP earned!`);
+        console.log("✅ Game 1 synced successfully");
+
+    } catch (error) {
+        console.error("❌ saveGameProgress Error:", error);
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   Phaser — preload & create
+   ═══════════════════════════════════════════════ */
+function preload() {
+    const imgs = [
+        "01_hero_logo","02_week_up","03_breakfast","04_notification",
+        "05_waiting_bus","06_safe_path","07_pass_window","08_sleep_student",
+        "09_stop_alart","10_school_arrival","11_celebration","12_need_sleep",
+        "13_final_check","14_back_home","15_win_screen","16_happy_all","hero"
+    ];
+    imgs.forEach(i => this.load.image(i, `assets/images/${i}.png`));
+    this.load.image('star', 'https://labs.phaser.io/assets/particles/yellow.png');
+    this.load.image('emoji_happy', 'https://cdn-icons-png.flaticon.com/512/1791/1791330.png');
+
+    const snds = [
+        "music","alarm","success","door","notification","v_morning","eating",
+        "v_breakfast","v_safety","engine","steps","v_thanks","horn","v_window",
+        "school_bg","sleep","v_insteck","v_hero"
+    ];
+    snds.forEach(s => this.load.audio(s, `assets/audio/${s}.mp3`));
+}
+
+function create() {
+    scene = this;
+    bg = this.add.image(960, 540, 'hero').setDisplaySize(1920, 1080);
+    stars = this.add.particles(0, 0, 'star', {
+        speed: 100,
+        scale: { start: 0.2, end: 0 },
+        alpha: { start: 1, end: 0 },
+        frequency: 80,
+        emitZone: { source: new Phaser.Geom.Rectangle(0, 0, 1920, 1080) }
+    });
+    stars.stop();
+}
+
+/* ═══════════════════════════════════════════════
+   Game flow — لم يتغير شيء هنا
+   ═══════════════════════════════════════════════ */
+function hideAllButtons() {
+    document.querySelectorAll('#action-container button').forEach(btn => btn.style.display = 'none');
+}
+
+function startBranding() {
+    if (!bg) return;
+    document.getElementById('preStart').style.display = 'none';
+    bg.setTexture('01_hero_logo');
+    try { scene.sound.play('music', { loop: true, volume: 0.2 }); } catch(e) {}
+    stars.start();
+    for (let i = 0; i < 6; i++) {
+        let emo = scene.add.image(Phaser.Math.Between(200, 1700), Phaser.Math.Between(200, 800), 'emoji_happy').setScale(0.15);
+        scene.tweens.add({ targets: emo, y: emo.y - 60, duration: 1500, yoyo: true, repeat: -1 });
+        emojies.push(emo);
+    }
+    document.getElementById('action-container').style.display = 'flex';
+    document.getElementById('btn-play').style.display = 'block';
+}
+
+function beginMission() {
+    stars.stop();
+    emojies.forEach(e => e.destroy());
+    hideAllButtons();
+    playTransition('door', () => {
+        bg.setTexture('02_week_up');
+        scene.sound.play('alarm', { loop: true });
+        showSubtitle("You're awake, champ! Good morning... Turn off the alarm now!");
+        document.getElementById('btn-stop').style.display = 'block';
+        document.getElementById('ui-layer').style.display = 'block';
+    });
+}
+
+function handleStopAlarm() {
+    scene.sound.stopByKey('alarm');
+    hideAllButtons();
+    let v = scene.sound.add('v_morning');
+    v.play();
+    v.on('complete', () => {
+        playTransition('door', () => {
+            bg.setTexture('03_breakfast');
+            let vb = scene.sound.add('v_breakfast');
+            vb.play();
+            showSubtitle("It's time for a healthy breakfast! Listen to the champion...");
+            vb.on('complete', () => {
+                showSubtitle("Press EATING and eat your food 🍏");
+                document.getElementById('btn-eating').style.display = 'block';
+            });
+        });
+    });
+}
+
+function handleEatBreakfast() {
+    hideAllButtons();
+    let eat = scene.sound.add('eating');
+    eat.play();
+    eat.on('complete', () => {
+        addScore(500);
+        playTransition('success', () => {
+            bg.setTexture('04_notification');
+            scene.sound.play('notification');
+            showSubtitle("A notification has arrived that the bus is here! Get ready 📱");
+            document.getElementById('btn-next').style.display = 'block';
+        });
+    });
+}
+
+function nextStep() {
+    hideAllButtons();
+    playTransition('door', () => {
+        bg.setTexture('05_waiting_bus');
+        let vs = scene.sound.add('v_safety');
+        vs.play();
+        showSubtitle("Wait in a safe place...");
+        vs.on('complete', () => {
+            scene.sound.play('engine');
+            setTimeout(() => {
+                scene.sound.play('horn');
+                showSubtitle("The bus has arrived! Follow the safe route.");
+                setTimeout(() => {
+                    playTransition('door', () => {
+                        bg.setTexture('06_safe_path');
+                        scene.sound.play('steps');
+                        document.getElementById('btn-go').style.display = 'block';
+                    });
+                }, 2000);
+            }, 2000);
+        });
+    });
+}
+
+function handleGo() {
+    hideAllButtons();
+    scene.sound.play('engine');
+    playTransition('door', () => {
+        bg.setTexture('07_pass_window');
+        let vw = scene.sound.add('v_window');
+        vw.play();
+        showSubtitle("Was Saeed's method of sticking his hand out of the window right or wrong?");
+        document.getElementById('btn-correct').style.display = 'block';
+        document.getElementById('btn-wrong').style.display = 'block';
+    });
+}
+
+function handleQuiz(isCorrectBtn) {
+    hideAllButtons();
+    if (!isCorrectBtn) {
+        scene.sound.play('success');
+        addScore(1000);
+        showSubtitle("Well done! This is very wrong and dangerous behavior.");
+    } else {
+        showSubtitle("Unfortunately, his behavior is wrong; one should not stick their hand out of the window!");
+    }
+    setTimeout(() => {
+        playTransition('door', () => {
+            bg.setTexture('10_school_arrival');
+            try { scene.sound.play('school_bg'); } catch(e) {}
+            showSubtitle("We've arrived at school! Let's get out quietly.");
+            setTimeout(() => {
+                playTransition('door', () => {
+                    bg.setTexture('12_need_sleep');
+                    try { scene.sound.play('steps'); } catch(e) {}
+                    showSubtitle("The school day is over... it's time to get back on the bus.");
+                    document.getElementById('btn-climb').style.display = 'block';
+                });
+            }, 4000);
+        });
+    }, 3000);
+}
+
+function handleClimb() {
+    hideAllButtons();
+    playTransition('success', () => {
+        bg.setTexture('09_stop_alart');
+        try { scene.sound.play('sleep'); } catch(e) {}
+        showSubtitle("The driver must be alerted... Is anyone asleep?");
+        document.getElementById('btn-alert').style.display = 'block';
+    });
+}
+
+function handleAlertDriver() {
+    hideAllButtons();
+    playTransition('door', () => {
+        bg.setTexture('08_sleep_student');
+        let vi = scene.sound.add('v_insteck');
+        vi.play();
+        showSubtitle("Stop! There's still a student sleeping on the bus!");
+        vi.on('complete', () => {
+            document.getElementById('btn-help').style.display = 'block';
+        });
+    });
+}
+
+function handleHelpStudent() {
+    hideAllButtons();
+    playTransition('success', () => {
+        bg.setTexture('13_final_check');
+        try { scene.sound.play('music'); } catch(e) {}
+        try { scene.sound.play('steps'); } catch(e) {}
+        showSubtitle("Search the bus thoroughly to make sure everyone has gotten off.");
+        document.getElementById('btn-finish-check').style.display = 'block';
+    });
+}
+
+function handleFinishCheck() {
+    hideAllButtons();
+    playTransition('success', () => {
+        bg.setTexture('11_celebration');
+        let vt = scene.sound.add('v_thanks');
+        vt.play();
+        showSubtitle("Thank you, Adel, for inspecting the bus and protecting your friends!");
+        vt.on('complete', () => {
+            try { scene.sound.play('success'); } catch(e) {}
+            document.getElementById('btn-thanks').style.display = 'block';
+        });
+    });
+}
+
+function handleThanksResponse() {
+    hideAllButtons();
+    playTransition('door', () => {
+        bg.setTexture('11_celebration');
+        showSubtitle("You're welcome... This is my duty as a hero of the Rahlat Aman! 🛡️");
+        setTimeout(() => {
+            document.getElementById('btn-home').style.display = 'block';
+        }, 2000);
+    });
+}
+
+function handleGoHome() {
+    hideAllButtons();
+    playTransition('success', () => {
+        bg.setTexture('16_happy_all');
+        try { scene.sound.play('music'); } catch(e) {}
+        showSubtitle("You have spread awareness among your friends... You are a true hero!");
+        setTimeout(() => {
+            document.getElementById('btn-final').style.display = 'block';
+        }, 3000);
+    });
+}
+
+async function handleFinalFinish() {
+    hideAllButtons();
+    playTransition('success', async () => {
+        bg.setTexture('15_win_screen');
+        let vh = scene.sound.add('v_hero');
+        vh.play();
+        showSubtitle("I am the hero of the safe journey! 🏆");
+        vh.on('complete', async () => {
+            await saveGameProgress();
+            try { scene.sound.play('success'); } catch(e) {}
+            if (!document.getElementById("backActivitiesBtn")) {
+                let backBtn = document.createElement('button');
+                backBtn.id = "backActivitiesBtn";
+                backBtn.innerText = "⬅ Back to Activities";
+                backBtn.style.cssText = "position:fixed;top:20px;right:20px;z-index:999999;pointer-events:auto;padding:16px 30px;font-size:24px;border-radius:20px;border:none;background:#ffcc00;font-weight:bold;cursor:pointer;";
+                backBtn.onclick = () => { window.location.href = "student_Activities.html"; };
+                document.body.appendChild(backBtn);
+            }
+        });
+    });
+}
+
+/* ═══════════════════════════════════════════════
+   Helpers — لم يتغير شيء
+   ═══════════════════════════════════════════════ */
+function playTransition(soundKey, callback) {
+    let overlay = document.getElementById('cinematic-overlay');
+    overlay.style.display = 'block';
+    try { if (soundKey) scene.sound.play(soundKey); } catch(e) {}
+    setTimeout(() => {
+        callback();
+        setTimeout(() => { overlay.style.display = 'none'; }, 500);
+    }, 2000);
+}
+
+function showSubtitle(text) {
+    let box = document.getElementById('subtitle-box');
+    box.innerText = text;
+    box.style.display = 'block';
+}
+
+function addScore(p) {
+    currentScore += p;
+    let el = document.getElementById('game-score');
+    if (el) el.innerText = currentScore;
+}
+
+function getLevel(points) {
+    if (points >= 1000) return "Legend 🔥";
+    if (points >= 500)  return "Master 🔴";
+    if (points >= 250)  return "Pro 🟡";
+    if (points >= 100)  return "Explorer 🔵";
+    return "Beginner 🟢";
+}
+
+function getBadge(points) {
+    if (points >= 1000) return "👑";
+    if (points >= 500)  return "🏆";
+    if (points >= 250)  return "🥇";
+    if (points >= 100)  return "🥈";
+    return "🥉";
+}
+
+const config = {
+    type: Phaser.AUTO,
+    width: 1920,
+    height: 1080,
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    scene: { preload, create }
+};
+
+new Phaser.Game(config);
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Profile Update | Rahlat Aman</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-navy: #020617;
+            --cyber-blue: #38bdf8;
+            --accent-gold: #fbbf24;
+            --pure-white: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --success-green: #10b981;
+        }
+
+        body {
+            background: var(--dark-navy);
+            color: var(--pure-white);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.05) 0%, transparent 40%);
+            overflow-x: hidden;
+        }
+
+        /* Success Notification Overlay */
+        #successOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.9);
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.4s ease;
+        }
+
+        .profile-container {
+            width: 100%;
+            max-width: 650px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header-section h1 {
+            font-size: 1.75rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #fff, var(--cyber-blue));
+            -webkit-background-clip : text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Advanced Avatar Upload */
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+
+        #profileImg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .edit-icon {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--cyber-blue);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark-navy);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(56, 189, 248, 0.4);
+            border: 2px solid var(--dark-navy);
+        }
+
+        /* Form Grid Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .full-row { grid-column: span 2; }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 5px;
+        }
+
+        input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 14px 18px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--cyber-blue);
+            background: rgba(56, 189, 248, 0.03);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+        }
+
+        .save-btn {
+            grid-column: span 2;
+            background: linear-gradient(135deg, var(--cyber-blue), #0ea5e9);
+            color: var(--dark-navy);
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.4s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(56, 189, 248, 0.3);
+            filter: brightness(1.1);
+        }
+
+        /* Bottom Back Button */
+        .back-nav {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--cyber-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .back-nav:hover { color: var(--accent-gold); transform: translateX(-5px); }
+
+        .back-nav i {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<!-- Success Screen -->
+<div id="successOverlay">
+    <i class="fas fa-check-circle" style="font-size: 5rem; color: var(--success-green); margin-bottom: 20px;"></i>
+    <h2 style="margin: 0;">Data Updated Successfully!</h2>
+    <p style="opacity: 0.6;">Your profile has been synchronized.</p>
+</div>
+
+<div class="profile-container">
+    <div class="glass-card">
+        <div class="header-section">
+            <div class="avatar-wrapper" onclick="document.getElementById('imgInput').click()">
+                <img id="profileImg" src="https://ui-avatars.com/api/?name=User&background=334155&color=fff" alt="Profile">
+                <div class="edit-icon"><i class="fas fa-camera"></i></div>
+                <input type="file" id="imgInput" hidden accept="image/*" onchange="loadAvatar(event)">
+            </div>
+            <h1>Edit Account Settings</h1>
+        </div>
+
+        <form id="profileForm" class="form-grid">
+            <div class="input-box full-row">
+                <label>School Institution Name</label>
+                <input type="text" id="school" placeholder="Enter school name" required>
+            </div>
+
+            <div class="input-box">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="example@mail.com" required>
+            </div>
+
+            <div class="input-box">
+                <label>Contact Number</label>
+                <input type="tel" id="phone" placeholder="+968 XXXX XXXX" required>
+            </div>
+
+            <div class="input-box">
+                <label>Governorate</label>
+                <input type="text" id="gov" placeholder="e.g. Muscat">
+            </div>
+
+            <div class="input-box">
+                <label>Wilayat</label>
+                <input type="text" id="wilayat" placeholder="e.g. Seeb">
+            </div>
+
+            <div class="input-box full-row">
+                <label>Residential Area</label>
+                <input type="text" id="area" placeholder="Enter specific location">
+            </div>
+
+            <div class="input-box full-row">
+                <label>System Password</label>
+                <input type="password" id="pass" placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="save-btn">Save Changes & Sync</button>
+        </form>
+
+        <!-- Back Link at bottom left -->
+        <a href="parent_settings.html" class="back-nav">
+            <i class="fas fa-arrow-left"></i>
+            <span>Return to Settings</span>
+        </a>
+    </div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+    measurementId: "G-SRY2J762GZ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.doc = doc;
+window.getDoc = getDoc;
+window.setDoc = setDoc;
+</script>
+<script>
+    // 1. Avatar Upload & Preview
+function loadAvatar(event) {
+
+    const reader = new FileReader();
+
+    reader.onload = async function() {
+
+        const img =
+        document.getElementById('profileImg');
+
+        img.src = reader.result;
+
+        try {
+
+            await window.setDoc(
+                window.doc(
+                    window.db,
+                    "parent_profile",
+                    parentDocId
+                ),
+                {
+                    profileImage: reader.result
+                },
+                { merge:true }
+            );
+
+        } catch(error) {
+            console.error(error);
+        }
+    }
+
+    reader.readAsDataURL(event.target.files[0]);
+}
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+const parentDocId =
+currentUser?.email?.replace(/[.#$[\]]/g, "_");
+    // 2. Load Data on Startup
+window.onload = async function() {
+
+    try {
+
+        const profileRef =
+        window.doc(window.db, "parent_profile", parentDocId);
+
+        const snapshot =
+        await window.getDoc(profileRef);
+
+        if(snapshot.exists()) {
+
+            const data = snapshot.data();
+
+            const profile = data.profile || {};
+
+            document.getElementById('school').value =
+            profile.school || "";
+
+            document.getElementById('email').value =
+            profile.email || "";
+
+            document.getElementById('phone').value =
+            profile.phone || "";
+
+            document.getElementById('gov').value =
+            profile.location?.governorate ||
+            profile.governorate ||
+            "";
+
+            document.getElementById('wilayat').value =
+            profile.location?.wilaya ||
+            profile.location?.wilayat ||
+            profile.wilaya ||
+            "";
+
+            document.getElementById('area').value =
+            profile.address || "";
+
+            if(data.profileImage){
+                document.getElementById("profileImg").src =
+                data.profileImage;
+            }
+        }
+
+    } catch(error) {
+        console.error(error);
+    }
+};
+    // 3. Form Submission & Professional Alert
+document.getElementById('profileForm').onsubmit = async function(e) {
+
+    e.preventDefault();
+
+    const updatedProfile = {
+
+        school:
+        document.getElementById('school').value,
+
+        email:
+        document.getElementById('email').value,
+
+        phone:
+        document.getElementById('phone').value,
+
+        address:
+        document.getElementById('area').value,
+
+        governorate:
+        document.getElementById('gov').value,
+
+        wilaya:
+        document.getElementById('wilayat').value,
+
+        location:{
+            governorate:
+            document.getElementById('gov').value,
+
+            wilaya:
+            document.getElementById('wilayat').value
+        }
+    };
+
+    try {
+
+        await window.setDoc(
+            window.doc(
+                window.db,
+                "parent_profile",
+                parentDocId
+            ),
+            {
+                profile: updatedProfile
+            },
+            { merge:true }
+        );
+
+        const currentUserData =
+        JSON.parse(
+            localStorage.getItem("currentUser")
+        ) || {};
+
+        Object.assign(
+            currentUserData,
+            updatedProfile
+        );
+
+        localStorage.setItem(
+            "currentUser",
+            JSON.stringify(currentUserData)
+        );
+
+        const overlay =
+        document.getElementById('successOverlay');
+
+        overlay.style.display = 'flex';
+
+        setTimeout(() => {
+            window.location.href =
+            "parent_settings.html";
+        }, 2500);
+
+    } catch(error) {
+
+        console.error(error);
+
+        alert(
+            "Failed to update profile."
+        );
+    }
+};
+</script>
+
+</body>
+</html>

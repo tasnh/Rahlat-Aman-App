@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rahlat Aman | Smart Safety Puzzle</title>
+<style>
+  body { margin:0; 
+    font-family: 'Segoe UI', 
+    sans-serif; 
+    background: #000; 
+    overflow:hidden; 
+    width: 100vw; 
+    height: 100vh; }
+
+ /* START SCREEN */
+  #startScreen { position:fixed; 
+    width:100%; 
+    height:100%; 
+    background:url("assets2/images/start_bg.png") center/cover; 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    justify-content:center; 
+    z-index: 500; }
+  .game-title { color: #000000; 
+    font-size: 50px; 
+    text-shadow: 0 0 20px #639aff; 
+    text-align: center; 
+    margin-top: 120px; }
+  #startBtn { padding:16px 55px; 
+    font-size:40px; 
+    font-weight:bold; color:rgb(255, 147, 147); 
+    background:linear-gradient(145deg, #ec5252, #8b1d1d); 
+    border:4px solid #fff; 
+    border-radius:50px; 
+    cursor:pointer; 
+    box-shadow:0 10px 0 #b40909; 
+    transition:0.1s; 
+    pointer-events: auto; }
+  #startBtn:active { transform: translateY(8px); 
+    box-shadow: 0 2px 0 #b46a5c; }
+
+  /* MAP SCREEN */
+  #mapScreen { display:none; 
+    width:100%; 
+    height:100%; 
+    background:url("assets2/images/puzzle_map.png") center/cover; 
+    position: relative; 
+    z-index: 100;}
+  .map-level { position:absolute; 
+    width:110px; 
+    height:110px; 
+    border-radius:50%; 
+    background:gold; 
+    border:5px solid #fff; 
+    color:#000; text-align:center; line-height:110px; 
+    font-size:30px; 
+    font-weight:bold; 
+    cursor:pointer; 
+    box-shadow:0 0 25px rgba(255,215,0,0.7); }
+  .locked { background:gray !important; 
+    box-shadow:none !important; 
+    cursor:default; 
+    opacity: 0.7;}
+
+    #backBtn {
+  position:absolute;
+  top:20px;
+  left:20px;
+  font-size:30px;
+  background:rgba(0,0,0,0.6);
+  color:white;
+  padding:10px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  z-index:999;
+}
+
+  /* GAME SCREEN */
+  #gameScreen { display:none; 
+    width:100%; 
+    height:100%; 
+    background:rgba(219, 227, 245, 0.9); 
+    position:fixed; top:0; 
+    left:0; 
+    z-index: 200; }
+  #levelHeader { position:absolute; 
+    top:20px; 
+    width:100%; 
+    text-align:center; 
+    color:#4e4b3b; 
+    font-size:40px; 
+    font-weight:bold; 
+    z-index: 210; }
+  
+  /* BOARD (The Grid) */
+  #board { position:absolute; 
+    top:140px; 
+    left:50px; 
+    display:grid; 
+    gap:10px; 
+    background:rgba(255,255,255,0.1); 
+    padding:15px; 
+    border-radius:15px; 
+    border: 4px solid #218d8f; 
+    z-index: 205; }
+  .slot { border:2px dashed #fff;
+     background:rgba(255,255,255,0.05); 
+     display:flex; 
+     align-items:center; 
+     justify-content:center; 
+     color:#102c2c; 
+     font-size:28px; 
+     font-weight:bold; }
+  
+  /* PIECES CONTAINER */
+  #piecesContainer { position:absolute; 
+    width:100%; 
+    height:100%; 
+    pointer-events: none; 
+    z-index: 220; }
+  .piece { position:absolute; 
+    cursor:grab; 
+    border-radius:8px; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6); 
+    pointer-events: auto; }
+  .piece-val { position:absolute; top:5px; 
+    right:5px; background:rgba(0,0,0,0.85); 
+    color:yellow; 
+    padding:3px 10px; 
+    border-radius:5px; 
+    font-size:20px; 
+    font-weight:bold; 
+    pointer-events:none; 
+    border: 1px solid yellow; }
+
+  /* UI ELEMENTS */
+  #timer { position:absolute; 
+    top:20px; 
+    right:50px; 
+    font-size:60px; 
+    color:red; 
+    font-weight:bold; 
+    z-index: 210; }
+  .controls { position:absolute; 
+    bottom:30px; 
+    padding:18px 50px; 
+    font-size:24px; 
+    font-weight:bold; 
+    border-radius:15px; 
+    border:none; 
+    cursor:pointer; 
+    color:white; 
+    z-index: 300; }
+  #repeatBtn { left:35%;
+     background:#ff4444; }
+  #finishBtn { left:55%; 
+    background:#2ecc71; 
+    display:none; }
+
+  #loseScreen { display:none; 
+  position:fixed; 
+  width:100%; 
+  height:100%; 
+  background:rgba(0,0,0,0.95); 
+  z-index:1000; 
+  color:white; 
+  flex-direction:column; 
+  align-items:center; 
+  justify-content:center; 
+  font-size:50px; 
+  font-weight:bold; }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <h1 class="game-title">RAHLAT AMAN<br><span style="font-size:30px; color:rgb(81, 177, 241);">Smart Safety Puzzle</span></h1>
+  <button id="startBtn">PLAY NOW</button>
+</div>
+
+<div id="mapScreen">
+    <div id="backBtn" onclick="goBack()">←</div>
+  <div class="map-level" style="bottom:15%; left:15%;" data-lvl="1">1</div>
+  <div class="map-level locked" style="bottom:45%; left:40%;" data-lvl="2">2</div>
+  <div class="map-level locked" style="top:25%; left:25%;" data-lvl="3">3</div>
+  <div class="map-level locked" style="top:10%; left:55%;" data-lvl="4">4</div>
+</div>
+
+<div id="gameScreen">
+  <div id="levelHeader"></div>
+  <div id="timer">00:00</div>
+  <div id="board"></div>
+  <div id="piecesContainer"></div>
+  <button id="repeatBtn" class="controls">Repeat</button>
+  <button id="finishBtn" class="controls">Finish Level</button>
+</div>
+
+<div id="loseScreen">
+  ⏰ TIME'S UP!
+  <button onclick="retryLevel()" style="margin-top:20px; 
+  padding:15px 50px; 
+  font-size:30px; 
+  cursor:pointer; 
+  border-radius:10px;">Retry</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+window.db     = db;
+window.doc    = doc;
+window.setDoc = setDoc;
+window.getDoc = getDoc;
+</script>
+
+<script>
+const sounds = {
+    grab:    new Audio("assets2/audio/puzzle_piece_grab.mp3"),
+    snap:    new Audio("assets2/audio/puzzle_piece_snap.mp3"),
+    wrong:   new Audio("assets2/audio/puzzle_wrong.mp3"),
+    win:     new Audio("assets2/audio/lvl_well_done.mp3"),
+    hero:    new Audio("assets2/audio/lvl_hero_finish.mp3"),
+    tick:    new Audio("assets2/audio/timer_tick.mp3"),
+    map:     new Audio("assets2/audio/map_intro.mp3"),
+    bus:     new Audio("assets2/audio/bus_moving.mp3"),
+    start:   new Audio("assets2/audio/level_unlock.mp3"),
+    success: new Audio("assets2/audio/success.mp3")
+};
+
+let unlocked   = 1;
+let currentLvl = 1;
+let timer;
+let timeLeft   = 0;
+
+/* ═══════════════════════════════════════════════
+   saveGameProgress — موحّد مع بقية الألعاب
+   المسار: StudentActivities/{userId}/games/game2
+   ═══════════════════════════════════════════════ */
+async function saveGameProgress(finalScore, levelReached = 4) {
+    // ① نأخذ userId من email دائماً (مفتاح موحد)
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+    const userId = currentUser.email || currentUser.studentId || currentUser.id || "guest";
+    console.log("GAME2 — USER ID:", userId);
+
+    try {
+        // ② تحديث Student-Dashboard (النقاط الكلية)
+        const dashboardRef  = window.doc(window.db, "Student-Dashboard", userId);
+        const dashboardSnap = await window.getDoc(dashboardRef);
+        const oldPoints     = dashboardSnap.exists() ? (dashboardSnap.data().points || 0) : 0;
+        const newPoints     = oldPoints + finalScore;
+
+        await window.setDoc(dashboardRef, {
+            points:       newPoints,
+            budget:       newPoints,
+            level:        getLevel(newPoints),
+            badge:        getBadge(newPoints),
+            lastGame:     "game2",
+            lastScore:    finalScore,
+            lastActivity: "Completed Game 2",
+            updatedAt:    new Date()
+        }, { merge: true });
+
+        // ③ حفظ بيانات اللعبة في المسار الموحد
+        //    StudentActivities/{userId}/games/game2
+        await window.setDoc(
+            window.doc(window.db, "StudentActivities", userId, "games", "game2"),
+            {
+                gameId:       "game2",
+                gameName:     "Puzzle Challenge",
+                earnedPoints: finalScore,
+                completed:    true,
+                liked:        false,
+                levelReached: levelReached,
+                playedAt:     new Date()
+            },
+            { merge: true }
+        );
+
+        localStorage.setItem("notifyNow", `🎉 +${finalScore} XP earned!`);
+        console.log("✅ Game 2 synced successfully");
+
+    } catch (error) {
+        console.error("❌ saveGameProgress Error:", error);
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   Sounds helper
+   ═══════════════════════════════════════════════ */
+function stopAllSounds() {
+    for (let s in sounds) {
+        sounds[s].pause();
+        sounds[s].currentTime = 0;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   Start screen
+   ═══════════════════════════════════════════════ */
+document.getElementById("startBtn").onclick = () => {
+    stopAllSounds();
+    sounds.start.play();
+    document.getElementById("startScreen").style.display = "none";
+    document.getElementById("mapScreen").style.display   = "block";
+    sounds.map.play();
+    setTimeout(() => {
+        if (document.getElementById("mapScreen").style.display === "block") sounds.bus.play();
+    }, 7000);
+};
+
+/* ═══════════════════════════════════════════════
+   Map level selection
+   ═══════════════════════════════════════════════ */
+document.querySelectorAll(".map-level").forEach(btn => {
+    btn.onclick = () => {
+        let lvl = parseInt(btn.dataset.lvl);
+        if (lvl > unlocked) return;
+        stopAllSounds();
+        sounds.start.play();
+        startLevel(lvl);
+    };
+});
+
+/* ═══════════════════════════════════════════════
+   Level configs — لم يتغير
+   ═══════════════════════════════════════════════ */
+const configs = {
+    1: { img: "puzzle_lvl1.png", grid: [2, 2], time: 60,  size: 250, title: "Hero, Assemble the Safety Bag!" },
+    2: { img: "puzzle_lvl2.png", grid: [3, 3], time: 120, size: 190, title: "Great! Now fix the School Bus!" },
+    3: { img: "puzzle_lvl3.png", grid: [4, 3], time: 240, size: 170, title: "Smart Boy, arrange the Safety Seat!" },
+    4: { img: "puzzle_lvl4.png", grid: [5, 4], time: 600, size: 140, title: "Champion, complete the Safety Map!" }
+};
+
+function cleanupLevel() {
+    clearInterval(timer);
+    document.getElementById("board").innerHTML          = "";
+    document.getElementById("piecesContainer").innerHTML = "";
+    document.getElementById("finishBtn").style.display  = "none";
+    document.getElementById("loseScreen").style.display = "none";
+}
+
+function startLevel(lvl) {
+    currentLvl = lvl;
+    cleanupLevel();
+
+    document.getElementById("mapScreen").style.display  = "none";
+    document.getElementById("gameScreen").style.display = "block";
+
+    const c = configs[lvl];
+    document.getElementById("levelHeader").innerText = c.title;
+
+    const board = document.getElementById("board");
+    board.style.gridTemplateColumns = `repeat(${c.grid[0]}, ${c.size}px)`;
+    board.style.gridTemplateRows    = `repeat(${c.grid[1]}, ${c.size}px)`;
+
+    let total  = c.grid[0] * c.grid[1];
+    let solved = 0;
+
+    for (let i = 0; i < total; i++) {
+        let slot = document.createElement("div");
+        slot.className         = "slot";
+        slot.style.width       = (c.size - 5) + "px";
+        slot.style.height      = (c.size - 5) + "px";
+        slot.dataset.idx       = i;
+        slot.innerText         = `${i} + 2`;
+        board.appendChild(slot);
+    }
+
+    const container = document.getElementById("piecesContainer");
+    for (let i = 0; i < total; i++) {
+        let p = document.createElement("div");
+        p.className = "piece";
+        p.style.width           = c.size + "px";
+        p.style.height          = c.size + "px";
+        p.style.backgroundImage = `url(assets2/images/${c.img})`;
+        p.style.backgroundSize  = `${c.grid[0] * c.size}px ${c.grid[1] * c.size}px`;
+
+        let col = i % c.grid[0];
+        let row = Math.floor(i / c.grid[0]);
+        p.style.backgroundPosition = `-${col * c.size}px -${row * c.size}px`;
+
+        let valLabel       = document.createElement("div");
+        valLabel.className = "piece-val";
+        valLabel.innerText = i + 2;
+        p.appendChild(valLabel);
+
+        p.style.left     = (window.innerWidth - 380 + Math.random() * 150) + "px";
+        p.style.top      = (150 + Math.random() * 350) + "px";
+        p.dataset.idx    = i;
+
+        setupDrag(p, () => {
+            solved++;
+            if (solved === total) showWin();
+        });
+        container.appendChild(p);
+    }
+
+    runTimer(c.time);
+}
+
+function setupDrag(el, onMatch) {
+    el.onmousedown = (e) => {
+        sounds.grab.play();
+        let ox = e.clientX - el.offsetLeft;
+        let oy = e.clientY - el.offsetTop;
+        el.style.zIndex = 1000;
+
+        document.onmousemove = (ev) => {
+            el.style.left = ev.clientX - ox + "px";
+            el.style.top  = ev.clientY - oy + "px";
+        };
+
+        document.onmouseup = () => {
+            document.onmousemove = null;
+            el.style.zIndex = 220;
+            let matched = false;
+
+            document.querySelectorAll(".slot").forEach(slot => {
+                let sr = slot.getBoundingClientRect();
+                let pr = el.getBoundingClientRect();
+                if (pr.left < sr.right && pr.right > sr.left && pr.top < sr.bottom && pr.bottom > sr.top) {
+                    if (slot.dataset.idx === el.dataset.idx) {
+                        el.style.left     = sr.left + "px";
+                        el.style.top      = sr.top  + "px";
+                        el.style.position = "fixed";
+                        el.onmousedown    = null;
+                        el.querySelector(".piece-val").style.display = "none";
+                        sounds.snap.play();
+                        matched = true;
+                        onMatch();
+                    }
+                }
+            });
+            if (!matched) sounds.wrong.play();
+        };
+    };
+}
+
+function runTimer(sec) {
+    timeLeft = sec;
+    sounds.tick.currentTime = 0;
+    sounds.tick.loop        = true;
+    sounds.tick.play();
+    timer = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft / 60);
+        let s = timeLeft % 60;
+        document.getElementById("timer").innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            stopAllSounds();
+            document.getElementById("loseScreen").style.display = "flex";
+            sounds.wrong.play();
+        }
+    }, 1000);
+}
+
+function getLevel(points) {
+    if (points >= 1000) return "Legend 🔥";
+    if (points >= 500)  return "Master 🔴";
+    if (points >= 250)  return "Pro 🟡";
+    if (points >= 100)  return "Explorer 🔵";
+    return "Beginner 🟢";
+}
+
+function getBadge(points) {
+    if (points >= 1000) return "👑";
+    if (points >= 500)  return "🏆";
+    if (points >= 250)  return "🥇";
+    if (points >= 100)  return "🥈";
+    return "🥉";
+}
+
+/* ═══════════════════════════════════════════════
+   Win / Finish
+   ═══════════════════════════════════════════════ */
+function showWin() {
+    clearInterval(timer);
+    sounds.tick.pause();
+    sounds.success.play();
+
+    const baseScore  = 500;
+    const timeBonus  = Math.max(0, timeLeft * 2);
+    const finalScore = baseScore + timeBonus;
+
+    saveGameProgress(finalScore, currentLvl);
+
+    document.getElementById("finishBtn").style.display = "block";
+    if (currentLvl === unlocked && unlocked < 4) unlocked++;
+}
+
+document.getElementById("finishBtn").onclick = () => {
+    stopAllSounds();
+    if (currentLvl === 4) {
+        sounds.hero.play();
+        setTimeout(() => {
+            if (!document.getElementById("backActivitiesBtn")) {
+                let btn       = document.createElement("button");
+                btn.id        = "backActivitiesBtn";
+                btn.innerText = "Go to activities ⬅";
+                btn.className = "controls";
+                btn.style.cssText = "position:fixed;top:20px;right:20px;z-index:9999;background:#2ecc71;";
+                btn.onclick = () => { window.location.href = "student_Activities.html"; };
+                document.body.appendChild(btn);
+            }
+        }, 2000);
+    } else {
+        sounds.win.play();
+        setTimeout(() => {
+            document.getElementById("gameScreen").style.display = "none";
+            document.getElementById("mapScreen").style.display  = "block";
+            updateMap();
+            sounds.map.play();
+        }, 2500);
+    }
+};
+
+function updateMap() {
+    document.querySelectorAll(".map-level").forEach(btn => {
+        if (parseInt(btn.dataset.lvl) <= unlocked) btn.classList.remove("locked");
+    });
+}
+
+function retryLevel() { startLevel(currentLvl); }
+
+function goBack() { window.location.href = "student_Activities.html"; }
+
+document.getElementById("repeatBtn").onclick = () => startLevel(currentLvl);
+</script>
+</body>
+</html>

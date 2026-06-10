@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman - Trip Status for the student time school </title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+:root{
+  --main:#0A6AA1;
+  --main2:#48A5D9;
+  --bg:#EEF5FB;
+  --white:#fff;
+  --dark:#183B56;
+  --green:#00c853;
+  --yellow:#ffb300;
+  --red:#ef5350;
+  --shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(to bottom,#EAF6FF,#D7EEFF);
+  overflow-x:hidden;
+  color:var(--dark);
+}
+
+/* HEADER */
+
+.header{
+  position:relative;
+  background:linear-gradient(135deg,var(--main2),var(--main));
+  padding:25px 20px 120px;
+  border-radius:0 0 35px 35px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+
+.header::before{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  background:rgba(255,255,255,0.08);
+  border-radius:50%;
+  top:-120px;
+  right:-60px;
+}
+
+.header::after{
+  content:"";
+  position:absolute;
+  width:180px;
+  height:180px;
+  background:rgba(255,255,255,0.05);
+  border-radius:50%;
+  bottom:-70px;
+  left:-50px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:relative;
+  z-index:2;
+}
+
+.back-btn{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+}
+
+.page-title{
+  color:white;
+  font-size:26px;
+  font-weight:700;
+}
+
+.live-status{
+  margin-top:25px;
+  position:relative;
+  z-index:2;
+  color:white;
+}
+
+.live-status h1{
+  font-size:32px;
+  margin-bottom:8px;
+}
+
+.live-status p{
+  opacity:0.95;
+  font-size:15px;
+}
+
+/* STUDENT CARD */
+
+.student-card{
+  width:92%;
+  margin:-80px auto 18px;
+  background:white;
+  border-radius:28px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  position:relative;
+  z-index:10;
+}
+
+.student-top{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.avatar{
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  object-fit:cover;
+  border:4px solid #DFF4FF;
+}
+
+.student-name{
+  font-size:22px;
+  font-weight:700;
+}
+
+.student-school{
+  color:#666;
+  margin-top:4px;
+}
+
+.rank{
+  margin-top:8px;
+  display:inline-block;
+  background:#E8F7FF;
+  color:var(--main);
+  padding:7px 14px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:700;
+}
+
+/* INFO GRID */
+
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  margin-top:20px;
+}
+
+.info-box{
+  background:#F7FBFF;
+  border-radius:20px;
+  padding:16px;
+}
+
+.info-box i{
+  color:var(--main);
+  margin-bottom:10px;
+  font-size:20px;
+}
+
+.info-label{
+  font-size:13px;
+  color:#777;
+}
+
+.info-value{
+  margin-top:4px;
+  font-weight:700;
+  font-size:15px;
+}
+
+/* STATUS CARD */
+
+.status-card{
+  width:92%;
+  margin:auto;
+  background:white;
+  border-radius:28px;
+  padding:22px;
+  box-shadow:var(--shadow);
+}
+
+.trip-status{
+  text-align:center;
+}
+
+.trip-status h2{
+  font-size:34px;
+}
+
+.trip-status p{
+  margin-top:10px;
+  color:#666;
+}
+
+.bus-animation{
+  font-size:55px;
+  margin:18px 0;
+  animation:busMove 1.5s infinite alternate;
+}
+
+@keyframes busMove{
+  from{transform:translateX(-8px);}
+  to{transform:translateX(8px);}
+}
+
+/* PROGRESS */
+
+.progress-bg{
+  width:100%;
+  height:18px;
+  background:#E4EAF0;
+  border-radius:30px;
+  overflow:hidden;
+  margin-top:18px;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  border-radius:30px;
+  background:linear-gradient(90deg,#00c853,#69f0ae);
+  transition:1s;
+}
+
+/* TIMELINE */
+
+.timeline{
+  margin-top:28px;
+}
+
+.timeline-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:14px;
+}
+
+.step{
+  display:flex;
+  gap:14px;
+  margin-bottom:18px;
+  position:relative;
+}
+
+.circle{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#cfd8dc;
+  margin-top:5px;
+  flex-shrink:0;
+}
+
+.step.done .circle{
+  background:var(--green);
+  box-shadow:0 0 12px rgba(0,200,83,0.4);
+}
+
+.step.current .circle{
+  background:#2196f3;
+  box-shadow:0 0 12px rgba(33,150,243,0.4);
+}
+
+.step-content{
+  background:#F8FBFE;
+  padding:15px;
+  border-radius:18px;
+  width:100%;
+}
+
+.step.done .step-content{
+  background:#E8FFF0;
+}
+
+.step.current .step-content{
+  background:#E9F5FF;
+}
+
+.step-time{
+  font-size:13px;
+  color:#777;
+}
+
+.step-text{
+  margin-top:5px;
+  font-weight:700;
+}
+
+/* WEEKEND */
+
+.weekend{
+  width:92%;
+  margin:20px auto;
+  background:white;
+  border-radius:28px;
+  padding:24px;
+  text-align:center;
+  box-shadow:var(--shadow);
+  display:none;
+}
+
+.weekend i{
+  font-size:55px;
+  color:#ff9800;
+  margin-bottom:15px;
+}
+
+.weekend h2{
+  font-size:28px;
+  margin-bottom:10px;
+}
+
+.weekend p{
+  color:#666;
+  line-height:1.7;
+}
+
+/* READY BUTTON */
+
+.ready-btn{
+  width:92%;
+  margin:20px auto 40px;
+  display:block;
+  border:none;
+  background:linear-gradient(135deg,#00c853,#00e676);
+  color:white;
+  padding:18px;
+  border-radius:22px;
+  font-size:18px;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 10px 25px rgba(0,200,83,0.25);
+  transition:0.3s;
+}
+
+.ready-btn:hover{
+  transform:translateY(-3px);
+}
+
+/* NOTIFY */
+
+.notify{
+  position:fixed;
+  top:-100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#00c853;
+  color:white;
+  padding:14px 26px;
+  border-radius:40px;
+  font-weight:bold;
+  z-index:9999;
+  transition:0.5s;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.notify.show{
+  top:20px;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+.info-grid{
+  grid-template-columns:1fr;
+}
+
+.live-status h1{
+  font-size:26px;
+}
+
+.trip-status h2{
+  font-size:28px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="notify" id="notify"></div>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="topbar">
+
+<div class="back-btn" onclick="goBack()">
+<i class="fas fa-arrow-left"></i>
+</div>
+
+<div style="color:white;font-weight:700;">
+Rahlat Aman
+</div>
+
+</div>
+
+<div class="live-status">
+<h1>🚌 Trip Status</h1>
+<p>
+Real-time transportation tracking system
+</p>
+</div>
+
+</div>
+
+<!-- STUDENT -->
+
+<div class="student-card">
+
+<div class="student-top">
+
+<img src="my.png" class="avatar">
+
+<div>
+<div class="student-name" id="studentName">
+Student
+</div>
+
+<div class="student-school" id="schoolName">
+Loading school...
+</div>
+
+<div class="rank">
+⭐ Safety Explorer
+</div>
+</div>
+
+</div>
+
+<div class="info-grid">
+
+<div class="info-box">
+<i class="fas fa-location-dot"></i>
+<div class="info-label">Current Location</div>
+<div class="info-value" id="location">
+Loading...
+</div>
+</div>
+
+<div class="info-box">
+<i class="fas fa-bus"></i>
+<div class="info-label">Bus Number</div>
+<div class="info-value" id="bus">
+Loading...
+</div>
+</div>
+
+<div class="info-box">
+<i class="fas fa-user-tie"></i>
+<div class="info-label">Driver Name</div>
+<div class="info-value" id="driver">
+Loading...
+</div>
+</div>
+
+<div class="info-box">
+<i class="fas fa-clock"></i>
+<div class="info-label">Trip Time</div>
+<div class="info-value" id="tripTime">
+Loading...
+</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- STATUS -->
+
+<div class="status-card">
+
+<div class="trip-status">
+
+<h2 id="status">
+Preparing...
+</h2>
+
+<p id="timeText">
+Checking trip schedule...
+</p>
+
+<div class="bus-animation">
+🚌
+</div>
+
+</div>
+
+<div class="progress-bg">
+<div class="progress-fill" id="progressBar"></div>
+</div>
+
+<div class="timeline">
+
+<div class="timeline-title">
+Trip Journey Timeline
+</div>
+
+<div id="timeline"></div>
+
+</div>
+
+</div>
+
+<!-- WEEKEND -->
+
+<div class="weekend" id="weekendBox">
+
+<i class="fas fa-calendar-check"></i>
+
+<h2>Weekend Mode</h2>
+
+<p>
+There are currently no active school trips.<br>
+Transportation schedules will resume on school days.
+</p>
+
+</div>
+
+<button class="ready-btn" onclick="readyStudent()">
+✔ I'm Ready For The Trip
+</button>
+
+<script>
+
+/* USER */
+
+let user = JSON.parse(localStorage.getItem("currentUser")) || {};
+
+document.getElementById("studentName").innerText =
+user.name || "Student";
+
+/* YOUR ORIGINAL DATA */
+/* ما غيرت البيانات - فقط خليتها منظمة */
+
+document.getElementById("schoolName").innerText =
+user.school || "Al Seeb School";
+
+document.getElementById("location").innerText =
+user.location || "Al Khoud";
+
+document.getElementById("driver").innerText =
+"Ahmed Al Balushi";
+
+document.getElementById("bus").innerText =
+"Bus A3";
+
+/* NOTIFY */
+
+function showNotify(text){
+
+let n=document.getElementById("notify");
+
+n.innerText=text;
+
+n.classList.add("show");
+
+setTimeout(()=>{
+n.classList.remove("show");
+},2500);
+
+}
+
+/* BACK */
+
+function goBack(){
+window.location.href="student_dashboard.html";
+}
+
+/* READY */
+
+async function readyStudent() {
+    showNotify("🚌 Student is ready for trip!");
+
+    let id = localStorage.getItem("currentUserId") || "guest";
+    let userKey = id.toLowerCase().replace(/[.#$[\]]/g, "_");
+
+    // 1. التحديث المحلي (كما هو موجود)
+    let coins = parseInt(localStorage.getItem("coins_" + id)) || 0;
+    coins += 5;
+    localStorage.setItem("coins_" + id, coins);
+    logStudentActivity("Trip Ready", "Student confirmed readiness for school trip");
+
+    // 2. الربط مع Firebase (الإضافة الجديدة)
+    try {
+        await window.setDoc(window.doc(window.db, "trip_status", userKey), {
+            studentName: user.name || "Student",
+            status: "I'm Ready",
+            timestamp: window.serverTimestamp(),
+            lastAction: "Confirmed Readiness"
+        }, { merge: true });
+        
+        console.log("Trip status updated in Firebase!");
+    } catch (e) {
+        console.error("Firebase Sync Error: ", e);
+    }
+}
+
+/* TIMELINE */
+
+let timeline=document.getElementById("timeline");
+
+function createStep(time,text,state){
+
+return `
+<div class="step ${state}">
+<div class="circle"></div>
+
+<div class="step-content">
+<div class="step-time">${time}</div>
+<div class="step-text">${text}</div>
+</div>
+
+</div>
+`;
+
+}
+
+/* MAIN SYSTEM */
+
+function updateTrip(){
+
+let now = new Date();
+
+let day = now.getDay();
+
+let current = now.getHours()*60 + now.getMinutes();
+
+/* WEEKEND */
+
+if(day == 5 || day == 6){
+
+document.getElementById("weekendBox").style.display="block";
+
+document.querySelector(".status-card").style.display="none";
+
+document.getElementById("tripTime").innerText =
+"Weekend";
+
+return;
+
+}
+
+document.getElementById("weekendBox").style.display="none";
+
+document.querySelector(".status-card").style.display="block";
+
+/* MORNING TRIP */
+
+let stages = [
+{time:"06:00", text:"Bus preparing"},
+{time:"06:10", text:"Bus started"},
+{time:"06:25", text:"Picking students"},
+{time:"06:40", text:"Almost arrived"},
+{time:"06:45", text:"Arrived at school"}
+];
+
+let start = 360;
+let end = 405;
+
+/* RETURN */
+
+if(current >= 795){
+
+stages = [
+{time:"13:15", text:"Bus preparing (Return)"},
+{time:"13:30", text:"Students boarding"},
+{time:"13:45", text:"Bus started"},
+{time:"14:00", text:"Dropping students"},
+{time:"14:15", text:"Arrived home"}
+];
+
+start = 795;
+end = 855;
+
+document.getElementById("driver").innerText =
+"Khalid Al Hinai";
+
+document.getElementById("bus").innerText =
+"Bus B2";
+
+}
+
+/* NO ACTIVE TRIP */
+
+if(current < start || current > end){
+
+document.getElementById("status").innerText =
+"🚫 No Active Trip";
+
+document.getElementById("timeText").innerText =
+"No active transportation right now";
+
+document.getElementById("progressBar").style.width="0%";
+
+document.getElementById("tripTime").innerText =
+"No Active Trip";
+
+timeline.innerHTML="";
+
+return;
+
+}
+
+/* ACTIVE */
+
+let progress = ((current-start)/(end-start))*100;
+
+progress = Math.max(0,Math.min(100,progress));
+
+document.getElementById("progressBar").style.width =
+progress+"%";
+
+/* STATUS */
+
+let status = "🟡 Preparing";
+
+if(progress > 20)
+status = "🚌 Bus Started";
+
+if(progress > 50)
+status = "📍 Picking Students";
+
+if(progress > 80)
+status = "🏫 Arriving Soon";
+
+if(progress >= 100)
+status = "✅ Arrived";
+
+document.getElementById("status").innerText =
+status;
+
+/* TIME */
+
+let remaining = end-current;
+
+document.getElementById("timeText").innerText =
+remaining > 0 ?
+"⏰ "+remaining+" minutes remaining" :
+"✅ Trip Completed";
+
+document.getElementById("tripTime").innerText =
+remaining > 0 ?
+remaining+" min left" :
+"Completed";
+
+/* TIMELINE */
+
+timeline.innerHTML="";
+
+let points=[0,20,50,80,100];
+
+stages.forEach((s,i)=>{
+
+let state="";
+
+if(progress >= points[i]){
+state="done";
+}
+
+if(progress >= points[i] &&
+progress < points[i+1]){
+state="current";
+}
+
+timeline.innerHTML += createStep(
+s.time,
+s.text,
+state
+);
+
+});
+
+}
+
+/* LOAD */
+
+updateTrip();
+
+setInterval(updateTrip,1000);
+
+</script>
+
+<script src="js/userSystem.js"></script>
+<script>
+
+function logStudentActivity(type, description){
+
+let activities =
+JSON.parse(localStorage.getItem("studentActivities")) || [];
+
+activities.unshift({
+
+type:type,
+description:description,
+time:new Date().toLocaleTimeString(),
+date:new Date().toLocaleDateString()
+
+});
+
+localStorage.setItem(
+"studentActivities",
+JSON.stringify(activities)
+);
+
+}
+
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = { /* ضعي إعدادات مشروعك هنا */ };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  
+  // جعل المتغيرات متاحة عالمياً
+  window.db = db; window.doc = doc; window.setDoc = setDoc; window.serverTimestamp = serverTimestamp;
+</script>
+</body>
+</html>

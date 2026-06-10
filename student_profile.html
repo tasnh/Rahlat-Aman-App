@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahlat Aman | Student Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{ --main:#0A6AA1; --main2:#48A5D9; --gold:#FFD54F; --bg:#EEF6FB; --dark:#12344d; --white:#fff; --shadow:0 12px 35px rgba(0,0,0,0.12); }
+        *{ margin:0; padding:0; box-sizing:border-box; }
+        body{ font-family:'Plus Jakarta Sans',sans-serif; background:linear-gradient(to bottom,#EAF5FC,#D7EBF8); color:var(--dark); overflow-x:hidden; }
+        .header{ position:relative; background:linear-gradient(135deg,var(--main2),var(--main)); padding:25px 20px 120px; border-radius:0 0 40px 40px; overflow:hidden; box-shadow:var(--shadow); }
+        .header::before{ content:""; position:absolute; width:280px; height:280px; background:rgba(255,255,255,0.08); border-radius:50%; top:-130px; right:-80px; }
+        .header::after{ content:""; position:absolute; width:180px; height:180px; background:rgba(255,255,255,0.06); border-radius:50%; bottom:-80px; left:-50px; }
+        .top-bar{ display:flex; justify-content:space-between; align-items:center; position:relative; z-index:2; }
+        .back-btn{ width:48px; height:48px; border-radius:15px; background:rgba(255,255,255,0.18); display:flex; align-items:center; justify-content:center; font-size:22px; color:white; cursor:pointer; backdrop-filter:blur(10px); transition:0.3s; }
+        .back-btn:hover{ transform:scale(1.08); }
+        .profile-title{ font-size:20px; font-weight:700; color:white; }
+        .profile-card{ position:relative; margin-top:-80px; margin-left:15px; margin-right:15px; background:white; border-radius:35px; padding:25px; box-shadow:var(--shadow); z-index:10; }
+        .avatar-wrapper{ position:relative; width:140px; height:140px; margin:auto; }
+        .avatar{ width:100%; height:100%; border-radius:50%; object-fit:cover; border:5px solid #fff; box-shadow:0 10px 25px rgba(0,0,0,0.15); background:#ddd; }
+        .upload-btn{ position:absolute; bottom:8px; right:8px; width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#00c853,#00e676); display:flex; align-items:center; justify-content:center; font-size:20px; cursor:pointer; color:white; box-shadow:0 6px 15px rgba(0,0,0,0.15); transition:0.3s; }
+        .student-name{ text-align:center; font-size:28px; font-weight:800; margin-top:18px; color:var(--dark); }
+        .student-id{ text-align:center; margin-top:6px; font-size:14px; color:#666; }
+        .level-badge{ margin:18px auto 0; background:linear-gradient(135deg,#FFD54F,#FFB300); padding:12px 18px; border-radius:20px; width:max-content; font-weight:700; font-size:15px; box-shadow:0 8px 20px rgba(255,193,7,0.25); }
+        .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:25px; }
+        .stat-box{ background:#F6FBFF; padding:18px; border-radius:22px; text-align:center; }
+        .stat-value{ font-size:24px; font-weight:800; color:var(--main); }
+        .stat-title{ font-size:13px; margin-top:6px; color:#666; }
+        .section{ background:white; margin:18px 15px; border-radius:28px; padding:22px; box-shadow:var(--shadow); }
+        .section-title{ display:flex; align-items:center; gap:10px; font-size:20px; font-weight:800; margin-bottom:18px; }
+        .info-grid{ display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+        .info-card{ background:#F7FBFE; padding:16px; border-radius:20px; }
+        .info-label{ font-size:12px; font-weight:700; color:#777; margin-bottom:8px; text-transform:uppercase; }
+        .info-value{ font-size:15px; font-weight:700; color:var(--dark); }
+        .about-box textarea{ width:100%; height:120px; border:none; outline:none; resize:none; background:#F7FBFE; border-radius:18px; padding:18px; font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; }
+        .save-btn{ width:100%; padding:16px; border:none; border-radius:18px; margin-top:15px; background:linear-gradient(135deg,var(--main2),var(--main)); color:white; font-size:16px; font-weight:700; cursor:pointer; }
+        .reward-list{ display:flex; gap:14px; overflow-x:auto; padding-bottom:5px; }
+        .reward-card{ min-width:160px; background:linear-gradient(135deg,#0A6AA1,#48A5D9); padding:18px; border-radius:22px; color:white; }
+        .history-item{ background:#F8FCFF; padding:15px; border-radius:16px; margin-bottom:12px; font-size:14px; display:flex; justify-content:space-between; align-items:center; }
+        .notify{ position:fixed; top:-100px; left:50%; transform:translateX(-50%); background:#00c853; color:white; padding:15px 28px; border-radius:35px; font-weight:700; z-index:9999; transition:0.5s; }
+        .notify.show{ top:20px; }
+    </style>
+</head>
+
+<body>
+<div class="notify" id="notify"></div>
+
+<div class="header">
+    <div class="top-bar">
+        <div class="back-btn" onclick="goBack()">←</div>
+        <div class="profile-title">Student Profile</div>
+        <div style="width:48px;"></div>
+    </div>
+</div>
+
+<div class="profile-card">
+    <div class="avatar-wrapper">
+        <img id="avatarImg" class="avatar" src="my.png">
+        <div class="upload-btn" onclick="uploadImage()">+</div>
+    </div>
+    <div class="student-name" id="studentName">Loading...</div>
+    <div class="student-id" id="studentID">ID</div>
+    <div class="level-badge" id="studentLevel">Beginner</div>
+    <div class="stats">
+        <div class="stat-box"><div class="stat-value" id="points">0</div><div class="stat-title">Points</div></div>
+        <div class="stat-box"><div class="stat-value" id="giftCount">0</div><div class="stat-title">Rewards</div></div>
+        <div class="stat-box"><div class="stat-value" id="certificateCount">0</div><div class="stat-title">Certificates</div></div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">📘 Student Information</div>
+    <div class="info-grid" id="infoGrid"></div>
+</div>
+
+<div class="section">
+    <div class="section-title">🧠 About Me</div>
+    <div class="about-box">
+        <textarea id="aboutText" placeholder="Write something about yourself..."></textarea>
+        <button class="save-btn" onclick="saveAbout()">Save About Me</button>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">🏆 My Rewards</div>
+    <div class="reward-list" id="rewardList"></div>
+</div>
+
+<div class="section">
+    <div class="section-title">🚌 Smart Transport</div>
+    <div class="info-grid" id="transportGrid"></div>
+</div>
+
+<div class="section">
+    <div class="section-title">📜 Activity History</div>
+    <div id="historyBox"></div>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import 
+    { getFirestore, 
+        doc, 
+        getDoc, 
+        setDoc, 
+        updateDoc, 
+        collection, 
+        query, 
+        where, 
+        getDocs } 
+        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    const firebaseConfig = { 
+        apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q", 
+        authDomain: "rahlataman-bus-safety-app.firebaseapp.com", 
+        projectId: "rahlataman-bus-safety-app", 
+        storageBucket: "rahlataman-bus-safety-app.firebasestorage.app", 
+        messagingSenderId: "1088859717905", 
+        appId: "1:1088859717905:web:e65d7054db709e274dccb0", 
+        measurementId: "G-SRY2J762GZ" };
+    const db = getFirestore(initializeApp(firebaseConfig));
+    window.db = db; window.collection = collection; window.query = query; window.where = where; window.getDocs = getDocs; window.doc = doc; window.getDoc = getDoc; window.setDoc = setDoc; window.updateDoc = updateDoc;
+</script>
+<script>
+    function goBack(){ window.location.href="student_dashboard.html"; }
+    let user = JSON.parse(localStorage.getItem("currentUser")) || {};
+    if(!user || !user.email) window.location.href = "login.html";
+    let studentDocId = user.email.toLowerCase().replace(/[.#$[\]]/g,"_");
+
+    async function loadProfile() {
+    try {
+        const q = window.query(
+            window.collection(window.db, "users"),
+            window.where("email", "==", user.email.toLowerCase())
+        );
+        const snapshot = await window.getDocs(q);
+        let profile = {};
+        if(!snapshot.empty){
+            profile = snapshot.docs[0].data();
+        } else {
+            /* fallback from localStorage */
+            profile =
+            JSON.parse(
+                localStorage.getItem(
+                    "profile_" + user.email
+                )
+            ) || {};
+        }
+        renderProfile(profile);
+        const transport =
+await loadTransport(profile.email);
+if(transport){
+document.getElementById(
+"transportGrid"
+).innerHTML = `
+<div class="info-card">
+<div class="info-label">
+Bus Number
+</div>
+<div class="info-value">
+${transport.busNumber || "N/A"}
+</div>
+</div>
+
+<div class="info-card">
+<div class="info-label">
+Driver
+</div>
+<div class="info-value">
+${transport.driverName || "N/A"}
+</div>
+</div>
+
+<div class="info-card">
+<div class="info-label">
+Seat Number
+</div>
+<div class="info-value">
+${transport.seatNumber || "N/A"}
+</div>
+</div>
+
+<div class="info-card">
+<div class="info-label">
+Trip Status
+</div>
+<div class="info-value">
+${transport.tripStatus || "Active"}
+</div>
+</div>
+`;
+}
+
+    const snap =
+await window.getDoc(
+window.doc(
+window.db,
+"student_profile",
+studentDocId )
+        );
+        if(snap.exists()){
+            const d = snap.data();
+            if(d.about){
+                document.getElementById(
+                    "aboutText"
+                ).value = d.about;
+            }
+            if(d.avatar){
+                document.getElementById(
+                    "avatarImg"
+                ).src = d.avatar;
+            }
+            renderHistory(d.history || []);
+        }
+    } catch(err){
+        console.error(
+            "Profile Load Error:",
+            err
+        );
+    }
+}
+async function loadTransport(studentEmail){
+
+    const q =
+    window.query(
+        window.collection(
+            window.db,
+            "drivers"
+        ),
+        window.where(
+            "studentEmail",
+            "==",
+            studentEmail
+        )
+    );
+
+    const snap =
+    await window.getDocs(q);
+
+    if(snap.empty){
+        return null;
+    }
+
+    return snap.docs[0].data();
+}
+
+    function renderProfile(p) {
+
+    let xp = p.performance?.xp || 
+    p.points ||
+    Number(localStorage.getItem(
+        "coins_" + p.id
+    )) || 0;
+
+    document.getElementById("studentName").innerText =
+        p.fullName || "Student";
+
+    document.getElementById("studentID").innerText =
+        p.id || "N/A";
+
+    document.getElementById("points").innerText =
+        xp;
+
+    let certificates =
+Math.floor(xp / 100);
+
+let rewards =
+Math.floor(xp / 50);
+
+document.getElementById(
+"certificateCount"
+).innerText =
+certificates;
+
+document.getElementById(
+"giftCount"
+).innerText =
+rewards;
+
+    /* LEVEL */
+
+    function getLevel(points){
+        if(points >= 1000) return "👑 Legend Level";
+        if(points >= 700) return "🔥 Elite Level";
+        if(points >= 400) return "🏆 Pro Level";
+        if(points >= 150) return "⭐ Explorer";
+        return "🌱 Beginner";
+    }
+
+    document.getElementById("studentLevel").innerText =
+        getLevel(xp);
+
+    /* AGE */
+
+    function calculateAge(date){
+        if(!date) return "N/A";
+
+        let birth = new Date(date);
+
+        let diff =
+            Date.now() - birth.getTime();
+
+        let ageDate =
+            new Date(diff);
+
+        return Math.abs(
+            ageDate.getUTCFullYear() - 1970
+        );
+    }
+
+    /* STUDENT INFORMATION */
+
+    document.getElementById("infoGrid").innerHTML = `
+
+        <div class="info-card">
+            <div class="info-label">Email</div>
+            <div class="info-value">
+                ${p.email || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Phone</div>
+            <div class="info-value">
+                ${p.phoneNumber || p.phone || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">School</div>
+            <div class="info-value">
+                ${p.schoolName || p.school || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Governorate</div>
+            <div class="info-value">
+                ${p.governorate || p.location?.governorate || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Wilayat</div>
+            <div class="info-value">
+                ${ p.wilayat || p.location?.wilayat || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Grade</div>
+            <div class="info-value">
+                ${p.grade || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Age</div>
+            <div class="info-value">
+                ${calculateAge(p.birthDate || p.birth || p.dateOfBirth)}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Role</div>
+            <div class="info-value">
+                ${p.role || 'Student'}
+            </div>
+        </div>
+    `;
+
+    /* TRANSPORT */
+
+    document.getElementById("transportGrid").innerHTML = `
+
+        <div class="info-card">
+            <div class="info-label">Bus Number</div>
+            <div class="info-value">
+                ${p.transport?.busNumber || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Driver</div>
+            <div class="info-value">
+                ${p.transport?.driverName || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Seat Number</div>
+            <div class="info-value">
+                ${p.transport?.seatNumber || 'N/A'}
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-label">Trip Status</div>
+            <div class="info-value">
+                ${p.transport?.tripStatus || 'Waiting'}
+            </div>
+        </div>
+    `;
+
+    loadRewards(xp);
+}
+    
+    function loadRewards(xp) {
+        let list = document.getElementById("rewardList");
+        let rewards = xp >= 100 ? [{title: "Explorer Badge", text: "Reached 100 XP"}] : [{title: "Beginner", text: "Start your journey"}];
+        document.getElementById("giftCount").innerText = rewards.length;
+        list.innerHTML = rewards.map(r => `<div class="reward-card"><h3>${r.title}</h3><p>${r.text}</p></div>`).join('');
+    }
+
+    async function saveAbout() {
+
+    let text =
+    document.getElementById(
+        "aboutText"
+    ).value;
+
+    /* نجيب بيانات المستخدم الحالية */
+    const q =
+    window.query(
+        window.collection(
+            window.db,
+            "users"
+        ),
+        window.where(
+            "email",
+            "==",
+            user.email.toLowerCase()
+        )
+    );
+
+    const snapshot =
+    await window.getDocs(q);
+
+    let p = {};
+
+    if(!snapshot.empty){
+        p = snapshot.docs[0].data();
+    }
+
+    /* حفظ البيانات كاملة في student_profile */
+    await window.setDoc(
+        window.doc(
+            window.db,
+            "student_profile",
+            studentDocId
+        ),
+        {
+
+            about: text,
+
+            fullName:
+            p.fullName || "N/A",
+
+            email:
+            p.email || user.email || "N/A",
+
+            phone:
+            p.phoneNumber ||
+            p.phone ||
+            "N/A",
+
+            school:
+            p.schoolName ||
+            p.school ||
+            "N/A",
+
+            grade:
+            p.grade || "N/A",
+
+            governorate:
+            p.governorate ||
+            p.location?.governorate ||
+            "N/A",
+
+            wilayat:
+            p.wilayat ||
+            p.location?.wilayat ||
+            "N/A",
+
+            role:
+            p.role || "Student",
+
+            id:
+            p.id || "N/A",
+
+            points:
+            p.performance?.xp ||
+            p.points ||
+            0
+
+        },
+
+        { merge:true }
+    );
+
+    showNotify(
+        "✅ Information saved successfully!"
+    );
+
+    renderHistory([
+        {
+            text:
+            "Updated About Me",
+            time:
+            new Date().toLocaleTimeString()
+        }
+    ]);
+}
+
+    function showNotify(msg) {
+        let n = document.getElementById("notify");
+        n.innerText = msg; n.classList.add("show");
+        if(navigator.vibrate) navigator.vibrate(200);
+        setTimeout(() => n.classList.remove("show"), 2500);
+    }
+
+    function renderHistory(h) {
+        document.getElementById("historyBox").innerHTML = h.map(i => `<div class="history-item"><span>${i.text}</span><span>${i.time}</span></div>`).join('');
+    }
+
+    function uploadImage() {
+        let input = document.createElement("input"); input.type = "file";
+        input.onchange = e => {
+            let reader = new FileReader();
+            reader.onload = async(ev) => {
+                document.getElementById("avatarImg").src = ev.target.result;
+                await window.setDoc(window.doc(window.db, "student_profile", studentDocId), { avatar: ev.target.result }, { merge: true });
+                showNotify("🖼️ Image Updated!");
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+        input.click();
+    }
+
+    window.onload = loadProfile;
+</script>
+</body>
+</html>

@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman | Parent Awareness Intelligence</title>
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+--bg:#07111c;
+--card:#101c2c;
+--card2:#16263a;
+--blue:#58b8ff;
+--gold:#f7c75d;
+--green:#11c28b;
+--red:#ff5e73;
+--text:#f4f8ff;
+--muted:#93a4b7;
+--shadow:0 15px 40px rgba(0,0,0,.35);
+}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI,sans-serif;
+}
+html{
+scroll-behavior:smooth;
+}
+body{
+background:linear-gradient(to bottom,#07111c,#0d1726);
+color:var(--text);
+overflow-x:hidden;
+}
+
+/* HEADER */
+
+.header{
+padding:22px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(7,17,28,.96);
+backdrop-filter:blur(15px);
+position:sticky;
+top:0;
+z-index:999;
+border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.logo-icon{
+width:60px;
+height:60px;
+border-radius:20px;
+background:linear-gradient(135deg,#58b8ff,#6fd8ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+color:#07111c;
+box-shadow:0 10px 30px rgba(88,184,255,.35);
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.05);}
+100%{transform:scale(1);}
+}
+
+.logo h2{
+font-size:23px;
+}
+
+.logo small{
+color:var(--muted);
+}
+
+.back-btn{
+padding:14px 20px;
+background:#16263a;
+border-radius:16px;
+text-decoration:none;
+color:white;
+transition:.3s;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.back-btn:hover{
+transform:translateX(-6px);
+background:#1d324d;
+}
+
+/* HERO */
+
+.hero{
+padding:75px 5%;
+position:relative;
+overflow:hidden;
+}
+
+.hero::before{
+content:"";
+position:absolute;
+width:500px;
+height:500px;
+border-radius:50%;
+background:rgba(88,184,255,.07);
+top:-250px;
+right:-150px;
+filter:blur(10px);
+}
+
+.ai-badge{
+display:inline-flex;
+align-items:center;
+gap:10px;
+padding:12px 18px;
+border-radius:40px;
+background:rgba(247,199,93,.12);
+border:1px solid rgba(247,199,93,.18);
+color:var(--gold);
+margin-bottom:25px;
+font-size:14px;
+}
+
+.hero h1{
+font-size:60px;
+line-height:1.1;
+max-width:850px;
+margin-bottom:20px;
+}
+
+.hero h1 span{
+color:var(--blue);
+}
+
+.hero p{
+max-width:850px;
+line-height:2;
+font-size:17px;
+color:#dce6ef;
+}
+
+/* LIVE STATUS */
+
+.live-alert{
+width:90%;
+margin:auto;
+background:linear-gradient(135deg,#1f2f44,#16263a);
+padding:22px;
+border-radius:24px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+border-left:5px solid var(--green);
+box-shadow:var(--shadow);
+}
+
+.live-alert i{
+color:var(--green);
+font-size:28px;
+}
+
+.live-alert h3{
+margin-bottom:6px;
+}
+
+.live-alert p{
+color:#d2dce7;
+font-size:14px;
+}
+
+/* GRID */
+
+.grid{
+width:90%;
+margin:auto;
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:25px;
+margin-bottom:30px;
+}
+
+.card{
+background:linear-gradient(145deg,#101c2c,#0d1725);
+border-radius:28px;
+padding:28px;
+box-shadow:var(--shadow);
+position:relative;
+overflow:hidden;
+}
+
+.card::before{
+content:"";
+position:absolute;
+width:220px;
+height:220px;
+background:rgba(88,184,255,.05);
+border-radius:50%;
+top:-120px;
+right:-90px;
+}
+
+.card-title{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:25px;
+font-size:22px;
+}
+
+.card-title i{
+color:var(--gold);
+}
+
+/* PROFILE */
+
+.student-profile{
+display:flex;
+align-items:center;
+gap:18px;
+margin-bottom:25px;
+}
+
+.student-avatar{
+width:85px;
+height:85px;
+border-radius:25px;
+background:linear-gradient(135deg,#58b8ff,#7ce0ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:34px;
+color:#07111c;
+font-weight:bold;
+}
+
+.student-info p{
+color:var(--muted);
+line-height:1.8;
+}
+
+/* SCORE */
+
+.score-box{
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+height:260px;
+position:relative;
+}
+
+.circle{
+width:220px;
+height:220px;
+border-radius:50%;
+background:conic-gradient(
+#58b8ff 0% 96%,
+#22364c 96% 100%
+);
+display:flex;
+justify-content:center;
+align-items:center;
+box-shadow:0 0 40px rgba(88,184,255,.25);
+animation:rotateGlow 4s linear infinite;
+}
+
+@keyframes rotateGlow{
+0%{box-shadow:0 0 20px rgba(88,184,255,.15);}
+50%{box-shadow:0 0 45px rgba(88,184,255,.35);}
+100%{box-shadow:0 0 20px rgba(88,184,255,.15);}
+}
+
+.circle::before{
+content:"";
+position:absolute;
+width:165px;
+height:165px;
+background:#101c2c;
+border-radius:50%;
+}
+
+.score{
+position:relative;
+font-size:58px;
+font-weight:bold;
+z-index:2;
+}
+
+.score-text{
+margin-top:18px;
+font-size:17px;
+color:#d8e2ec;
+text-align:center;
+}
+
+/* ACTIVITY */
+
+.activity{
+background:#16263a;
+padding:18px;
+border-radius:20px;
+margin-bottom:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+transition:.3s;
+border:1px solid rgba(255,255,255,.03);
+}
+
+.activity:hover{
+transform:translateX(6px);
+background:#1a3048;
+}
+
+.activity-left{
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.activity-icon{
+width:55px;
+height:55px;
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+background:linear-gradient(135deg,#58b8ff,#7be0ff);
+color:#07111c;
+}
+
+.activity h4{
+margin-bottom:5px;
+}
+
+.activity p{
+font-size:13px;
+color:#b9c8d7;
+line-height:1.7;
+}
+
+.activity-time{
+font-size:13px;
+color:var(--muted);
+}
+
+/* BADGES */
+
+.badges{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+}
+
+.badge-card{
+background:#16263a;
+padding:20px;
+border-radius:22px;
+text-align:center;
+transition:.3s;
+border:1px solid rgba(255,255,255,.04);
+}
+
+.badge-card:hover{
+transform:translateY(-5px);
+box-shadow:0 0 20px rgba(247,199,93,.15);
+}
+
+.badge-card i{
+font-size:32px;
+margin-bottom:12px;
+color:var(--gold);
+}
+
+/* ANALYSIS */
+
+.behavior{
+margin-bottom:18px;
+}
+
+.behavior-top{
+display:flex;
+justify-content:space-between;
+margin-bottom:10px;
+}
+
+.progress{
+height:12px;
+background:#22364c;
+border-radius:30px;
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+border-radius:30px;
+background:linear-gradient(90deg,#58b8ff,#11c28b);
+}
+
+/* FEED */
+
+.feed-item{
+background:#16263a;
+padding:18px;
+border-radius:20px;
+margin-bottom:15px;
+display:flex;
+gap:15px;
+}
+
+.feed-icon{
+min-width:50px;
+height:50px;
+border-radius:16px;
+background:rgba(88,184,255,.12);
+display:flex;
+justify-content:center;
+align-items:center;
+color:var(--blue);
+}
+
+/* ACTION */
+
+.action-box{
+background:linear-gradient(135deg,#13243a,#16263a);
+padding:24px;
+border-radius:25px;
+margin-top:25px;
+}
+
+.action-box ul{
+margin-top:15px;
+padding-left:18px;
+line-height:2;
+color:#dbe5ef;
+}
+
+.btn{
+margin-top:20px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#58b8ff,#7ce0ff);
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+color:#07111c;
+}
+
+.btn:hover{
+transform:translateY(-3px);
+}
+
+/* CHART */
+
+.chart-box{
+height:320px;
+}
+
+/* MODAL */
+
+.popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(.8);
+background:#13243a;
+width:90%;
+max-width:420px;
+padding:30px;
+border-radius:28px;
+z-index:9999;
+opacity:0;
+pointer-events:none;
+transition:.35s;
+box-shadow:0 25px 50px rgba(0,0,0,.45);
+text-align:center;
+border:1px solid rgba(255,255,255,.06);
+}
+
+.popup.active{
+opacity:1;
+pointer-events:auto;
+transform:translate(-50%,-50%) scale(1);
+}
+
+.popup i{
+font-size:55px;
+margin-bottom:18px;
+color:var(--gold);
+}
+
+.popup h2{
+margin-bottom:12px;
+}
+
+.popup p{
+line-height:1.9;
+color:#d3deea;
+font-size:15px;
+}
+
+.popup button{
+margin-top:22px;
+padding:14px 20px;
+border:none;
+border-radius:16px;
+background:linear-gradient(135deg,#58b8ff,#7ce0ff);
+font-weight:bold;
+cursor:pointer;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.hero h1{
+font-size:42px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+<i class="fas fa-shield-heart"></i>
+<h2 id="popupTitle">Mission Started</h2>
+<p id="popupText">
+Family mission activated successfully.
+</p>
+<button onclick="closePopup()">
+Close
+</button>
+
+</div>
+
+<!-- HEADER -->
+
+<header class="header">
+
+<div class="logo">
+
+<div class="logo-icon">
+<i class="fas fa-brain"></i>
+</div>
+
+<div>
+<h2>RAHLAT AMAN</h2>
+<small>Smart Educational Transportation Platform</small>
+</div>
+
+</div>
+
+<a href="parent_dashboard.html" class="back-btn">
+<i class="fas fa-arrow-left"></i>
+Home Page
+</a>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="ai-badge">
+<i class="fas fa-route"></i>
+Connected Parent & Student Awareness Monitoring
+</div>
+
+<h1>
+Track Your Child’s
+<span>Awareness Journey</span>
+</h1>
+
+<p>
+Rahlat Aman transforms transportation safety into a connected educational experience.
+Parents can now monitor their child’s transportation awareness, learning activities,
+safety engagement, reward achievements, educational behavior, and transportation interaction
+inside one intelligent connected platform.
+</p>
+
+</section>
+
+<!-- LIVE STATUS -->
+
+<div class="live-alert">
+
+<div style="display:flex;gap:18px;align-items:center;">
+
+<i class="fas fa-circle-check"></i>
+
+<div>
+<h3>Student Awareness Synchronization Active</h3>
+
+<p id="lastActivity">
+Student activities are connected successfully with parent awareness monitoring.
+</p>
+
+</div>
+
+</div>
+
+<div style="font-size:13px;color:#b7c7d8;">
+Last Sync:
+<span id="syncTime"></span>
+</div>
+
+</div>
+
+<!-- GRID -->
+
+<section class="grid">
+
+<!-- LEFT -->
+
+<div>
+
+<!-- PROFILE -->
+
+<div class="card">
+
+<div class="student-profile">
+
+<div class="student-avatar">
+A
+</div>
+
+<div class="student-info">
+
+<h2 id="studentName">Ahmed Salem</h2>
+
+<p>
+Live transportation awareness tracking connected with student educational interaction and activity system.
+</p>
+
+</div>
+
+</div>
+
+<div class="score-box">
+
+<div class="circle">
+<div class="score" id="awarenessScore">
+96%
+</div>
+</div>
+
+<div class="score-text">
+Transportation Awareness Performance
+</div>
+
+</div>
+
+</div>
+
+<!-- LIVE ACTIVITIES -->
+
+<div class="card" style="margin-top:25px;">
+
+<div class="card-title">
+<i class="fas fa-wave-square"></i>
+<h3>Live Student Activity Timeline</h3>
+</div>
+
+<div id="activityContainer"></div>
+
+</div>
+
+<!-- CHART -->
+
+<div class="card" style="margin-top:25px;">
+
+<div class="card-title">
+<i class="fas fa-chart-line"></i>
+<h3>Weekly Awareness Development</h3>
+</div>
+
+<div class="chart-box">
+<canvas id="growthChart"></canvas>
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div>
+
+<!-- BADGES -->
+
+<div class="card">
+
+<div class="card-title">
+<i class="fas fa-award"></i>
+<h3>Student Achievement Gallery</h3>
+</div>
+
+<div class="badges">
+
+<div class="badge-card">
+<i class="fas fa-shield"></i>
+<h4>Quiet Hero</h4>
+<p style="font-size:13px;color:#b9c8d7;">
+Excellent transportation discipline
+</p>
+</div>
+
+<div class="badge-card">
+<i class="fas fa-bus"></i>
+<h4>Bus Master</h4>
+<p style="font-size:13px;color:#b9c8d7;">
+Completed all safety activities
+</p>
+</div>
+
+<div class="badge-card">
+<i class="fas fa-bolt"></i>
+<h4>Fast Thinker</h4>
+<p style="font-size:13px;color:#b9c8d7;">
+Quick emergency understanding
+</p>
+</div>
+
+<div class="badge-card">
+<i class="fas fa-star"></i>
+<h4>Awareness Star</h4>
+<p style="font-size:13px;color:#b9c8d7;">
+High educational interaction
+</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- ANALYSIS -->
+
+<div class="card" style="margin-top:25px;">
+
+<div class="card-title">
+<i class="fas fa-chart-pie"></i>
+<h3>Behavior Monitoring Analysis</h3>
+</div>
+
+<div class="behavior">
+
+<div class="behavior-top">
+<span>Seatbelt Awareness</span>
+<b>98%</b>
+</div>
+
+<div class="progress">
+<div class="fill" style="width:98%;"></div>
+</div>
+
+</div>
+
+<div class="behavior">
+
+<div class="behavior-top">
+<span>Emergency Understanding</span>
+<b>84%</b>
+</div>
+
+<div class="progress">
+<div class="fill" style="width:84%;"></div>
+</div>
+
+</div>
+
+<div class="behavior">
+
+<div class="behavior-top">
+<span>Road Crossing Awareness</span>
+<b>92%</b>
+</div>
+
+<div class="progress">
+<div class="fill" style="width:92%;"></div>
+</div>
+
+</div>
+
+<div class="behavior">
+
+<div class="behavior-top">
+<span>Educational Interaction</span>
+<b>96%</b>
+</div>
+
+<div class="progress">
+<div class="fill" style="width:96%;"></div>
+</div>
+
+</div>
+
+</div>
+
+<!-- FEED -->
+
+<div class="card" style="margin-top:25px;">
+
+<div class="card-title">
+<i class="fas fa-rss"></i>
+<h3>Parent Awareness Feed</h3>
+</div>
+
+<div class="feed-item">
+
+<div class="feed-icon">
+<i class="fas fa-lightbulb"></i>
+</div>
+
+<div>
+<h4>Positive Improvement Detected</h4>
+
+<p style="font-size:14px;color:#c4d0db;line-height:1.8;">
+Student awareness interaction improved after completing transportation safety tasks and educational quizzes.
+</p>
+
+</div>
+
+</div>
+
+<div class="feed-item">
+
+<div class="feed-icon">
+<i class="fas fa-triangle-exclamation"></i>
+</div>
+
+<div>
+<h4>Recommended Attention Area</h4>
+
+<p style="font-size:14px;color:#c4d0db;line-height:1.8;">
+Student requires more practice in emergency evacuation procedures and response speed activities.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ACTION PLAN -->
+
+<div class="action-box">
+
+<h2>
+<i class="fas fa-users"></i>
+Family Awareness Action Plan
+</h2>
+
+<ul>
+
+<li>
+Practice emergency exit procedures together every weekend.
+</li>
+
+<li>
+Review safe road crossing before school daily.
+</li>
+
+<li>
+Encourage educational transportation games regularly.
+</li>
+
+<li>
+Reward positive transportation behavior weekly.
+</li>
+
+</ul>
+
+<button class="btn" onclick="startMission()">
+
+<i class="fas fa-rocket"></i>
+START FAMILY MISSION
+
+</button>
+
+<button class="btn"
+style="
+background:linear-gradient(135deg,#11c28b,#0ea873);
+margin-top:15px;
+color:white;
+"
+onclick="sendMessage()">
+
+<i class="fas fa-paper-plane"></i>
+SEND ENCOURAGEMENT MESSAGE
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+ 
+
+const studentName =
+localStorage.getItem("studentName")
+|| "Ahmed Salem";
+
+document.getElementById("studentName")
+.innerText = studentName;
+
+const awareness =
+localStorage.getItem("awarenessLevel")
+|| 96;
+
+document.getElementById("awarenessScore")
+.innerText = awareness + "%";
+
+document.getElementById("syncTime")
+.innerText =
+new Date().toLocaleTimeString();
+
+/* =========================
+LIVE ACTIVITIES
+========================= */
+
+const activities = [
+
+{
+icon:"fas fa-gamepad",
+title:"Safety Game Completed",
+desc:"Student completed Emergency Exit Challenge successfully.",
+time:"2 min ago"
+},
+
+{
+icon:"fas fa-award",
+title:"Reward Achievement Unlocked",
+desc:"Student earned the Seatbelt Hero achievement badge.",
+time:"9 min ago"
+},
+
+{
+icon:"fas fa-video",
+title:"Educational Video Watched",
+desc:"Student watched Safe Road Crossing training content.",
+time:"18 min ago"
+},
+
+{
+icon:"fas fa-book-open",
+title:"Transportation Quiz Solved",
+desc:"Student completed Transportation Awareness Quiz with 95% score.",
+time:"25 min ago"
+},
+
+{
+icon:"fas fa-map-location-dot",
+title:"Student Opened Bus Tracking",
+desc:"Student checked live transportation route tracking.",
+time:"33 min ago"
+},
+
+{
+icon:"fas fa-message",
+title:"Student Interacted With Awareness Mission",
+desc:"Student completed today’s awareness challenge task.",
+time:"40 min ago"
+}
+
+];
+
+const activityContainer =
+document.getElementById("activityContainer");
+
+activities.forEach(activity=>{
+
+const div = document.createElement("div");
+
+div.className = "activity";
+
+div.innerHTML = `
+
+<div class="activity-left">
+
+<div class="activity-icon">
+<i class="${activity.icon}"></i>
+</div>
+
+<div>
+<h4>${activity.title}</h4>
+<p>${activity.desc}</p>
+</div>
+
+</div>
+
+<div class="activity-time">
+${activity.time}
+</div>
+
+`;
+
+activityContainer.appendChild(div);
+
+});
+
+/* =========================
+POPUP SYSTEM
+========================= */
+
+function showPopup(title,text){
+
+document.getElementById("popupTitle")
+.innerText = title;
+
+document.getElementById("popupText")
+.innerText = text;
+
+document.getElementById("popup")
+.classList.add("active");
+
+}
+
+function closePopup(){
+
+document.getElementById("popup")
+.classList.remove("active");
+
+}
+
+function startMission(){
+
+showPopup(
+
+"Family Mission Started 🚀",
+
+"A new transportation awareness family mission has been activated successfully. Parents and students can now complete this week’s awareness activity together."
+
+);
+
+}
+
+function sendMessage(){
+
+showPopup(
+
+"Encouragement Message Sent 💙",
+
+"Your motivational transportation awareness message has been delivered successfully to your child inside the Rahlat Aman educational platform."
+
+);
+
+}
+
+/* =========================
+CHART
+========================= */
+
+const ctx =
+document.getElementById("growthChart");
+
+new Chart(ctx,{
+
+type:"line",
+
+data:{
+
+labels:[
+"Sunday",
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday"
+],
+
+datasets:[{
+
+label:"Awareness Progress",
+
+data:[
+74,
+80,
+86,
+92,
+96
+],
+
+borderColor:"#58b8ff",
+
+backgroundColor:"rgba(88,184,255,.15)",
+
+fill:true,
+
+tension:.4,
+
+borderWidth:3,
+
+pointBackgroundColor:"#58b8ff"
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+maintainAspectRatio:false,
+
+plugins:{
+legend:{
+labels:{
+color:"#fff"
+}
+}
+},
+
+scales:{
+
+y:{
+ticks:{
+color:"#9cb0c5"
+},
+grid:{
+color:"rgba(255,255,255,.05)"
+}
+},
+
+x:{
+ticks:{
+color:"#9cb0c5"
+},
+grid:{
+display:false
+}
+}
+
+}
+
+}
+
+});
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Safety Care | Rahlat Aman</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    increment
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {
+apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q", 
+authDomain: "rahlataman-bus-safety-app.firebaseapp.com", 
+projectId: "rahlataman-bus-safety-app", 
+storageBucket: "rahlataman-bus-safety-app.firebasestorage.app", 
+messagingSenderId: "1088859717905", 
+appId: "1:1088859717905:web:e65d7054db709e274dccb0", 
+};
+const app = initializeApp(firebaseConfig);
+window.db = getFirestore(app);
+window.firebaseHelpers = {
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc,
+    increment
+};
+</script>    
+
+    <style>
+        :root {
+            --primary-blue: #399ac7; --deep-navy: #16316e; --soft-white: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-gold: #f59e0b; --success-green: #4ab893; --danger-red: #ff6969;
+            --3d-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        body {
+            background: var(--deep-navy); color: var(--soft-white);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0; min-height: 100vh;
+            background-image: radial-gradient(circle at top left, #31405a, transparent);
+        }
+
+        .container { max-width: 1100px; margin: auto; padding: 20px; }
+
+        /* شريط التنبيه العلوي للويكند */
+        .weekend-banner {
+            display: none;
+            background: linear-gradient(90deg, rgba(57, 154, 199, 0.2), rgba(22, 49, 110, 0.8));
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 1px solid var(--primary-blue);
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: var(--3d-shadow);
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* الهيدر */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--glass-border); }
+        .back-btn { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--primary-blue); padding: 10px 20px; border-radius: 12px; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .back-btn:hover { background: var(--primary-blue); color: white; transform: scale(1.05); }
+
+        /* المقدمة الترحيبية */
+        .page-intro { text-align: center; margin: 40px 0; animation: fadeInDown 0.8s ease; }
+        .page-intro h1 { font-size: 2.8rem; font-weight: 700; background: linear-gradient(to right, #fff, var(--primary-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; }
+        .page-intro p { color: #cbd5e1; max-width: 700px; margin: auto; line-height: 1.8; font-size: 1.1rem; }
+
+        /* قسم البحث والدخول */
+        .search-section { 
+            background: var(--glass-bg); border: 1px solid var(--glass-border); 
+            padding: 40px; border-radius: 40px; text-align: center; margin-bottom: 30px; 
+            backdrop-filter: blur(20px); box-shadow: var(--3d-shadow);
+        }
+        .security-icon { font-size: 3.5rem; color: var(--accent-gold); margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.3)); }
+        
+        .search-box { display: flex; gap: 15px; max-width: 550px; margin: 25px auto; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 20px; border: 1px solid var(--primary-blue); }
+        .search-box input { flex: 1; background: transparent; border: none; color: white; padding: 12px; outline: none; font-size: 1.1rem; }
+        .btn-search { background: var(--primary-blue); border: none; color: white; padding: 12px 30px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-search:hover { background: white; color: var(--primary-blue); box-shadow: 0 0 20px var(--primary-blue); }
+
+        .add-child-link { color: var(--accent-gold); cursor: pointer; text-decoration: underline; font-size: 0.95rem; margin-top: 15px; display: inline-block; transition: 0.3s; }
+        .add-child-link:hover { color: white; text-shadow: 0 0 10px var(--accent-gold); }
+
+        /* شبكة لوحة التحكم للبيانات */
+        .main-dashboard { display: grid; grid-template-columns: 1.2fr 1fr; gap: 25px; margin-top: 30px; display: none; }
+        .card { background: var(--glass-bg); border-radius: 30px; padding: 30px; border: 1px solid var(--glass-border); backdrop-filter: blur(15px); transition: 0.4s; }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary-blue); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 25px; }
+        .stat-box { background: rgba(14, 165, 233, 0.1); padding: 20px; border-radius: 22px; text-align: center; border: 1px solid rgba(14, 165, 233, 0.2); }
+        .stat-num { display: block; font-size: 1.8rem; font-weight: 800; color: white; }
+        .stat-desc { font-size: 0.85rem; color: #94a3b8; }
+
+        /* قسم تحديث الحالة اليومية */
+        .date-display { background: linear-gradient(45deg, var(--primary-blue), #0369a1); font-weight: bold; text-align: center; padding: 15px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(14, 165, 233, 0.3); }
+        .action-group label { display: block; color: var(--accent-gold); font-weight: 600; margin-bottom: 10px; }
+        .field-instruction { font-size: 0.85rem; color: #a1a1aa; font-style: italic; margin-bottom: 8px; display: block; }
+        
+        select, textarea, input[type="file"], .modal input { background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); color: white; padding: 15px; border-radius: 15px; width: 100%; box-sizing: border-box; transition: 0.3s; margin-bottom: 15px; }
+        select:focus, input:focus { border-color: var(--accent-gold); outline: none; }
+
+        .btn-save { background: var(--success-green); color: var(--deep-navy); padding: 18px; border-radius: 20px; border: none; width: 100%; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.4s; }
+        .btn-save:hover { background: #fff; box-shadow: 0 0 30px var(--success-green); transform: scale(1.02); }
+
+        /* ستايل قفل الويكند والكومنت التنبيهي المدمج */
+        .btn-disabled { background: #4b5563 !important; color: #9ca3af !important; cursor: not-allowed !important; box-shadow: none !important; transform: none !important; }
+        .weekend-inline-notice { background: rgba(245, 158, 11, 0.1); border: 1px dashed var(--accent-gold); color: #cbd5e1; padding: 20px; border-radius: 20px; text-align: center; line-height: 1.6; margin-bottom: 20px; font-size: 0.95rem; }
+
+        /* جدول السجل التاريخي */
+        .history-section { margin-top: 35px; grid-column: span 2; }
+        .history-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .history-table th { padding: 15px; color: var(--primary-blue); text-align: center; }
+        .history-table td { background: rgba(255,255,255,0.03); padding: 15px; text-align: center; border: 1px solid var(--glass-border); }
+        .history-table tr td:first-child { border-radius: 20px 0 0 20px; }
+        .history-table tr td:last-child { border-radius: 0 20px 20px 0; }
+
+        /* ميثاق الانضباط */
+        .policy-section { 
+            margin-top: 50px; padding: 35px; 
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(0,0,0,0.5) 100%); 
+            border-radius: 35px; border: 1px solid var(--accent-gold);
+        }
+        .policy-list { font-size: 0.95rem; line-height: 1.8; color: #cbd5e1; }
+
+        /* إعدادات النافذة المنبثقة */
+        .modal { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); }
+        .modal-content { background: var(--deep-navy); border: 2px solid var(--primary-blue); margin: 10% auto; padding: 40px; border-radius: 35px; width: 420px; text-align: center; box-shadow: var(--3d-shadow); position: relative; }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .notif-toast { position: fixed; top: 20px; right: 20px; padding: 20px 40px; border-radius: 20px; color: white; display: none; z-index: 99999; font-weight: bold; box-shadow: var(--3d-shadow); }
+    </style>
+</head>
+<body>
+
+<div class="weekend-banner" id="topWeekendBanner">
+    <i class="fas fa-umbrella-beach" style="color: var(--accent-gold);"></i> <b>Weekend Mode Activated:</b> You are exploring active logs in review-only mode. Daily attendance tracking forms are currently locked.
+</div>
+
+<audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+<audio id="infoSound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3"></audio>
+
+<div id="addChildModal" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-user-plus" style="font-size: 3.5rem; color: var(--primary-blue); margin-bottom: 25px;"></i>
+        <h2 style="margin-bottom: 10px;">Add New Child</h2>
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 25px;">Link another student account to your dashboard</p>
+        
+        <input type="text" id="newChildData" placeholder="Enter Student ID or Email Address">
+        
+        <button class="btn-save" onclick="confirmAddChild()">Link Child Account <i class="fas fa-link"></i></button>
+        <button onclick="closeModal()" style="background:none; border:none; color:#94a3b8; margin-top: 20px; cursor:pointer; text-decoration: underline;">Cancel</button>
+    </div>
+</div>
+
+<div class="notif-toast" id="toast"></div>
+
+<div class="container">
+    <div class="top-bar">
+        <a href="parent_dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> HOME</a>
+        <h3 style="color: var(--primary-blue); margin: 0; letter-spacing: 1px;" id="portalTitle">RAHLAT AMAN </h3>
+    </div>
+
+    <div class="page-intro">
+        <h1>Safety Care for Your Children <i class="fas fa-heart" style="color: var(--danger-red);"></i></h1>
+        <p>Because we know that behind every student is a loving and caring parent, we designed this page to be your watchful eye on your children's attendance, ensuring their safety and your peace of mind on every journey.</p>
+    </div>
+
+    <div class="search-section">
+        <div class="security-icon"><i class="fas fa-shield-halved"></i></div>
+        <h3>Secure Access Portal</h3>
+        <p style="font-size: 0.95rem; color: #94a3b8;">Enter your child's credentials to start live tracking</p>
+        <div class="search-box">
+            <input type="email" id="studentSearch" placeholder="Student Email (e.g., name@gmail.com)">
+            <button class="btn-search" onclick="findStudent()">Access</button>
+        </div>
+        <span class="add-child-link" onclick="openModal()"><i class="fas fa-plus-circle"></i> Add another child to track multiple students</span>
+    </div>
+
+    <div id="dashboard" class="main-dashboard">
+        <div class="card">
+            <h4 style="margin-top:0"><i class="fas fa-chart-line" style="color: var(--primary-blue);"></i> Attendance Pulse</h4>
+            <canvas id="attendanceChart" height="200"></canvas>
+            
+            <div class="stats-grid">
+                <div class="stat-box"><span class="stat-num" id="stat-rate">0%</span><span class="stat-desc">Attendance Rate</span></div>
+                <div class="stat-box"><span class="stat-num" id="stat-absent" style="color: var(--danger-red);">0</span><span class="stat-desc">Days Absent</span></div>
+                <div class="stat-box"><span class="stat-num" id="stat-excused" style="color: var(--success-green);">0</span><span class="stat-desc">Excused Absence</span></div>
+                <div class="stat-box"><span class="stat-num" id="stat-late" style="color: var(--accent-gold);">0</span><span class="stat-desc">Unexcused Absence</span></div>
+            </div>
+        </div>
+
+        <div class="card" id="formCard">
+            <h4 style="margin-top:0"><i class="fas fa-calendar-check" style="color: var(--accent-gold);"></i> Daily Status Update</h4>
+            <div class="date-display" id="currentDate">-- / -- / ----</div>
+            
+            <div id="weekendInlineMessage" class="weekend-inline-notice" style="display:none;">
+                <i class="fas fa-clock" style="color:var(--accent-gold); font-size:1.5rem; margin-bottom:8px; display:block;"></i>
+                Notice: The system is currently in weekend standby mode.<br>You can inspect analytical metrics and previous telemetry logs, but daily attendance entry updates are paused.
+            </div>
+
+            <div id="formFieldsContainer">
+                <span class="field-instruction" style="color: var(--primary-blue); font-weight: 600; margin-bottom: 15px;">
+                    <i class="fas fa-circle-info"></i> Important Note: Please submit your child's daily attendance before school hours begin.
+                </span>
+
+                <div class="action-group">
+                    <label>Is your child attending school today?</label>
+                    <select id="todayStatus" onchange="handleAttendanceStructure()">
+                        <option value="present">Yes - Present and Safe</option>
+                        <option value="absent">No - Absent Today</option>
+                    </select>
+                </div>
+
+                <div id="absenceClassificationGroup" style="display:none;">
+                    <div class="action-group">
+                        <label>Attendance Classification</label>
+                        <select id="absClassification" onchange="handleAbsenceStructure()">
+                            <option value="Excused">Absent with Excuse (بعذر)</option>
+                            <option value="Unexcused">Absent without Excuse (بدون عذر)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="excusedDetailsGroup" style="display:none; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px dashed var(--danger-red);">
+                    <div class="action-group">
+                        <label>Reason for Absence</label>
+                        <select id="absReason">
+                            <option value="Medical Condition">Medical Condition / Doctor Visit</option>
+                            <option value="Family Emergency">Emergency Family Matter</option>
+                            <option value="Bereavement">Bereavement (Official Condolences)</option>
+                            <option value="Appointment">Official Medical Appointment</option>
+                        </select>
+                    </div>
+                    <div class="action-group">
+                        <label>Upload Attachment Documents</label>
+                        <span class="field-instruction">
+                            (Kindly upload official documentation, such as medical reports or appointment slips, to justify the absence and preserve the student's academic records)
+                        </span>
+                        <input type="file" id="absFile">
+                    </div>
+                </div>
+
+                <div class="action-group">
+                    <label>Message to the Supervisor</label>
+                    <textarea id="absComment" rows="3" placeholder="Share any additional notes with the school management..."></textarea>
+                </div>
+            </div>
+
+            <button class="btn-save" id="saveRecordBtn" onclick="processEntry()">Update Record <i class="fas fa-check-double"></i></button>
+        </div>
+
+        <div class="history-section card">
+            <h4 style="margin-top:0"><i class="fas fa-history"></i> Historical Attendance Log</h4>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date & Day</th>
+                        <th>Status</th>
+                        <th>Reported Reason</th>
+                        <th>Classification</th>
+                        <th>Attachment</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="policy-section">
+        <h3><i class="fas fa-circle-info"></i> Discipline Charter (Ministry of Education)</h3>
+        <div class="policy-list">
+            • Please be advised that maintaining the student's academic path requires an attendance of no less than <b>60%</b>.<br>
+            • In "Rahlat Aman", their safety is the priority; please inform us of any absence before the official school day starts.<br>
+            • Attached medical reports are reviewed and approved by management to ensure the student's rights to grades.
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStudentId = "";
+    let chart;
+
+    // =========================================================================
+    // 🛠️ مفتاح الاختبار والعرض الذكي (DEMO MODE CONTROL)
+    // =========================================================================
+    const SYSTEM_MODE = "WEEKDAY"; 
+
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    function openModal() { document.getElementById('addChildModal').style.display = 'block'; }
+    function closeModal() { document.getElementById('addChildModal').style.display = 'none'; }
+    
+    function evaluateTimeWindows() {
+        const now = new Date();
+        const realDay = now.getDay(); 
+        let isWeekend = false;
+        if (SYSTEM_MODE === "WEEKEND") {
+            isWeekend = true;
+        } else if (SYSTEM_MODE === "WEEKDAY") {
+            isWeekend = false;
+        } else {
+            if (realDay === 5 || realDay === 6) {
+                isWeekend = true;
+            }
+        }
+        const topBanner = document.getElementById("topWeekendBanner");
+        const inlineNotice = document.getElementById("weekendInlineMessage");
+        const fieldsContainer = document.getElementById("formFieldsContainer");
+        const saveBtn = document.getElementById("saveRecordBtn");
+
+        if (isWeekend) {
+            if(topBanner) topBanner.style.display = "block";
+            if(inlineNotice) inlineNotice.style.display = "block";
+            if(fieldsContainer) fieldsContainer.style.display = "none"; 
+            
+            if (saveBtn) {
+                saveBtn.classList.add("btn-disabled");
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = "Submissions Paused (Weekend) <i class='fas fa-lock'></i>";
+            }
+            
+            if (document.getElementById('dashboard').style.display === 'grid') {
+                document.getElementById('infoSound').play().catch(e => console.log("Audio play blocked"));
+            }
+        } else {
+            if(topBanner) topBanner.style.display = "none";
+            if(inlineNotice) inlineNotice.style.display = "none";
+            if(fieldsContainer) fieldsContainer.style.display = "block";
+            
+            if (saveBtn) {
+                saveBtn.classList.remove("btn-disabled");
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = "Update Record <i class='fas fa-check-double'></i>";
+            }
+        }
+    }
+
+    // إدارة ظهور وإخفاء القوائم بناءً على الاختيارات
+    function handleAttendanceStructure() {
+        const status = document.getElementById('todayStatus').value;
+        const classificationGroup = document.getElementById('absenceClassificationGroup');
+        const excusedDetailsGroup = document.getElementById('excusedDetailsGroup');
+
+        if (status === 'present') {
+            classificationGroup.style.display = 'none';
+            excusedDetailsGroup.style.display = 'none';
+        } else {
+            classificationGroup.style.display = 'block';
+            handleAbsenceStructure(); // فحص التصنيف الفرعي فوراً
+        }
+    }
+
+    function handleAbsenceStructure() {
+        const classification = document.getElementById('absClassification').value;
+        const excusedDetailsGroup = document.getElementById('excusedDetailsGroup');
+
+        if (classification === 'Excused') {
+            excusedDetailsGroup.style.display = 'block';
+        } else {
+            excusedDetailsGroup.style.display = 'none';
+        }
+    }
+
+    function confirmAddChild() {
+        const inputData = document.getElementById('newChildData').value.trim();
+        if(!inputData) {
+            showToast("Please enter a Student ID or Email", "#ef4444");
+            return;
+        }
+        showToast("Linking account for " + inputData + "...", "#0ea5e9");
+        setTimeout(() => {
+            closeModal();
+            document.getElementById('studentSearch').value = inputData;
+            findStudent(); 
+            document.getElementById('newChildData').value = "";
+        }, 1200);
+    }
+
+    function showToast(msg, color) {
+        const t = document.getElementById('toast');
+        t.innerText = msg; t.style.background = color; t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 4000);
+    }
+async function findStudent() {
+
+    const email = document
+        .getElementById("studentSearch")
+        .value
+        .trim()
+        .toLowerCase();
+
+    if (!email) {
+        return showToast(
+            "Enter student email",
+            "#ef4444"
+        );
+    }
+
+    try {
+
+        const {
+            collection,
+            query,
+            where,
+            getDocs
+        } = window.firebaseHelpers;
+
+        // IMPORTANT
+        // search in USERS not STUDENTS
+
+        const usersRef =
+            collection(window.db, "users");
+
+        const q = query(
+            usersRef,
+            where("email", "==", email)
+        );
+
+        const snapshot =
+            await getDocs(q);
+
+        if (snapshot.empty) {
+
+            return showToast(
+                "Student email not found",
+                "#ef4444"
+            );
+        }
+
+        const userDoc =
+            snapshot.docs[0];
+
+        const userData =
+            userDoc.data();
+
+        // only students allowed
+
+        if (
+            userData.role?.toLowerCase() !==
+            "student"
+        ) {
+
+            return showToast(
+                "This account is not a student",
+                "#ef4444"
+            );
+        }
+
+        currentStudentId =
+            userDoc.id;
+
+        document.getElementById(
+            "portalTitle"
+        ).innerText =
+            `RAHLAT AMAN | ${userData.fullName}`;
+
+        document.getElementById(
+            "dashboard"
+        ).style.display =
+            "grid";
+
+        evaluateTimeWindows();
+
+        await updateDisplay();
+        await renderHistory();
+
+        showToast(
+            "Student loaded successfully",
+            "#10b981"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(
+            "Firebase connection failed",
+            "#ef4444"
+        );
+    }
+}
+async function initializeStudentDataStore(id) {
+    try {
+
+        const { doc, getDoc } = await import(
+            "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+        );
+
+        const studentRef = doc(window.db, "students", id);
+        const studentSnap = await getDoc(studentRef);
+
+        if (!studentSnap.exists()) {
+            showToast("Student account not found in Firebase", "#ef4444");
+            return false;
+        }
+
+        return true;
+
+    } catch (error) {
+
+        console.error(error);
+        showToast("Database connection error", "#ef4444");
+        return false;
+    }
+}
+async function getStudentData() {
+
+    try {
+
+        const {
+            doc,
+            getDoc
+        } = window.firebaseHelpers;
+
+        const userRef =
+            doc(
+                window.db,
+                "users",
+                currentStudentId
+            );
+
+        const snapshot =
+            await getDoc(userRef);
+
+        if (!snapshot.exists()) {
+            return null;
+        }
+
+        const data =
+            snapshot.data();
+
+        return {
+
+            studentInfo: {
+                email:
+                    data.email || "",
+
+                fullName:
+                    data.fullName || "",
+
+                governorate:
+                    data.governorate || "",
+
+                phoneNumber:
+                    data.phoneNumber || "",
+
+                schoolName:
+                    data.schoolName || "",
+
+                wilayat:
+                    data.wilayat || "",
+
+                role:
+                    data.role || ""
+            },
+
+            stats:
+                data.stats || {
+                    totalDays: 0,
+                    present: 0,
+                    absent: 0,
+                    excused: 0,
+                    unexcused: 0,
+                    attendanceRate: 100
+                },
+
+            history:
+                data.history || []
+        };
+
+    } catch (error) {
+
+        console.error(error);
+
+        return null;
+    }
+}
+
+async function processEntry() {
+    const status =
+        document.getElementById(
+            "todayStatus"
+        ).value;
+
+    const classification =
+        document.getElementById(
+            "absClassification"
+        ).value;
+
+    const reason =
+        document.getElementById(
+            "absReason"
+        ).value;
+
+    const comment =
+        document.getElementById(
+            "absComment"
+        ).value;
+
+    const date =
+        new Date().toLocaleDateString("en-GB");
+
+    let profile =
+        await getStudentData();
+
+    profile.stats.totalDays++;
+
+    if (status === "present") {
+        profile.stats.present++;
+
+        profile.history.unshift({
+            date,
+            status: "Present",
+            reason: "Regular Attendance",
+            type: "N/A",
+            file: "No"
+        });
+
+    } else {
+
+        profile.stats.absent++;
+
+        if (classification === "Excused") {
+
+            profile.stats.excused++;
+
+            profile.history.unshift({
+                date,
+                status: "Absent",
+                reason,
+                type: "Excused",
+                file: "Yes"
+            });
+
+        } else {
+
+            profile.stats.unexcused++;
+
+            profile.history.unshift({
+                date,
+                status: "Absent",
+                reason: "No Excuse Provided",
+                type: "Unexcused",
+                file: "No"
+            });
+        }
+    }
+    const totalAttendanceDays =
+    profile.stats.present + profile.stats.absent;
+profile.stats.attendanceRate =
+    totalAttendanceDays > 0
+        ? Math.round(
+            (profile.stats.present / totalAttendanceDays) * 100
+          )
+        : 100;
+
+    try {
+
+        const {
+            doc,
+            setDoc
+        } = window.firebaseHelpers;
+
+        const studentRef = 
+        doc(
+            window.db,
+            "users",
+            currentStudentId
+        );
+        await setDoc(
+            studentRef,
+            {
+                stats: profile.stats,
+                history: profile.history
+            },
+            { merge: true}
+        );
+
+        await syncWithFirebaseAdminHub(
+            currentStudentId,
+            status,
+            reason,
+            classification,
+            comment
+        );
+
+        await updateDisplay();
+        await renderHistory();
+
+        showToast(
+            "Attendance Updated",
+            "#10b981"
+        );
+
+        document.getElementById(
+            "absComment"
+        ).value = "";
+
+    } catch(error) {
+
+        console.error(error);
+
+        showToast(
+            "Failed saving to Firebase",
+            "#ef4444"
+        );
+    }
+}   
+
+async function updateDisplay() {
+    const profile =
+        await getStudentData();
+    if (!profile) return;
+    const rate =
+        profile.stats.attendanceRate || 100;
+    document.getElementById(
+        "stat-rate"
+    ).innerText =
+        rate + "%";
+    document.getElementById(
+        "stat-absent"
+    ).innerText =
+        profile.stats.absent;
+    document.getElementById(
+        "stat-excused"
+    ).innerText =
+        profile.stats.excused;
+    document.getElementById(
+        "stat-late"
+    ).innerText =
+        profile.stats.unexcused;
+    updateChart(
+        profile.stats.present,
+        profile.stats.absent
+    );
+}
+
+async function renderHistory() {
+    const profile =
+        await getStudentData();
+    if (!profile) return;
+    document.getElementById(
+        "historyBody"
+    ).innerHTML =
+    profile.history.map(item => `
+        <tr>
+            <td>${item.date}</td>
+            <td style="
+                color:
+                ${
+                    item.status === "Present"
+                    ? "var(--success-green)"
+                    : "var(--danger-red)"
+                };
+                font-weight:bold;
+            ">
+                ${item.status}
+            </td>
+            <td>${item.reason}</td>
+            <td>
+                ${item.type}
+            </td>
+            <td>
+                ${item.file}
+            </td>
+        </tr>
+    `).join("");
+}
+
+    function updateChart(present, absent) {
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Days Present', 'Days Absent'],
+                datasets: [{
+                    data: [present, absent],
+                    backgroundColor: ['#10b981', '#ff6969'],
+                    borderRadius: 15
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'white' } }, 
+                    x: { ticks: { color: 'white' } } 
+                }
+            }
+        });
+    }
+
+async function syncWithFirebaseAdminHub(studentId, status, reason, classification, parentNotes) {
+    const logDate = new Date().toISOString().split('T')[0];
+    try {
+        const { doc, setDoc } = await import(
+            "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+        );
+        await setDoc(
+            doc(window.db, "Admin_Attendance_Hub", studentId, "logs", logDate),
+            {
+                studentId: studentId,
+                date: logDate,
+                status: status,
+                reason: reason,
+                classification: classification,
+                parentNotes: parentNotes,
+                updatedAt: new Date().toISOString()
+            }
+        );
+        console.log("Firebase Sync Success");
+    } catch (error) {
+        console.error("Firebase Error:", error);
+    }
+}
+
+    window.onload = function() {
+        evaluateTimeWindows();
+    };
+</script>
+</body>
+</html>

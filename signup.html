@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Rahlat Aman Academic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #288fca86;
+            --accent-gold: #F4BC5A;
+            --text-light: #F2FEC3;
+            --glass-strong: rgba(30, 113, 161, 0.5);
+            --error-red: #ff4d4d;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: url("sign.png") no-repeat center top;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .top-spacer {
+            flex: 0.7; 
+            padding: 30px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .back-circle {
+            background: rgb(238, 243, 168);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .glass-panel {
+            flex: 1.3;
+            background: var(--glass-strong);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-top: 1px solid rgba(71, 71, 71, 0.3);
+            border-radius: 50px 50px 0 0;
+            padding: 40px;
+            color: var(--text-light);
+            overflow-y: auto;
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.4);
+            animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .input-group label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+            opacity: 0.9;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-gold);
+        }
+
+        select option { background: #1e5c80; color: white; }
+
+        .btn-register {
+            grid-column: span 2;
+            padding: 20px;
+            background: var(--accent-gold);
+            color: #4a3300;
+            border: none;
+            border-radius: 22px;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(244, 188, 90, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-register:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(244, 188, 90, 0.5); }
+
+        .error-box {
+            grid-column: span 2;
+            background: rgba(255, 77, 77, 0.2);
+            color: white;
+            border: 1px solid var(--error-red);
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .glass-panel::-webkit-scrollbar { width: 5px; }
+        .glass-panel::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="top-spacer">
+        <div class="back-circle" onclick="goBack()">←</div>
+    </div>
+
+    <div class="glass-panel">
+        <h2 id="pageTitle">Student Registration</h2>
+
+        <div class="form-grid">
+            <div id="errorMessage" class="error-box"></div>
+
+            <div class="input-group full-width">
+                <label>Full Name (Academic Name)</label>
+                <input type="text" id="regName" placeholder="Full name as per ID">
+            </div>
+
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="regEmail" placeholder="student@school.com">
+            </div>
+
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="regPhone" placeholder="+968 0000 0000">
+            </div>
+
+            <div class="input-group">
+                <label>Secure Password</label>
+                <input type="password" id="regPass" placeholder="••••••••">
+            </div>
+
+            <div class="input-group">
+                <label>Confirm Password</label>
+                <input type="password" id="regConfirm" placeholder="••••••••">
+            </div>
+
+            <div class="input-group" id="gradeSection">
+                <label>Academic Grade</label>
+                <input type="number" id="regGrade" placeholder="1 - 12">
+            </div>
+
+            <div class="input-group">
+                <label>Birth Date</label>
+                <input type="date" id="regBirth">
+            </div>
+
+            <div class="input-group">
+                <label>Governorate</label>
+                <select id="regGov">
+                    <option value="">Select...</option>
+                    <option>Muscat</option>
+                    <option>North Al Batinah</option>
+                    <option>South Al Batinah</option>
+                    <option>Ad Dakhiliyah</option>
+                    <option>Dhofar</option>
+                    <option>Musandam</option>
+                    <option>Al Buraimi</option>
+                    <option>Ad Dhahirah</option>
+                    <option>North Ash Sharqiyah</option>
+                    <option>South Ash Sharqiyah</option>
+                    <option>Al Wusta</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Wilayat (State)</label>
+                <select id="regWilayat">
+                    <option value="">Select Wilayat</option>
+                </select>
+            </div>
+
+            <div class="input-group full-width">
+                <label>School Reference</label>
+                <input type="text" id="regSchool" placeholder="Enter full school name">
+            </div>
+
+            <button class="btn-register" id="signUpBtn" onclick="executeAdvancedSignUp()">Create in Rahlat Aman →</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // تم تحديث مفاتيح الفايربيس الحية والخاصة بنظام رحلات أمان بنجاح هنا
+    const firebaseConfig = {
+        apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+        authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+        projectId: "rahlataman-bus-safety-app",
+        storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+        messagingSenderId: "1088859717905",
+        appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+        measurementId: "G-SRY2J762GZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // إدارة الأدوار الديناميكية وتحديث الواجهة
+    const activeRole = localStorage.getItem("userRole") || "Student";
+    const formattedRole = activeRole.charAt(0).toUpperCase() + activeRole.slice(1);
+    document.getElementById("pageTitle").innerText = `New ${formattedRole === "Admin" ? "School Admin" : formattedRole} Portal`;
+
+    if(activeRole.toLowerCase() !== "student"){
+        const gradeSec = document.getElementById("gradeSection");
+        if(gradeSec) gradeSec.style.display = "none";
+    }
+
+    // جعل الدوال متاحة عالمياً لـ HTML
+    window.goBack = function() {
+        window.location.href = "welcome.html";
+    }
+
+    // إدارة محرك الخرائط الجغرافية العُمانية
+    const omanData = {
+        "Muscat": ["Seeb", "Bawshar", "Muttrah", "Al Amarat", "Qurayyat", "Muscat"],
+        "North Al Batinah": ["Sohar", "Shinas", "Liwa", "Saham", "Al Khaburah", "As Suwaiq"],
+        "South Al Batinah": ["Rustaq", "Al Musannah", "Barka", "Nakhal", "Wadi Al Maawil", "Awabi"],
+        "Ad Dakhiliyah": ["Nizwa", "Bahla", "Izki", "Samail", "Al Hamra", "Adam", "Manah", "Bidbid"],
+        "Dhofar": ["Salalah", "Taqah", "Mirbat", "Thumrait", "Sadah"],
+        "Ad Dhahirah": ["Ibri", "Yanqul", "Dhank"],
+        "Musandam": ["Khasab", "Bukha", "Dibba", "Madha"],
+        "Al Buraimi": ["Al Buraimi", "Mahdah", "As Sunaynah"],
+        "North Ash Sharqiyah": ["Ibra", "Al Mudhaibi", "Bidiya", "Wadi Bani Khalid", "Dima Wattayeen", "Al Qabil"],
+        "South Ash Sharqiyah": ["Sur", "Jalan Bani Bu Ali", "Jalan Bani Bu Hassan", "Al Kamil Wal Wafi", "Masirah"],
+        "Al Wusta": ["Hima", "Duqm", "Mahout", "Al Jazer"]
+    };
+
+    document.getElementById("regGov").addEventListener("change", function() {
+        const gov = this.value;
+        const wilSelect = document.getElementById("regWilayat");
+        wilSelect.innerHTML = '<option value="">Select Wilayat</option>';
+
+        if(omanData[gov]){
+            omanData[gov].forEach(w => {
+                let opt = document.createElement("option");
+                opt.value = w;
+                opt.innerText = w;
+                wilSelect.appendChild(opt);
+            });
+        }
+    });
+
+    // دالة إنشاء الحساب والمزامنة السحابية
+    window.executeAdvancedSignUp = async function() {
+        const errorDiv = document.getElementById("errorMessage");
+        errorDiv.style.display = "none";
+
+        const name = document.getElementById("regName").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const phone = document.getElementById("regPhone").value.trim();
+        const pass = document.getElementById("regPass").value.trim();
+        const confirm = document.getElementById("regConfirm").value.trim();
+        const gov = document.getElementById("regGov").value;
+        const wilayat = document.getElementById("regWilayat").value;
+        const school = document.getElementById("regSchool").value.trim();
+        const grade = document.getElementById("regGrade") ? document.getElementById("regGrade").value : "";
+        const birth = document.getElementById("regBirth").value;
+
+        // التحقق من المدخلات الأساسية
+        if(!name || !email || !phone || !pass || !gov || !wilayat || !school || (activeRole.toLowerCase() === "student" && !grade)){
+            showError("Registration Alert: Please fill all required fields.");
+            return;
+        }
+
+        if(pass.length < 6){
+            showError("Security Alert: Password must be at least 6 characters.");
+            return;
+        }
+
+        if(pass !== confirm){
+            showError("Error: Passwords do not match.");
+            return;
+        }
+
+        const signUpBtn = document.getElementById("signUpBtn");
+        signUpBtn.innerText = "Integrating Spherically...";
+        signUpBtn.disabled = true;
+        signUpBtn.style.opacity = "0.7";
+
+        try {
+            // 1. إنشاء الحساب في نظام المصادقة السحابي من جوجل
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+            const user = userCredential.user;
+
+            // توليد كود أكاديمي فريد مخصص للنظام
+            const prefixMap = { "student": "STU-", "admin": "ADM-", "parent": "PAR-", "driver": "DRV-", "ministry": "MIN-" };
+            const generatedId = (prefixMap[activeRole.toLowerCase()] || "USR-") + Math.floor(100000 + Math.random() * 900000);
+
+            // 2. بناء هيكل البروفايل العميق المتقدم والمطابق لمشروعكِ
+            const fullProfile = {
+                id: generatedId,
+                uid: user.uid,
+                role: activeRole.toLowerCase(),
+                fullName: name,
+                email: email,
+                emailLower: email.toLowerCase(),
+                phone: phone,
+                searchKeywords:[
+                    email.toLowerCase(),
+                    generatedId.toLowerCase()
+                ],
+                governorate: gov,
+                wilayat: wilayat,
+                address: `${wilayat}, ${gov}`,
+                profileImage: "",
+                children: [],
+                notes:[],
+                grade: grade,
+                birth: birth,
+                school: school,
+                
+                
+                transport: {
+                    busNumber: "BUS-" + Math.floor(100 + Math.random() * 900),
+                    driverName: ["Ahmed Al Balushi", "Khalid Al Hinai", "Ali Al Riyami", "Salim Al Habsi"][Math.floor(Math.random() * 4)],
+                    supervisorName: ["Fatma Al Lawati", "Aisha Al Rashdi", "Mariam Al Balushi"][Math.floor(Math.random() * 3)],
+                    seatNumber: Math.floor(1 + Math.random() * 40),
+                    pickupTime: "06:20 AM",
+                    returnTime: "01:45 PM",
+                    routeName: `${wilayat} School Route`,
+                    tripStatus: "Waiting",
+                    smartTracking: true
+                },
+                performance: {
+                    coins: 0,
+                    xp: 0,
+                    level: 1,
+                    safetyScore: 100,
+                    completedVideos: 0,
+                    completedQuizzes: 0,
+                    rank: "Beginner"
+                },
+                safety: {
+                    emergencyContact: phone,
+                    attendanceStatus: "Not Checked",
+                    safetyBadge: "Starter",
+                    violations: 0
+                },
+                meta: {
+                    joinDate: new Date().toISOString(),
+                    lastLogin: null,
+                    accountStatus: "Active",
+                    weekendMode: false,
+                    schoolDays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"]
+                }
+            };
+
+            // 3. رفع وحفظ البروفايل بالكامل داخل Firestore بشكل منظم وجاهز للاستدعاء فوراً
+            await setDoc(doc(db, "users", user.uid), fullProfile);
+
+            // 4. ضبط التخزين المحلي المؤقت لتسهيل الانتقال السريع بين الصفحات
+            localStorage.setItem("currentUser", JSON.stringify(fullProfile));
+            localStorage.setItem("currentUserEmail", email);
+            localStorage.setItem("currentUserId", fullProfile.id);
+            localStorage.setItem("isLoggedIn", "true");
+
+            alert("Profile Registered and Integrated Successfully in Firebase!");
+            window.location.href = "login.html";
+
+        } catch (error) {
+            console.error("Sign Up Error: ", error);
+            if (error.code === "auth/email-already-in-use") {
+                showError("This email address is already registered in our system.");
+            } else if (error.code === "auth/invalid-email") {
+                showError("Please enter a valid email structure.");
+            } else if (error.code === "auth/weak-password") {
+                showError("The password chosen is too weak.");
+            } else {
+                showError("System integration error or database rule restriction. Check your cloud parameters.");
+            }
+        } finally {
+            signUpBtn.innerText = "Create in Rahlat Aman →";
+            signUpBtn.disabled = false;
+            signUpBtn.style.opacity = "1";
+        }
+    }
+
+    function showError(msg) {
+        const errorDiv = document.getElementById("errorMessage");
+        errorDiv.innerText = msg;
+        errorDiv.style.display = "block";
+        document.querySelector(".glass-panel").scrollTop = 0; // لرفع السكرول لأعلى لرؤية التنبيه
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rihla Aman — Driver Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0a2a3d;
+    --accent: #00c9bf;
+    --accent2: #00e5ff;
+    --gold: #ffd700;
+    --danger: #ff3b5c;
+    --warning: #ff8c00;
+    --glass: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.15);
+    --glass-strong: rgba(255,255,255,0.12);
+    --text: #e8f5f0;
+    --text-muted: rgba(232,245,240,0.6);
+    --bg: #050f0a;
+    --bg2: #071a12;
+    --bg3: #0a2318;
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow-green: 0 0 30px rgba(0,201,122,0.25);
+    --shadow-blue: 0 0 30px rgba(0,229,255,0.2);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(77, 115, 172, 0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0, 110, 255, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 30% at 60% 30%, rgba(61, 77, 99, 0.1) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+    animation: bgPulse 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes bgPulse {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,201,122,0.02) 60px, rgba(0,201,122,0.02) 61px),
+      repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,201,122,0.02) 60px, rgba(0,201,122,0.02) 61px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-bar {
+    padding: 16px 0 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(0, 94, 201, 0.18), rgba(2, 34, 61, 0.1));
+    border: 1px solid rgba(0,201,122,0.45);
+    border-radius: 14px;
+    padding: 10px 20px;
+    color: var(--accent);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s;
+    box-shadow: 0 4px 18px rgba(0,201,122,0.25), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.2);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  .back-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.4s;
+  }
+
+  .back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0,201,122,0.4), inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.2);
+    border-color: rgba(0,201,122,0.7);
+    color: #fff;
+  }
+
+  .back-btn:hover::before { transform: translateX(100%); }
+  .back-btn:active { transform: translateY(0) scale(0.97); }
+  .back-arrow { font-size: 18px; display: flex; align-items: center; transition: transform 0.2s; }
+  .back-btn:hover .back-arrow { transform: translateX(-4px); }
+  .back-home-icon { font-size: 16px; opacity: 0.8; }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0 32px;
+    gap: 16px;
+  }
+
+  .logo-area { display: flex; align-items: center; gap: 14px; }
+
+  .logo-icon {
+    width: 54px; height: 54px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 0 24px rgba(0,201,122,0.5);
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes logoPulse {
+    0%,100% { box-shadow: 0 0 24px rgba(0,201,122,0.5); }
+    50% { box-shadow: 0 0 40px rgba(0,201,122,0.8), 0 0 60px rgba(0,229,255,0.3); }
+  }
+
+  .logo-text h1 { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+  .logo-text h1 span { color: var(--accent); }
+  .logo-text p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  .driver-badge {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 8px 16px 8px 8px;
+    backdrop-filter: blur(20px);
+  }
+
+  .driver-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), #006644);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    color: var(--primary);
+  }
+
+  .driver-name { font-size: 13px; font-weight: 600; }
+  .driver-role { font-size: 11px; color: var(--text-muted); }
+
+  .time-live {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 8px 14px;
+    backdrop-filter: blur(20px);
+    text-align: center;
+  }
+
+  .time-live .time { font-size: 18px; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .time-live .date { font-size: 10px; color: var(--text-muted); }
+
+  .emergency-bar { margin-bottom: 32px; }
+
+  .emergency-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #ff4167, #ff3b5c, #c62828);
+    border: 2px solid rgba(255,80,100,0.6);
+    border-radius: var(--radius);
+    padding: 20px 32px;
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+    box-shadow: 0 0 40px rgba(255,50,80,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+    transition: all 0.2s;
+    animation: emergencyPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes emergencyPulse {
+    0%,100% { box-shadow: 0 0 40px rgba(255,50,80,0.4), inset 0 1px 0 rgba(255,255,255,0.2); }
+    50% { box-shadow: 0 0 70px rgba(255,50,80,0.7), 0 0 120px rgba(255,50,80,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+  }
+
+  .emergency-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+  .emergency-btn:hover { transform: scale(1.01); }
+  .emergency-btn:active { transform: scale(0.99); }
+  .emergency-icon { font-size: 32px; animation: shake 1s ease-in-out infinite; }
+
+  @keyframes shake {
+    0%,100%{transform:rotate(0)} 25%{transform:rotate(-5deg)} 75%{transform:rotate(5deg)}
+  }
+
+  .emergency-text h2 { font-size: 20px; font-weight: 900; color: white; letter-spacing: 1px; }
+  .emergency-text p { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 2px; }
+
+  .emergency-ping {
+    width: 14px; height: 14px; border-radius: 50%; background: white;
+    box-shadow: 0 0 0 0 rgba(255,255,255,0.7);
+    animation: ping 1.5s infinite;
+  }
+
+  @keyframes ping {
+    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+    70% { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+  }
+
+  .section-label {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-label .icon-box {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .icon-green  { background: rgba(0,201,122,0.2);   border: 1px solid rgba(0,201,122,0.4); }
+  .icon-blue   { background: rgba(0,229,255,0.15);  border: 1px solid rgba(0,229,255,0.35); }
+  .icon-gold   { background: rgba(255,215,0,0.15);  border: 1px solid rgba(255,215,0,0.35); }
+  .icon-red    { background: rgba(255,59,92,0.15);  border: 1px solid rgba(255,59,92,0.35); }
+  .icon-purple { background: rgba(180,100,255,0.15);border: 1px solid rgba(180,100,255,0.35); }
+
+  .section-label h2 { font-size: 20px; font-weight: 800; }
+  .section-label p  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .glass-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(24px);
+    padding: 28px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  }
+
+  .glass-card:hover { border-color: rgba(255,255,255,0.25); }
+
+  .schedule-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, rgba(0,201,122,0.3), rgba(0,229,255,0.2));
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,201,122,0.2);
+  }
+
+  .tab-btn:hover:not(.active) { background: var(--glass); color: var(--text); }
+
+  .schedule-content { display: none; }
+  .schedule-content.active { display: block; }
+
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+
+  .day-col { display: flex; flex-direction: column; gap: 6px; }
+
+  .day-header {
+    text-align: center;
+    padding: 10px 6px;
+    border-radius: 10px;
+    font-size: 13px; font-weight: 700;
+    background: rgba(0,201,122,0.15);
+    border: 1px solid rgba(0,201,122,0.3);
+    color: var(--accent);
+  }
+
+  .day-header.weekend {
+    background: rgba(255,59,92,0.15);
+    border-color: rgba(255,59,92,0.4);
+    color: #ff6b8a;
+  }
+
+  .time-slot {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .time-slot:hover { background: rgba(0,201,122,0.1); border-color: rgba(0,201,122,0.3); }
+  .time-slot .ts-time  { color: var(--accent2); font-weight: 700; font-size: 12px; }
+  .time-slot .ts-note  { color: var(--text-muted); font-size: 10px; margin-top: 3px; line-height: 1.3; }
+  .time-slot .ts-emoji { font-size: 14px; margin-bottom: 3px; }
+  .time-slot.morning   { border-left: 2px solid rgba(255,200,0,0.5); }
+  .time-slot.afternoon { border-left: 2px solid rgba(0,180,255,0.5); }
+
+  .weekend-cell {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(255,50,80,0.15), rgba(200,20,50,0.08));
+    border: 1px solid rgba(255,59,92,0.3);
+    border-radius: 10px;
+    padding: 10px 6px;
+    gap: 6px;
+    min-height: 220px;
+  }
+
+  .weekend-badge {
+    background: linear-gradient(135deg, #ff3b5c, #c62828);
+    color: white;
+    font-size: 11px; font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-align: center;
+    letter-spacing: 1px;
+    box-shadow: 0 0 16px rgba(255,59,92,0.5);
+    transform: perspective(300px) rotateX(8deg);
+    transform-style: preserve-3d;
+  }
+
+  .weekend-text { font-size: 10px; color: rgba(255,107,138,0.8); text-align: center; }
+
+  .period-divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 16px 0 10px;
+  }
+
+  .period-divider span {
+    font-size: 12px; font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .period-divider .morning-label   { background: rgba(255,200,0,0.2); color: #ffd700; border: 1px solid rgba(255,200,0,0.3); }
+  .period-divider .afternoon-label { background: rgba(0,180,255,0.15); color: var(--accent2); border: 1px solid rgba(0,180,255,0.3); }
+  .period-divider .line { flex: 1; height: 1px; background: var(--glass-border); }
+
+  .contact-types { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+
+  .type-chip {
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .type-chip.selected {
+    background: linear-gradient(135deg, rgba(0,201,122,0.3), rgba(0,229,255,0.2));
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 16px rgba(0,201,122,0.25);
+  }
+
+  .type-chip:hover:not(.selected) { background: var(--glass); color: var(--text); }
+
+  .form-row { margin-bottom: 16px; }
+
+  .form-label {
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+    margin-bottom: 8px; display: block;
+  }
+
+  .glass-input, .glass-textarea {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+    resize: none;
+  }
+
+  .glass-input:focus, .glass-textarea:focus {
+    border-color: var(--accent);
+    background: rgba(0,201,122,0.06);
+    box-shadow: 0 0 0 3px rgba(0,201,122,0.1);
+  }
+
+  .glass-input::placeholder, .glass-textarea::placeholder { color: rgba(232,245,240,0.3); }
+  .glass-textarea { height: 100px; }
+
+  .send-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #00c97a, #00a060);
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-family: 'Cairo', sans-serif;
+    font-size: 16px; font-weight: 800;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,201,122,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .send-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+  }
+
+  .send-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,201,122,0.6), inset 0 1px 0 rgba(255,255,255,0.3); }
+  .send-btn:hover::before { animation: shimmer 0.6s forwards; }
+  .send-btn:active { transform: translateY(0) scale(0.99); }
+
+  .messages-list { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+
+  .message-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    padding: 16px 20px;
+    display: flex; align-items: flex-start; gap: 14px;
+    animation: slideIn 0.4s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg-type-badge {
+    padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+    white-space: nowrap; flex-shrink: 0;
+    background: rgba(0,201,122,0.2); color: var(--accent);
+    border: 1px solid rgba(0,201,122,0.3);
+  }
+
+  .msg-content { flex: 1; }
+  .msg-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .msg-body  { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .msg-time  { font-size: 10px; color: rgba(232,245,240,0.3); margin-top: 6px; }
+
+  .delete-btn {
+    background: transparent; border: 1px solid rgba(255,59,92,0.3);
+    border-radius: 8px; padding: 6px 10px;
+    color: rgba(255,59,92,0.7); cursor: pointer;
+    font-size: 14px; transition: all 0.2s; flex-shrink: 0;
+  }
+
+  .delete-btn:hover { background: rgba(255,59,92,0.1); color: var(--danger); border-color: var(--danger); }
+
+  .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .event-card {
+    border-radius: var(--radius);
+    padding: 22px;
+    border: 1px solid;
+    position: relative; overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .event-card.active-event {
+    background: linear-gradient(135deg, rgba(0,201,122,0.12), rgba(0,229,255,0.06));
+    border-color: rgba(0,201,122,0.4);
+    box-shadow: 0 0 30px rgba(0,201,122,0.15);
+  }
+
+  .event-card.inactive-event {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.1);
+    filter: saturate(0.4);
+  }
+
+  .event-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    border-radius: 2px 2px 0 0;
+  }
+
+  .event-card.active-event::before  { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .event-card.inactive-event::before{ background: rgba(255,255,255,0.15); }
+  .event-card:hover.active-event    { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,201,122,0.2); }
+
+  .event-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+  .event-emoji { font-size: 32px; }
+
+  .event-status {
+    font-size: 10px; font-weight: 800; padding: 4px 10px;
+    border-radius: 20px; letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .status-live { background: rgba(0,201,122,0.25); color: var(--accent); border: 1px solid rgba(0,201,122,0.5); }
+  .status-soon { background: rgba(255,215,0,0.2);  color: var(--gold);   border: 1px solid rgba(255,215,0,0.4); }
+
+  .event-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+  .event-desc  { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; }
+  .event-date  { font-size: 12px; color: var(--accent2); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+
+  .stars-row { display: flex; align-items: center; gap: 4px; }
+
+  .star-btn {
+    font-size: 22px; background: transparent; border: none;
+    cursor: pointer; transition: all 0.15s;
+    filter: grayscale(1) opacity(0.4);
+    padding: 2px;
+  }
+
+  .star-btn.rated { filter: none; text-shadow: 0 0 10px rgba(255,215,0,0.7); }
+  .star-btn:hover { transform: scale(1.3); filter: none; }
+  .stars-label { font-size: 11px; color: var(--text-muted); margin-right: 8px; }
+
+  .chart-area { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+
+  .donut-container {
+    position: relative; flex-shrink: 0;
+    width: 220px; height: 220px;
+  }
+
+  .donut-container svg { width: 100%; height: 100%; }
+
+  .donut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .donut-center .total-num   { font-size: 28px; font-weight: 900; color: var(--accent); }
+  .donut-center .total-label { font-size: 11px; color: var(--text-muted); }
+
+  .chart-legend { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 14px; }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    transition: all 0.2s;
+  }
+
+  .legend-item:hover { background: rgba(255,255,255,0.07); }
+
+  .legend-dot  { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+  .legend-info { flex: 1; }
+  .legend-label{ font-size: 13px; font-weight: 600; }
+  .legend-sub  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .legend-count{ font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; }
+
+  .notif-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px; margin-bottom: 24px;
+  }
+
+  .notif-chip {
+    padding: 14px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+
+  .notif-chip .nc-icon { font-size: 24px; }
+
+  .notif-chip.selected {
+    background: rgba(0,201,122,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,201,122,0.2);
+  }
+
+  .notif-chip:hover:not(.selected) { background: var(--glass); }
+
+  .confirm-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 20px;
+  }
+
+  .confirm-btn {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .confirm-btn.start { background: rgba(0,201,122,0.15); border-color: rgba(0,201,122,0.4); color: var(--accent); }
+  .confirm-btn.end   { background: rgba(0,229,255,0.1);  border-color: rgba(0,229,255,0.3);  color: var(--accent2); }
+  .confirm-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+  .student-confirm {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-bottom: 20px;
+  }
+
+  .student-btn {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid;
+    font-family: 'Cairo', sans-serif;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .student-btn.board  { background: rgba(255,215,0,0.1);   border-color: rgba(255,215,0,0.35);   color: var(--gold); }
+  .student-btn.alight { background: rgba(180,100,255,0.1); border-color: rgba(180,100,255,0.35); color: #c87aff; }
+  .student-btn:hover  { transform: translateY(-2px); filter: brightness(1.2); }
+
+  .send-notif-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #00c97a, #00a060);
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-family: 'Cairo', sans-serif;
+    font-size: 15px; font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba(0,201,122,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+
+  .send-notif-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,201,122,0.6); }
+
+  .incoming-notifs { margin-top: 20px; }
+  .incoming-title  { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+  .incoming-item {
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 12px;
+    animation: slideIn 0.4s ease;
+  }
+
+  .incoming-item .in-icon { font-size: 20px; }
+  .incoming-item .in-text { font-size: 13px; }
+  .incoming-item .in-time { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .toast-container {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 9999; display: flex; flex-direction: column; gap: 10px;
+    pointer-events: none; min-width: 320px;
+  }
+
+  .toast {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 22px;
+    border-radius: var(--radius-sm);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px; font-weight: 700;
+    pointer-events: auto;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    border: 1px solid;
+    min-width: 300px;
+  }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(-20px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes toastOut {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  }
+
+  .toast.success { background: rgba(0,30,20,0.95);  border-color: rgba(0,201,122,0.6); color: var(--accent); }
+  .toast.error   { background: rgba(30,0,10,0.95);   border-color: rgba(255,59,92,0.6); color: #ff8fa5; }
+  .toast.warning { background: rgba(30,20,0,0.95);  border-color: rgba(255,140,0,0.6); color: #ffb347; }
+  .toast.info    { background: rgba(0,15,30,0.95);  border-color: rgba(0,229,255,0.4); color: var(--accent2); }
+  .toast-icon    { font-size: 22px; }
+
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    z-index: 9990;
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .modal-box {
+    background: var(--bg3);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 32px;
+    max-width: 380px; width: 90%;
+    text-align: center;
+    animation: toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .modal-box .modal-icon { font-size: 48px; margin-bottom: 16px; }
+  .modal-box h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+  .modal-box p  { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+  .modal-btns { display: flex; gap: 12px; }
+  .modal-btns button {
+    flex: 1; padding: 13px;
+    border-radius: var(--radius-sm);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; border: 1px solid;
+  }
+
+  .modal-confirm { background: rgba(255,59,92,0.2);  border-color: var(--danger); color: var(--danger); }
+  .modal-cancel  { background: rgba(255,255,255,0.05); border-color: var(--glass-border); color: var(--text-muted); }
+  .modal-confirm:hover { background: rgba(255,59,92,0.35); }
+  .modal-cancel:hover  { background: rgba(255,255,255,0.1); }
+
+  .stat-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-left: 6px;
+    animation: ping 1.5s infinite;
+  }
+
+  /* Firebase loading overlay */
+  #fb-loading {
+    position: fixed; inset: 0;
+    background: rgba(5,15,10,0.92);
+    z-index: 99999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px;
+  }
+
+  #fb-loading .fb-spinner {
+    width: 52px; height: 52px;
+    border: 4px solid rgba(0,201,122,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #fb-loading p { font-size: 14px; color: var(--text-muted); }
+
+  @media (max-width: 700px) {
+    .schedule-grid { grid-template-columns: repeat(4, 1fr); }
+    .schedule-grid .day-col:nth-child(n+5):not(:nth-child(6)):not(:nth-child(7)) { display: none; }
+    .chart-area { flex-direction: column; align-items: center; }
+    .confirm-actions, .student-confirm { grid-template-columns: 1fr; }
+    .header { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Firebase loading overlay -->
+<div id="fb-loading">
+  <div class="fb-spinner"></div>
+  <p>Loading driver data from Firebase...</p>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<div class="container">
+
+  <div class="back-bar">
+    <button class="back-btn" onclick="goBack()">
+      <span class="back-arrow">&#8592;</span>
+      <span class="back-home-icon">🏠</span>
+      <span>Back to Driver Dashboard</span>
+    </button>
+  </div>
+
+  <header class="header">
+    <div class="logo-area">
+      <div class="logo-icon">🚌</div>
+      <div class="logo-text">
+        <h1>Rihla <span>Aman</span></h1>
+        <p>School Bus Management System</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="time-live">
+        <div class="time" id="live-clock">--:--:--</div>
+        <div class="date" id="live-date">...</div>
+      </div>
+      <!-- Driver badge — name comes from Firebase -->
+      <div class="driver-badge">
+        <div class="driver-avatar" id="driver-avatar-initials">DR</div>
+        <div>
+          <div class="driver-name" id="driver-display-name">Loading...</div>
+          <div class="driver-role">🟢 Online Now</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- EMERGENCY -->
+  <div class="emergency-bar">
+    <button class="emergency-btn" onclick="triggerEmergency()">
+      <div class="emergency-ping"></div>
+      <div class="emergency-icon">🆘</div>
+      <div class="emergency-text">
+        <h2>EMERGENCY BUTTON</h2>
+        <p>Press to contact the administration immediately in emergency situations</p>
+      </div>
+      <div class="emergency-ping"></div>
+    </button>
+  </div>
+
+  <!-- SECTION 1: SCHEDULE -->
+  <div class="section-label">
+    <div class="icon-box icon-green">🕐</div>
+    <div>
+      <h2>Official Schedule</h2>
+      <p>Morning and afternoon session times — official school week days</p>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="schedule-tabs">
+      <button class="tab-btn active" onclick="switchTab('morning-tab', this)">☀️ Morning Session</button>
+      <button class="tab-btn" onclick="switchTab('afternoon-tab', this)">🌆 Afternoon Session</button>
+    </div>
+
+    <!-- MORNING -->
+    <div id="morning-tab" class="schedule-content active">
+      <div class="period-divider">
+        <span class="morning-label">⏰ Morning Times</span>
+        <div class="line"></div>
+      </div>
+      <div class="schedule-grid">
+        <div class="day-col">
+          <div class="day-header">Sunday</div>
+          <div class="time-slot morning" onclick="showSlotInfo('6:15 AM','🚌 Depart from school now — start your trip!')"><div class="ts-emoji">🚌</div><div class="ts-time">6:15 AM</div><div class="ts-note">Depart from school</div></div>
+          <div class="time-slot morning" onclick="showSlotInfo('6:30 AM','📍 You must be at the student assembly point now')"><div class="ts-emoji">📍</div><div class="ts-time">6:30 AM</div><div class="ts-note">Arrive at assembly point</div></div>
+          <div class="time-slot morning" onclick="showSlotInfo('6:45 AM','✅ All students boarded — head to school')"><div class="ts-emoji">✅</div><div class="ts-time">6:45 AM</div><div class="ts-note">Collect students & depart</div></div>
+          <div class="time-slot morning" onclick="showSlotInfo('7:00 AM','🏫 You must have arrived at school by now')"><div class="ts-emoji">🏫</div><div class="ts-time">7:00 AM</div><div class="ts-note">Arrive at school</div></div>
+          <div class="time-slot morning" onclick="showSlotInfo('7:15 AM','🎒 Confirm all students got off and entered the building')"><div class="ts-emoji">🎒</div><div class="ts-time">7:15 AM</div><div class="ts-note">Confirm student drop-off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Monday</div>
+          <div class="time-slot morning"><div class="ts-emoji">🚌</div><div class="ts-time">6:15 AM</div><div class="ts-note">Depart from school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">📍</div><div class="ts-time">6:30 AM</div><div class="ts-note">Arrive at assembly point</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">✅</div><div class="ts-time">6:45 AM</div><div class="ts-note">Collect students & depart</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🏫</div><div class="ts-time">7:00 AM</div><div class="ts-note">Arrive at school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🎒</div><div class="ts-time">7:15 AM</div><div class="ts-note">Confirm student drop-off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Tuesday</div>
+          <div class="time-slot morning"><div class="ts-emoji">🚌</div><div class="ts-time">6:15 AM</div><div class="ts-note">Depart from school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">📍</div><div class="ts-time">6:30 AM</div><div class="ts-note">Arrive at assembly point</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">✅</div><div class="ts-time">6:45 AM</div><div class="ts-note">Collect students & depart</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🏫</div><div class="ts-time">7:00 AM</div><div class="ts-note">Arrive at school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🎒</div><div class="ts-time">7:15 AM</div><div class="ts-note">Confirm student drop-off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Wednesday</div>
+          <div class="time-slot morning"><div class="ts-emoji">🚌</div><div class="ts-time">6:15 AM</div><div class="ts-note">Depart from school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">📍</div><div class="ts-time">6:30 AM</div><div class="ts-note">Arrive at assembly point</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">✅</div><div class="ts-time">6:45 AM</div><div class="ts-note">Collect students & depart</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🏫</div><div class="ts-time">7:00 AM</div><div class="ts-note">Arrive at school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🎒</div><div class="ts-time">7:15 AM</div><div class="ts-note">Confirm student drop-off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Thursday</div>
+          <div class="time-slot morning"><div class="ts-emoji">🚌</div><div class="ts-time">6:15 AM</div><div class="ts-note">Depart from school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">📍</div><div class="ts-time">6:30 AM</div><div class="ts-note">Arrive at assembly point</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">✅</div><div class="ts-time">6:45 AM</div><div class="ts-note">Collect students & depart</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🏫</div><div class="ts-time">7:00 AM</div><div class="ts-note">Arrive at school</div></div>
+          <div class="time-slot morning"><div class="ts-emoji">🎒</div><div class="ts-time">7:15 AM</div><div class="ts-note">Confirm student drop-off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header weekend">Friday</div>
+          <div class="weekend-cell"><div class="weekend-badge">WEEKEND</div><div style="font-size:28px">🏖️</div><div class="weekend-text">Weekend Holiday</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header weekend">Saturday</div>
+          <div class="weekend-cell"><div class="weekend-badge">WEEKEND</div><div style="font-size:28px">🌴</div><div class="weekend-text">Weekend Holiday</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTERNOON -->
+    <div id="afternoon-tab" class="schedule-content">
+      <div class="period-divider">
+        <span class="afternoon-label">🌆 Afternoon Times</span>
+        <div class="line"></div>
+      </div>
+      <div class="schedule-grid">
+        <div class="day-col">
+          <div class="day-header">Sunday</div>
+          <div class="time-slot afternoon" onclick="showSlotInfo('1:31 PM','🏫 School day ended — prepare to receive students')"><div class="ts-emoji">🔔</div><div class="ts-time">1:31 PM</div><div class="ts-note">End of school day</div></div>
+          <div class="time-slot afternoon" onclick="showSlotInfo('1:45 PM','🚌 Confirm all students have boarded the bus')"><div class="ts-emoji">🚌</div><div class="ts-time">1:45 PM</div><div class="ts-note">Students board & depart</div></div>
+          <div class="time-slot afternoon" onclick="showSlotInfo('2:15 PM','🏠 Confirm all students reached home safely')"><div class="ts-emoji">🏠</div><div class="ts-time">2:15 PM</div><div class="ts-note">All students dropped off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Monday</div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🔔</div><div class="ts-time">1:31 PM</div><div class="ts-note">End of school day</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🚌</div><div class="ts-time">1:45 PM</div><div class="ts-note">Students board & depart</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🏠</div><div class="ts-time">2:15 PM</div><div class="ts-note">All students dropped off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Tuesday</div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🔔</div><div class="ts-time">1:31 PM</div><div class="ts-note">End of school day</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🚌</div><div class="ts-time">1:45 PM</div><div class="ts-note">Students board & depart</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🏠</div><div class="ts-time">2:15 PM</div><div class="ts-note">All students dropped off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Wednesday</div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🔔</div><div class="ts-time">1:31 PM</div><div class="ts-note">End of school day</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🚌</div><div class="ts-time">1:45 PM</div><div class="ts-note">Students board & depart</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🏠</div><div class="ts-time">2:15 PM</div><div class="ts-note">All students dropped off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header">Thursday</div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🔔</div><div class="ts-time">1:31 PM</div><div class="ts-note">End of school day</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🚌</div><div class="ts-time">1:45 PM</div><div class="ts-note">Students board & depart</div></div>
+          <div class="time-slot afternoon"><div class="ts-emoji">🏠</div><div class="ts-time">2:15 PM</div><div class="ts-note">All students dropped off</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header weekend">Friday</div>
+          <div class="weekend-cell"><div class="weekend-badge">WEEKEND</div><div style="font-size:28px">🏖️</div><div class="weekend-text">Holiday</div></div>
+        </div>
+        <div class="day-col">
+          <div class="day-header weekend">Saturday</div>
+          <div class="weekend-cell"><div class="weekend-badge">WEEKEND</div><div style="font-size:28px">🌴</div><div class="weekend-text">Holiday</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: CONTACT -->
+  <div class="section-label">
+    <div class="icon-box icon-blue">💬</div>
+    <div>
+      <h2>Contact Administration</h2>
+      <p>Send your notes and reports directly to the school administration</p>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="form-row">
+      <label class="form-label">📋 Select Contact Type</label>
+      <div class="contact-types">
+        <button class="type-chip" onclick="selectType(this)">📢 Report</button>
+        <button class="type-chip" onclick="selectType(this)">😞 Complaint</button>
+        <button class="type-chip" onclick="selectType(this)">💡 Suggestion</button>
+        <button class="type-chip" onclick="selectType(this)">📝 Note</button>
+        <button class="type-chip" onclick="selectType(this)">🔄 Edit Request</button>
+        <button class="type-chip" onclick="selectType(this)">🤝 Collaboration</button>
+        <button class="type-chip" onclick="selectType(this)">🆘 Help Needed</button>
+        <button class="type-chip" onclick="selectType(this)">🚀 Development</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">✏️ Message Title</label>
+      <input class="glass-input" id="msg-title" type="text" placeholder="Write your message title here...">
+    </div>
+    <div class="form-row">
+      <label class="form-label">📄 Message Body</label>
+      <textarea class="glass-textarea" id="msg-body" placeholder="Write your message in detail..."></textarea>
+    </div>
+    <button class="send-btn" onclick="sendMessage()">📤 Send Message to Administration</button>
+    <div class="messages-list" id="messages-list"></div>
+  </div>
+
+  <!-- SECTION 3: EVENTS -->
+  <div class="section-label">
+    <div class="icon-box icon-gold">🎯</div>
+    <div>
+      <h2>Events & Activities</h2>
+      <p>All Rihla Aman events — rate and track their schedules</p>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="events-grid" id="events-grid"></div>
+  </div>
+
+  <!-- SECTION 4: CHART -->
+  <div class="section-label">
+    <div class="icon-box icon-purple">📊</div>
+    <div>
+      <h2>Activity & Engagement Index</h2>
+      <p>Donut chart showing your interaction level with the app</p>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <div class="chart-area">
+      <div class="donut-container">
+        <svg viewBox="0 0 220 220" id="donut-svg"></svg>
+        <div class="donut-center">
+          <div class="total-num" id="donut-total">0</div>
+          <div class="total-label">Total Activity</div>
+        </div>
+      </div>
+      <div class="chart-legend" id="chart-legend"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: NOTIFICATIONS -->
+  <div class="section-label">
+    <div class="icon-box icon-red">🚨</div>
+    <div>
+      <h2>Urgent Notifications</h2>
+      <p>Send urgent requests and trip confirmations to administration</p>
+    </div>
+  </div>
+
+  <div class="glass-card">
+    <label class="form-label" style="margin-bottom:14px">⚡ Select What You Need Now</label>
+    <div class="notif-options">
+      <button class="notif-chip" onclick="toggleNotif(this)"><span class="nc-icon">🆘</span>Need Help</button>
+      <button class="notif-chip" onclick="toggleNotif(this)"><span class="nc-icon">🚌</span>Extra Bus Needed</button>
+      <button class="notif-chip" onclick="toggleNotif(this)"><span class="nc-icon">👁️</span>Need Supervision</button>
+      <button class="notif-chip" onclick="toggleNotif(this)"><span class="nc-icon">🛠️</span>Bus Breakdown</button>
+      <button class="notif-chip" onclick="toggleNotif(this)"><span class="nc-icon">🤝</span>Need Support</button>
+      <button class="notif-chip" onclick="toggleNotif(this)"><span class="nc-icon">⚠️</span>Emergency Situation</button>
+    </div>
+
+    <label class="form-label" style="margin:4px 0 14px">🛣️ Trip Confirmation</label>
+    <div class="confirm-actions">
+      <button class="confirm-btn start" onclick="confirmAction('Trip started now 🚌','success')">🟢 Trip Started</button>
+      <button class="confirm-btn end"   onclick="confirmAction('Trip completed successfully ✅','info')">✅ Trip Finished</button>
+    </div>
+
+    <label class="form-label" style="margin:4px 0 14px">👦 Student Confirmation</label>
+    <div class="student-confirm">
+      <button class="student-btn board"  onclick="confirmAction('All students have boarded the bus 🎒','success')">🎒 All Students Boarded</button>
+      <button class="student-btn alight" onclick="confirmAction('All students dropped off safely 🏠','success')">🏠 All Students Dropped Off</button>
+    </div>
+
+    <button class="send-notif-btn" onclick="sendNotification()">📡 Send Notification to Administration</button>
+
+    <div class="incoming-notifs">
+      <div class="incoming-title">📥 Notifications from Administration <span class="stat-dot" style="background:var(--accent2)"></span></div>
+      <div id="admin-comments-list">
+        <!-- Admin comments loaded from Firebase will appear here -->
+        <div class="incoming-item">
+          <span class="in-icon">📢</span>
+          <div>
+            <div class="in-text">Reminder: Tomorrow is Safety Activity Day — be prepared</div>
+            <div class="in-time">Administration — 10:30 AM</div>
+          </div>
+        </div>
+        <div class="incoming-item">
+          <span class="in-icon">✅</span>
+          <div>
+            <div class="in-text">Your previous report has been received and will be reviewed</div>
+            <div class="in-time">Administration — Yesterday 2:15 PM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- DELETE CONFIRM MODAL -->
+<div id="modal-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <div class="modal-icon" id="modal-icon">🗑️</div>
+    <h3 id="modal-title">Are you sure?</h3>
+    <p id="modal-desc">Do you want to permanently delete this message?</p>
+    <div class="modal-btns">
+      <button class="modal-confirm" id="modal-yes">Yes, Delete</button>
+      <button class="modal-cancel"  onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FIREBASE + SCRIPT ==================== -->
+<script type="module">
+  import { initializeApp }                              from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged }                from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, updateDoc,
+    collection, addDoc, getDocs, deleteDoc,
+    query, orderBy, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // ── Firebase config ──────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+    measurementId: "G-SRY2J762GZ"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // ── Global state ─────────────────────────────────────────────
+  let currentUID      = null;
+  let currentFullName = "Driver";
+  let driverAdminRef  = null;   // reference to driver_admin/{uid}
+
+  // ── Schedule data (stored in Firebase) ───────────────────────
+  const SCHEDULE = {
+    morning: [
+      { emoji:"🚌", time:"6:15 AM", note:"Depart from school"       },
+      { emoji:"📍", time:"6:30 AM", note:"Arrive at assembly point"  },
+      { emoji:"✅", time:"6:45 AM", note:"Collect students & depart" },
+      { emoji:"🏫", time:"7:00 AM", note:"Arrive at school"          },
+      { emoji:"🎒", time:"7:15 AM", note:"Confirm student drop-off"  }
+    ],
+    afternoon: [
+      { emoji:"🔔", time:"1:31 PM", note:"End of school day"         },
+      { emoji:"🚌", time:"1:45 PM", note:"Students board & depart"   },
+      { emoji:"🏠", time:"2:15 PM", note:"All students dropped off"  }
+    ]
+  };
+
+  // ── Auth guard ────────────────────────────────────────────────
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      // Not logged in — redirect to login
+      window.location.href = "login.html";
+      return;
+    }
+
+    currentUID = user.uid;
+
+    // 1. Pull driver profile from users/{uid}
+    const userSnap = await getDoc(doc(db, "users", currentUID));
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      // Security check: only allow drivers
+      if (data.role !== "driver") {
+        alert("Access denied: This page is for drivers only.");
+        window.location.href = "login.html";
+        return;
+      }
+      currentFullName = data.fullName || "Driver";
+    }
+
+    // 2. Update name in UI
+    document.getElementById("driver-display-name").textContent = currentFullName + " — Driver";
+    const initials = currentFullName.split(" ").map(w => w[0]).join("").toUpperCase().slice(0,2);
+    document.getElementById("driver-avatar-initials").textContent = initials;
+
+    // 3. Set up driver_admin document reference
+    driverAdminRef = doc(db, "driver_admin", currentUID);
+
+    // 4. Create/update the driver_admin document with base info + schedule
+    await initDriverAdmin();
+
+    // 5. Load messages from Firebase
+    await loadMessages();
+
+    // 6. Load ratings from Firebase
+    await loadRatings();
+
+    // 7. Load activity stats from Firebase
+    await loadStats();
+
+    // 8. Listen for admin comments in real-time
+    listenAdminComments();
+
+    // 9. Hide loading screen
+    document.getElementById("fb-loading").style.display = "none";
+  });
+
+  // ── Initialize driver_admin document ─────────────────────────
+  async function initDriverAdmin() {
+    const snap = await getDoc(driverAdminRef);
+    const now  = new Date().toISOString();
+
+    if (!snap.exists()) {
+      // Create fresh document
+      await setDoc(driverAdminRef, {
+        driverUID:    currentUID,
+        driverName:   currentFullName,
+        createdAt:    now,
+        lastSeen:     now,
+        schedule: {
+          morning:   SCHEDULE.morning,
+          afternoon: SCHEDULE.afternoon
+        },
+        activity: {
+          messages:      0,
+          ratings:       0,
+          notifications: 0,
+          opens:         1
+        },
+        ratings:     {},
+        adminComment: ""
+      });
+    } else {
+      // Update lastSeen and increment opens
+      const existing = snap.data();
+      const opens = (existing.activity?.opens || 0) + 1;
+      await updateDoc(driverAdminRef, {
+        lastSeen:          now,
+        driverName:        currentFullName,
+        "activity.opens":  opens,
+        "schedule.morning":   SCHEDULE.morning,
+        "schedule.afternoon": SCHEDULE.afternoon
+      });
+    }
+  }
+
+  // ── MESSAGES (stored in driver_admin/{uid}/messages subcollection) ──
+  async function loadMessages() {
+    const q = query(
+      collection(db, "driver_admin", currentUID, "messages"),
+      orderBy("timestamp", "desc")
+    );
+    const snap = await getDocs(q);
+    const msgs = [];
+    snap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
+    window._fbMessages = msgs;
+    renderMessages();
+  }
+
+  window.sendMessage = async function () {
+    const typeEl = document.querySelector('.type-chip.selected');
+    const title  = document.getElementById('msg-title').value.trim();
+    const body   = document.getElementById('msg-body').value.trim();
+    if (!typeEl) { showToast('❗ Please select a contact type first', 'error'); return; }
+    if (!title)  { showToast('❗ Please write a message title', 'error'); return; }
+    if (!body)   { showToast('❗ Please write the message body', 'error'); return; }
+
+    const msgData = {
+      type:      typeEl.textContent.trim(),
+      title,
+      body,
+      driverUID: currentUID,
+      driverName:currentFullName,
+      timestamp: serverTimestamp(),
+      timeStr:   new Date().toLocaleString('en-US')
+    };
+
+    // Save to driver_admin/{uid}/messages subcollection
+    const ref = await addDoc(
+      collection(db, "driver_admin", currentUID, "messages"),
+      msgData
+    );
+
+    // Update message count in driver_admin
+    const snap = await getDoc(driverAdminRef);
+    const count = (snap.data()?.activity?.messages || 0) + 1;
+    await updateDoc(driverAdminRef, { "activity.messages": count });
+
+    // Update local list
+    window._fbMessages.unshift({ id: ref.id, ...msgData, timestamp: new Date() });
+    document.getElementById('msg-title').value = '';
+    document.getElementById('msg-body').value  = '';
+    document.querySelectorAll('.type-chip').forEach(x => x.classList.remove('selected'));
+    renderMessages();
+    showToast('Message sent to administration successfully! 🎉', 'success');
+    await syncStats({ messages: count });
+  };
+
+  window.deleteMessageFromFB = async function(msgId, idx) {
+    await deleteDoc(doc(db, "driver_admin", currentUID, "messages", msgId));
+    window._fbMessages.splice(idx, 1);
+    const snap = await getDoc(driverAdminRef);
+    const count = Math.max((snap.data()?.activity?.messages || 1) - 1, 0);
+    await updateDoc(driverAdminRef, { "activity.messages": count });
+    renderMessages();
+    closeModal();
+    showToast('Message deleted successfully 🗑️', 'warning');
+    await syncStats({ messages: count });
+  };
+
+  // ── RATINGS ───────────────────────────────────────────────────
+  async function loadRatings() {
+    const snap = await getDoc(driverAdminRef);
+    window._fbRatings = snap.data()?.ratings || {};
+    renderEvents();
+  }
+
+  window.rateEvent = async function(idx, val, row) {
+    window._fbRatings[idx] = val;
+    // Save ratings map to driver_admin doc
+    await updateDoc(driverAdminRef, { [`ratings.${idx}`]: val });
+    // Update rating count
+    const snap  = await getDoc(driverAdminRef);
+    const count = Object.keys(window._fbRatings).length;
+    await updateDoc(driverAdminRef, { "activity.ratings": count });
+
+    row.querySelectorAll('.star-btn').forEach((s, i) => s.classList.toggle('rated', i < val));
+    playSound('success');
+    showToast(`You rated ${val} stars ⭐`, 'success', 2000);
+    await syncStats({ ratings: count });
+  };
+
+  // ── STATS ─────────────────────────────────────────────────────
+  async function loadStats() {
+    const snap = await getDoc(driverAdminRef);
+    window._fbStats = snap.data()?.activity || { messages:0, ratings:0, notifications:0, opens:1 };
+    renderChart();
+  }
+
+  async function syncStats(partial) {
+    window._fbStats = { ...window._fbStats, ...partial };
+    renderChart();
+  }
+
+  // ── NOTIFICATIONS ─────────────────────────────────────────────
+  window.confirmAction = async function(msg, type) {
+    playSound('success');
+    showToast(msg, type);
+    await incrementNotifCount(msg);
+  };
+
+  window.sendNotification = async function() {
+    if (!selectedNotifs.size) { showToast('❗ Please select a notification type first', 'error'); return; }
+    const list = Array.from(selectedNotifs).join(', ');
+
+    // Store notification in driver_admin/{uid}/notifications subcollection
+    await addDoc(collection(db, "driver_admin", currentUID, "notifications"), {
+      types:      list,
+      driverUID:  currentUID,
+      driverName: currentFullName,
+      timestamp:  serverTimestamp(),
+      timeStr:    new Date().toLocaleString('en-US')
+    });
+
+    await incrementNotifCount(list);
+    showToast(`Notification sent: ${list} ✅`, 'success');
+    document.querySelectorAll('.notif-chip').forEach(x => x.classList.remove('selected'));
+    selectedNotifs.clear();
+  };
+
+  async function incrementNotifCount(label) {
+    const snap  = await getDoc(driverAdminRef);
+    const count = (snap.data()?.activity?.notifications || 0) + 1;
+    await updateDoc(driverAdminRef, { "activity.notifications": count });
+    window._fbStats.notifications = count;
+    renderChart();
+  }
+
+  // ── EMERGENCY ─────────────────────────────────────────────────
+  window.triggerEmergency = async function() {
+    playSound('emergency');
+    showToast('🆘 Emergency alert sent to administration immediately!', 'error', 5000);
+    navigator.vibrate && navigator.vibrate([200, 100, 200]);
+
+    // Log emergency in driver_admin/{uid}/emergency subcollection
+    await addDoc(collection(db, "driver_admin", currentUID, "emergency"), {
+      driverUID:  currentUID,
+      driverName: currentFullName,
+      timestamp:  serverTimestamp(),
+      timeStr:    new Date().toLocaleString('en-US'),
+      type:       "EMERGENCY_BUTTON_PRESSED"
+    });
+
+    // Also update top-level driver_admin doc with last emergency time
+    await updateDoc(driverAdminRef, {
+      lastEmergency: new Date().toISOString()
+    });
+
+    await incrementNotifCount("EMERGENCY");
+  };
+
+  // ── ADMIN COMMENTS (real-time listener) ───────────────────────
+  function listenAdminComments() {
+    const q = query(
+      collection(db, "driver_admin", currentUID, "admin_comments"),
+      orderBy("timestamp", "desc")
+    );
+    onSnapshot(q, (snap) => {
+      if (snap.empty) return;
+      const container = document.getElementById("admin-comments-list");
+      container.innerHTML = '';
+      snap.forEach(d => {
+        const c = d.data();
+        const el = document.createElement('div');
+        el.className = 'incoming-item';
+        el.innerHTML = `
+          <span class="in-icon">💬</span>
+          <div>
+            <div class="in-text">${c.comment || ''}</div>
+            <div class="in-time">Admin — ${c.timeStr || ''}</div>
+          </div>`;
+        container.appendChild(el);
+      });
+    });
+  }
+
+  // ── RENDER MESSAGES ───────────────────────────────────────────
+  function renderMessages() {
+    const list = document.getElementById('messages-list');
+    list.innerHTML = '';
+    const msgs = window._fbMessages || [];
+    if (!msgs.length) return;
+    msgs.forEach((m, i) => {
+      const el = document.createElement('div');
+      el.className = 'message-item';
+      el.innerHTML = `
+        <div class="msg-type-badge">${m.type}</div>
+        <div class="msg-content">
+          <div class="msg-title">${m.title}</div>
+          <div class="msg-body">${m.body}</div>
+          <div class="msg-time">📅 ${m.timeStr || ''}</div>
+        </div>
+        <button class="delete-btn" onclick="confirmDelete('${m.id}', ${i})">🗑️</button>`;
+      list.appendChild(el);
+    });
+  }
+
+  // ── RENDER EVENTS ─────────────────────────────────────────────
+  const today = new Date();
+  const eventsData = [
+    { emoji:'🛡️', title:'Safety Awareness Event',     desc:'Spreading awareness about safe school bus driving — no phone use while driving, take safe routes, avoid speeding in traffic, always stop in designated areas.', date: new Date('2026-04-01'), dateStr:'April 1, 2026' },
+    { emoji:'👨‍👩‍👧', title:'Our First Responsibility',   desc:'How to verify student attendance on the bus — checking their names, confirming presence at assembly points, and ensuring safe drop-off in front of their homes.', date: new Date('2026-06-20'), dateStr:'June 20, 2026' },
+    { emoji:'🚑', title:'Emergency Response Guide',   desc:'Training drivers to handle emergency situations on the bus — first aid, safe evacuation, and immediate contact with relevant authorities.', date: new Date('2026-09-10'), dateStr:'September 10, 2026' },
+    { emoji:'🌟', title:'Excellence & Professionalism',desc:'A workshop to develop driver skills in dealing with students and parents — professionalism, punctuality, and building trust with the school community.', date: new Date('2026-11-15'), dateStr:'November 15, 2026' }
+  ];
+
+  function renderEvents() {
+    const grid = document.getElementById('events-grid');
+    grid.innerHTML = '';
+    const ratings = window._fbRatings || {};
+    eventsData.forEach((ev, idx) => {
+      const isActive = ev.date <= today;
+      const status   = isActive
+        ? (ev.date.toDateString() === today.toDateString()
+            ? '<span class="event-status status-live">🔴 Today</span>'
+            : '<span class="event-status status-live">✅ Completed</span>')
+        : '<span class="event-status status-soon">⏳ Upcoming</span>';
+      const card = document.createElement('div');
+      card.className = `event-card ${isActive ? 'active-event' : 'inactive-event'}`;
+      const savedRating = ratings[idx] || 0;
+      let starsHTML = '';
+      for (let s = 1; s <= 5; s++) {
+        starsHTML += `<button class="star-btn ${s <= savedRating ? 'rated' : ''}" onclick="rateEvent(${idx},${s},this.parentElement)">⭐</button>`;
+      }
+      card.innerHTML = `
+        <div class="event-top"><div class="event-emoji">${ev.emoji}</div>${status}</div>
+        <div class="event-title">${ev.title}</div>
+        <div class="event-desc">${ev.desc}</div>
+        <div class="event-date">📅 ${ev.dateStr}</div>
+        <div class="stars-row"><span class="stars-label">Your Rating:</span>${starsHTML}</div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  // ── RENDER CHART ──────────────────────────────────────────────
+  const chartColors = ['#00c97a','#00e5ff','#ffd700','#c87aff'];
+  const chartLabels = ['Messages to Admin','Event Ratings','Sent Notifications','App Opens'];
+
+  function renderChart() {
+    const s = window._fbStats || { messages:0, ratings:0, notifications:0, opens:0 };
+    const vals  = [s.messages||0, s.ratings||0, s.notifications||0, s.opens||0];
+    const total = vals.reduce((a,b) => a+b, 0) || 1;
+    const svg   = document.getElementById('donut-svg');
+    const cx=110, cy=110, R=90, r=60;
+    let html = '';
+    let startAngle = -Math.PI / 2;
+    vals.forEach((v, i) => {
+      const angle = (v / total) * Math.PI * 2;
+      if (angle < 0.001) { startAngle += angle; return; }
+      const x1=cx+R*Math.cos(startAngle),   y1=cy+R*Math.sin(startAngle);
+      const x2=cx+R*Math.cos(startAngle+angle), y2=cy+R*Math.sin(startAngle+angle);
+      const x3=cx+r*Math.cos(startAngle+angle), y3=cy+r*Math.sin(startAngle+angle);
+      const x4=cx+r*Math.cos(startAngle),   y4=cy+r*Math.sin(startAngle);
+      const large = angle > Math.PI ? 1 : 0;
+      html += `<path d="M${x1},${y1} A${R},${R} 0 ${large} 1 ${x2},${y2} L${x3},${y3} A${r},${r} 0 ${large} 0 ${x4},${y4} Z" fill="${chartColors[i]}" opacity="0.85" stroke="rgba(5,15,10,0.5)" stroke-width="2"/>`;
+      startAngle += angle;
+    });
+    svg.innerHTML = html;
+    document.getElementById('donut-total').textContent = vals.reduce((a,b)=>a+b, 0);
+    const legend = document.getElementById('chart-legend');
+    legend.innerHTML = '';
+    vals.forEach((v, i) => {
+      const pct = total > 0 ? Math.round((v/total)*100) : 0;
+      legend.innerHTML += `
+        <div class="legend-item">
+          <div class="legend-dot" style="background:${chartColors[i]}"></div>
+          <div class="legend-info">
+            <div class="legend-label">${chartLabels[i]}</div>
+            <div class="legend-sub">${pct}% of total activity</div>
+          </div>
+          <div class="legend-count" style="color:${chartColors[i]}">${v}</div>
+        </div>`;
+    });
+  }
+
+  // Expose confirm delete to global
+  window.confirmDelete = function(msgId, idx) {
+    pendingDeleteId = { msgId, idx };
+    document.getElementById('modal-overlay').style.display = 'flex';
+    document.getElementById('modal-yes').onclick = () => deleteMessageFromFB(msgId, idx);
+    playSound('warn');
+  };
+
+  // ── Expose init globals ───────────────────────────────────────
+  window._fbMessages = [];
+  window._fbRatings  = {};
+  window._fbStats    = { messages:0, ratings:0, notifications:0, opens:0 };
+</script>
+
+<!-- Non-module global helpers -->
+<script>
+  // ── BACK ─────────────────────────────────────────────────────
+  function goBack() {
+    playSound('click');
+    window.location.href = 'Driver_dashboard.html';
+  }
+
+  // ── AUDIO ─────────────────────────────────────────────────────
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
+  function getCtx() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+
+  function playSound(type) {
+    try {
+      const ctx = getCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      const presets = {
+        success:   { freq:[523,659,784],     dur:0.12, shape:'sine',     vol:0.3  },
+        error:     { freq:[300,200],         dur:0.15, shape:'sawtooth', vol:0.25 },
+        click:     { freq:[800],             dur:0.06, shape:'sine',     vol:0.15 },
+        pop:       { freq:[1000,1200],       dur:0.08, shape:'sine',     vol:0.2  },
+        warn:      { freq:[440,330],         dur:0.13, shape:'triangle', vol:0.25 },
+        emergency: { freq:[880,660,880,660], dur:0.18, shape:'square',   vol:0.4  }
+      };
+      const p = presets[type] || presets.click;
+      o.type = p.shape;
+      let t = ctx.currentTime;
+      p.freq.forEach((f, i) => { o.frequency.setValueAtTime(f, t + i * p.dur); });
+      g.gain.setValueAtTime(p.vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + p.freq.length * p.dur + 0.1);
+      o.start(t); o.stop(t + p.freq.length * p.dur + 0.15);
+    } catch(e) {}
+  }
+
+  // ── CLOCK ─────────────────────────────────────────────────────
+  function updateClock() {
+    const now    = new Date();
+    const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    document.getElementById('live-clock').textContent =
+      String(now.getHours()).padStart(2,'0') + ':' +
+      String(now.getMinutes()).padStart(2,'0') + ':' +
+      String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('live-date').textContent =
+      days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── TOAST ─────────────────────────────────────────────────────
+  function showToast(msg, type = 'success', duration = 3500) {
+    const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span class="toast-icon">${icons[type] || '📢'}</span><span>${msg}</span>`;
+    c.appendChild(t);
+    playSound(type === 'success' ? 'success' : type === 'error' ? 'error' : 'pop');
+    setTimeout(() => {
+      t.style.animation = 'toastOut 0.3s ease forwards';
+      setTimeout(() => t.remove(), 300);
+    }, duration);
+  }
+
+  // ── TABS ──────────────────────────────────────────────────────
+  function switchTab(id, btn) {
+    document.querySelectorAll('.schedule-content').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    playSound('click');
+  }
+
+  function showSlotInfo(time, msg) {
+    playSound('pop');
+    showToast(`${time} — ${msg}`, 'info', 4000);
+  }
+
+  // ── CONTACT TYPE ──────────────────────────────────────────────
+  function selectType(btn) {
+    document.querySelectorAll('.type-chip').forEach(x => x.classList.remove('selected'));
+    btn.classList.add('selected');
+    playSound('pop');
+  }
+
+  // ── MODAL ─────────────────────────────────────────────────────
+  let pendingDeleteId = null;
+  function closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
+
+  // ── NOTIF CHIPS ───────────────────────────────────────────────
+  let selectedNotifs = new Set();
+
+  function toggleNotif(btn) {
+    btn.classList.toggle('selected');
+    if (btn.classList.contains('selected')) selectedNotifs.add(btn.textContent.trim());
+    else selectedNotifs.delete(btn.textContent.trim());
+    playSound('pop');
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman - Safety Content have a answer quizzes, earn XP points, unlock levels</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+:root{
+--main:#0A6AA1;
+--main2:#49A8DF;
+--bg:#EEF5FB;
+--dark:#183B56;
+--white:#fff;
+--green:#22c55e;
+--yellow:#f4b400;
+--red:#ef4444;
+--shadow:0 12px 30px rgba(0,0,0,0.08);
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(to bottom,#EEF5FB,#DDEFFC);
+overflow-x:hidden;
+color:var(--dark);
+}
+
+/* HEADER */
+
+.header{
+background:linear-gradient(135deg,var(--main2),var(--main));
+padding:28px 20px 110px;
+border-radius:0 0 35px 35px;
+position:relative;
+overflow:hidden;
+}
+
+.header::before{
+content:"";
+position:absolute;
+width:250px;
+height:250px;
+background:rgba(255,255,255,0.08);
+border-radius:50%;
+top:-100px;
+right:-60px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:relative;
+z-index:2;
+}
+
+.back{
+width:48px;
+height:48px;
+border-radius:14px;
+background:rgba(255,255,255,0.18);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+color:white;
+cursor:pointer;
+backdrop-filter:blur(10px);
+}
+
+.hero-text{
+margin-top:30px;
+color:white;
+position:relative;
+z-index:2;
+}
+
+.hero-text h1{
+font-size:31px;
+font-weight:800;
+}
+
+.hero-text p{
+margin-top:8px;
+font-size:15px;
+opacity:0.95;
+line-height:1.6;
+}
+
+/* STATS */
+
+.stats{
+margin-top:-70px;
+padding:0 15px;
+position:relative;
+z-index:10;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+}
+
+.stat{
+background:rgba(255,255,255,0.96);
+border-radius:22px;
+padding:18px 12px;
+text-align:center;
+box-shadow:var(--shadow);
+backdrop-filter:blur(10px);
+}
+
+.stat i{
+font-size:20px;
+margin-bottom:8px;
+color:var(--main);
+}
+
+.stat-num{
+font-size:18px;
+font-weight:800;
+}
+
+.stat-name{
+font-size:12px;
+color:#666;
+margin-top:4px;
+}
+
+/* GLOBAL PROGRESS */
+
+.global-box{
+background:white;
+margin:20px 15px;
+padding:20px;
+border-radius:25px;
+box-shadow:var(--shadow);
+}
+
+.global-top{
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+font-weight:700;
+font-size:14px;
+}
+
+.progress{
+height:15px;
+background:#e5e7eb;
+border-radius:20px;
+overflow:hidden;
+}
+
+.progress-fill{
+height:100%;
+width:0%;
+border-radius:20px;
+background:linear-gradient(90deg,#00c853,#57e389);
+transition:1s;
+}
+
+/* LEVELS */
+
+.section-title{
+font-size:22px;
+font-weight:800;
+margin:25px 18px 10px;
+}
+
+.level{
+margin:0 15px 20px;
+}
+
+.level-tag{
+display:inline-block;
+padding:10px 16px;
+border-radius:16px;
+font-size:14px;
+font-weight:700;
+margin-bottom:14px;
+color:white;
+}
+
+.red{
+background:#ff5b5b;
+}
+
+.yellow{
+background:#f4b400;
+}
+
+.green{
+background:#00b894;
+}
+
+/* MISSION */
+
+.card{
+background:white;
+border-radius:28px;
+padding:18px;
+margin-bottom:18px;
+box-shadow:var(--shadow);
+position:relative;
+overflow:hidden;
+transition:0.3s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:translateY(-4px);
+}
+
+.card.completed{
+border:3px solid #22c55e;
+}
+
+.card.locked{
+opacity:0.55;
+filter:grayscale(1);
+pointer-events:none;
+}
+
+.card::before{
+content:"";
+position:absolute;
+width:130px;
+height:130px;
+background:rgba(73,168,223,0.08);
+border-radius:50%;
+top:-40px;
+right:-40px;
+}
+
+.card-top{
+display:flex;
+gap:16px;
+position:relative;
+z-index:2;
+}
+
+.thumb{
+width:105px;
+height:105px;
+border-radius:22px;
+object-fit:cover;
+}
+
+.content{
+flex:1;
+}
+
+.mission{
+font-size:12px;
+font-weight:700;
+color:#0A6AA1;
+margin-bottom:6px;
+}
+
+.title{
+font-size:20px;
+font-weight:800;
+line-height:1.3;
+}
+
+.desc{
+margin-top:8px;
+font-size:14px;
+color:#666;
+line-height:1.6;
+}
+
+.meta{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.meta span{
+background:#EEF5FB;
+padding:8px 12px;
+border-radius:12px;
+font-size:12px;
+font-weight:700;
+}
+
+.bottom{
+margin-top:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.start{
+padding:12px 20px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,var(--main2),var(--main));
+color:white;
+font-weight:700;
+cursor:pointer;
+font-size:14px;
+}
+
+.done{
+background:#22c55e;
+}
+
+.status{
+font-weight:800;
+font-size:13px;
+}
+
+.not{
+color:#999;
+}
+
+.inprogress{
+color:#f4b400;
+}
+
+.complete{
+color:#22c55e;
+}
+
+/* QUIZ */
+
+.quiz-box{
+display:none;
+margin-top:20px;
+padding-top:20px;
+border-top:2px dashed #dbe7f3;
+animation:fade 0.5s;
+}
+
+.question{
+margin-bottom:18px;
+}
+
+.question h4{
+margin-bottom:12px;
+font-size:15px;
+}
+
+.option{
+background:#F5FAFF;
+padding:12px;
+border-radius:14px;
+margin-bottom:10px;
+cursor:pointer;
+transition:0.3s;
+border:2px solid transparent;
+}
+
+.option:hover{
+background:#e9f5ff;
+}
+
+.option.correct{
+background:#dcfce7;
+border-color:#22c55e;
+}
+
+.option.wrong{
+background:#fee2e2;
+border-color:#ef4444;
+}
+
+.result{
+margin-top:16px;
+padding:14px;
+border-radius:16px;
+font-weight:700;
+display:none;
+}
+
+.success{
+background:#dcfce7;
+color:#15803d;
+}
+
+/* NEW ADDED COMPONENT FOR SMART VIDEO VIEWING OVERLAY */
+.video-overlay-page {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #EEF5FB;
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 20px;
+    animation: fade 0.4s ease-out;
+}
+
+.overlay-top-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.overlay-back {
+    width: 45px; height: 45px;
+    border-radius: 12px;
+    background: var(--bg);
+    color: var(--main);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer; transition: 0.3s;
+}
+.overlay-back:hover { background: #d3e6f5; }
+
+.overlay-title {
+    font-size: 20px; font-weight: 800; color: var(--dark);
+}
+
+.video-container-box {
+    background: white;
+    padding: 20px;
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+}
+
+.video-frame-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0; overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    background: #000;
+}
+
+.video-frame-wrapper iframe {
+    position: absolute; top:0; left:0; width: 100%; height: 100%; border:0;
+}
+
+.enjoy-msg-banner {
+    background: linear-gradient(135deg, rgba(73,168,223,0.1), rgba(10,106,161,0.05));
+    border-left: 5px solid var(--main);
+    padding: 15px; border-radius: 12px;
+    margin-top: 15px; font-size: 14px; font-weight: 700;
+    color: var(--dark); line-height: 1.5; display: flex; align-items: center; gap: 10px;
+}
+
+.overlay-quiz-card {
+    background: white; padding: 25px; border-radius: 28px; box-shadow: var(--shadow); margin-bottom: 30px;
+}
+
+.overlay-quiz-card h2 {
+    font-size: 22px; font-weight: 800; margin-bottom: 20px; color: var(--main); display: flex; align-items: center; gap: 10px;
+}
+
+.finish-mission-btn {
+    width: 100%; padding: 16px; font-size: 16px; font-weight: 800; color: white;
+    background: linear-gradient(135deg, var(--main2), var(--main));
+    border: none; border-radius: 18px; cursor: pointer; transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(10,106,161,0.2); margin-top: 20px;
+}
+.finish-mission-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(10,106,161,0.3); }
+
+/* APP WARNING POPUP (CUSTOM RED ALERT CONTAINER WITH SHINY GLOW EFFECT) */
+.custom-warning-modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(24, 59, 86, 0.4); backdrop-filter: blur(8px); z-index: 3000;
+    align-items: center; justify-content: center; padding: 20px;
+}
+
+.warning-card-box {
+    background: #ffffff; width: 100%; max-width: 420px; border-radius: 28px;
+    padding: 30px 22px; text-align: center;
+    border: 3px solid var(--red);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.4), 0 20px 50px rgba(0,0,0,0.15);
+    animation: pulseGlow 1.5s infinite alternate, bounce3d 0.4s ease-out;
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.3), 0 20px 50px rgba(0,0,0,0.15); }
+    100% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.6), 0 20px 50px rgba(0,0,0,0.15); }
+}
+
+.warning-icon {
+    width: 70px; height: 70px; background: rgba(239, 68, 68, 0.1);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 35px; color: var(--red); margin: 0 auto 15px;
+}
+
+.warning-text-msg {
+    font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 22px; line-height: 1.6;
+}
+
+.warning-close-btn {
+    width: 100%; padding: 14px; background: var(--red); color: white; border: none;
+    border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s;
+}
+.warning-close-btn:hover { background: #dc2626; }
+
+/* 3D SMART SUCCESS SCOREBOARD POPUP */
+.scoreboard-modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(24, 59, 86, 0.7); backdrop-filter: blur(12px); z-index: 2000;
+    align-items: center; justify-content: center; padding: 20px;
+}
+
+.scoreboard-card-3d {
+    background: linear-gradient(135deg, #ffffff, #f6faff);
+    width: 100%; max-width: 500px; border-radius: 35px; padding: 35px 25px;
+    text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.25), inset 0 0 20px rgba(255,255,255,0.6);
+    position: relative; border: 2px solid rgba(255,255,255,0.8);
+    transform: perspective(1000px) rotateX(4deg); animation: bounce3d 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounce3d {
+    0% { transform: perspective(1000px) scale(0.7) rotateX(20deg); opacity: 0; }
+    100% { transform: perspective(1000px) scale(1) rotateX(4deg); opacity: 1; }
+}
+
+/* SHINY PARTICLES & SPARKS EFFECTS BACKGROUND */
+.stars-container-3d {
+    position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; overflow: hidden; border-radius: 35px;
+}
+
+.spark-star {
+    position: absolute; color: var(--yellow); font-size: 24px; text-shadow: 0 0 12px var(--yellow); animation: floatSpark 2.5s infinite ease-in-out; opacity: 0.8;
+}
+
+@keyframes floatSpark {
+    0%, 100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 0.3; }
+    50% { transform: translateY(-20px) scale(1.3) rotate(180deg); opacity: 1; }
+}
+
+.scoreboard-icon {
+    width: 90px; height: 90px; background: linear-gradient(135deg, #fff2cc, var(--yellow));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 45px; color: #d49200; margin: 0 auto 20px;
+    box-shadow: 0 10px 25px rgba(244,180,0,0.3); border: 4px solid white;
+}
+
+.scoreboard-title {
+    font-size: 26px; font-weight: 900; color: var(--dark); margin-bottom: 8px;
+}
+
+.scoreboard-vname {
+    font-size: 15px; font-weight: 700; color: var(--main); margin-bottom: 25px; background: rgba(10,106,161,0.06); padding: 8px 16px; border-radius: 30px; display: inline-block;
+}
+
+.score-stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;
+}
+
+.score-stats-box {
+    background: white; border-radius: 20px; padding: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.03); border: 1px solid #eef2f6;
+}
+.score-stats-box.pts-box { border-bottom: 4px solid var(--green); }
+.score-stats-box.ans-box { border-bottom: 4px solid var(--main2); }
+
+.score-box-num { font-size: 22px; font-weight: 800; color: var(--dark); }
+.score-box-lbl { font-size: 12px; color: #777; margin-top: 4px; font-weight: 600; }
+
+.next-mission-btn {
+    width: 100%; padding: 15px; background: linear-gradient(135deg, #22c55e, #15803d);
+    color: white; border: none; border-radius: 16px; font-size: 16px; font-weight: 800;
+    cursor: pointer; box-shadow: 0 8px 20px rgba(34,197,94,0.3); transition: 0.3s;
+}
+.next-mission-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(34,197,94,0.4); }
+
+/* ANIMATION */
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+@media(max-width:900px){
+
+.stats{
+grid-template-columns:repeat(2,1fr);
+}
+
+.card-top{
+flex-direction:column;
+}
+
+.thumb{
+width:100%;
+height:190px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<div class="topbar">
+
+<div class="back" onclick="goBack()">
+<i class="fas fa-arrow-left"></i>
+</div>
+
+</div>
+
+<div class="hero-text">
+<h1>Safety Learning Journey 🚍</h1>
+
+<p>
+Complete safety missions, answer quizzes,
+earn XP points, unlock levels, and become
+a Rahlat Aman Safety Hero.
+</p>
+
+</div>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<i class="fas fa-star"></i>
+<div class="stat-num" id="xp">0</div>
+<div class="stat-name">XP</div>
+</div>
+
+<div class="stat">
+<i class="fas fa-shield-heart"></i>
+<div class="stat-num" id="rank">Beginner</div>
+<div class="stat-name">Rank</div>
+</div>
+
+<div class="stat">
+<i class="fas fa-circle-check"></i>
+<div class="stat-num" id="completed">0/8</div>
+<div class="stat-name">Completed</div>
+</div>
+
+<div class="stat">
+<i class="fas fa-fire"></i>
+<div class="stat-num" id="streak">0</div>
+<div class="stat-name">Missions</div>
+</div>
+
+</div>
+
+<div class="global-box">
+
+<div class="global-top">
+<span>Overall Progress</span>
+<span id="globalText">0%</span>
+</div>
+
+<div class="progress">
+<div class="progress-fill" id="globalFill"></div>
+</div>
+
+</div>
+
+<div class="section-title">
+🔴 Essential Safety
+</div>
+
+<div class="level">
+
+<div class="level-tag red">
+LEVEL 1 — Essential Missions
+</div>
+
+<div id="missions"></div>
+
+</div>
+
+<div class="video-overlay-page" id="videoOverlayPage">
+    <div class="overlay-top-nav">
+        <div class="overlay-back" onclick="closeVideoOverlay()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="overlay-title" id="overlayVideoTitle">Bus Safety Rules</div>
+        <div style="width: 45px;"></div> </div>
+
+    <div class="video-container-box">
+        <div class="video-frame-wrapper">
+            <iframe id="overlayIframePlayer" src="" allowfullscreen></iframe>
+        </div>
+        <div class="enjoy-msg-banner">
+            <i class="fas fa-circle-info" style="color: var(--main); font-size: 18px;"></i>
+            <span>Enjoy watching the video and learn from it! After finishing the video, your focus level will be tested and points will be collected! 🌟</span>
+        </div>
+    </div>
+
+    <div class="overlay-quiz-card">
+        <h2><i class="fas fa-clipboard-question"></i> Knowledge Challenge (Quiz)</h2>
+        <div id="overlayQuizContent">
+            </div>
+        <button class="finish-mission-btn" onclick="submitOverlayQuiz()">Finish Mission 🎉</button>
+    </div>
+</div>
+
+<div class="custom-warning-modal" id="customWarningModal">
+    <div class="warning-card-box">
+        <div class="warning-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="warning-text-msg">
+            Please answer all the available questions before completing the mission! 🌟
+        </div>
+        <button class="warning-close-btn" onclick="closeWarningAlert()">OK</button>
+    </div>
+</div>
+
+<div class="scoreboard-modal" id="scoreboardModal">
+    <div class="scoreboard-card-3d">
+        <div class="stars-container-3d">
+            <i class="fas fa-star spark-star" style="top:10%; left:15%; animation-delay: 0s;"></i>
+            <i class="fas fa-star spark-star" style="top:25%; right:12%; animation-delay: 0.5s;"></i>
+            <i class="fas fa-sparkles spark-star" style="bottom:20%; left:20%; animation-delay: 1.2s;"></i>
+            <i class="fas fa-star spark-star" style="bottom:15%; right:22%; animation-delay: 0.8s;"></i>
+        </div>
+
+        <div class="scoreboard-icon">
+            <i class="fas fa-trophy"></i>
+        </div>
+        <div class="scoreboard-title">You have successfully completed the mission!</div>
+        <div class="scoreboard-vname" id="popVideoTitle">Bus Safety Rules</div>
+
+        <div class="score-stats-grid">
+            <div class="score-stats-box pts-box">
+                <div class="score-box-num" id="popEarnedXP" style="color: var(--green);">+0 XP</div>
+                <div class="score-box-lbl">Earned XP</div>
+            </div>
+            <div class="score-stats-grid ans-box">
+                <div class="score-box-num" id="popCorrectRatio" style="color: var(--main);">0 / 0</div>
+                <div class="score-box-lbl">Correct Answers</div>
+            </div>
+        </div>
+
+        <button class="next-mission-btn" onclick="clickNextMission()">Next Mission ➡️</button>
+    </div>
+</div>
+
+
+// استبدل سكربت الـ module الحالي بهذا:
+<script type="module">
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    getDoc, 
+    updateDoc, 
+    collection, 
+    addDoc, 
+    serverTimestamp 
+} 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { increment } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = { 
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q", 
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com", 
+    projectId: "rahlataman-bus-safety-app", 
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app", 
+    messagingSenderId: "1088859717905", 
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0" 
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.doc = doc;
+window.setDoc = setDoc;
+window.getDoc = getDoc;
+window.updateDoc = updateDoc;
+window.collection = collection;
+window.addDoc = addDoc;
+window.serverTimestamp = serverTimestamp;
+</script>
+<script>
+
+async function syncProgressWithFirebase(missionId, courseData, scoreData) {
+    if(!courseData || !scoreData) return;
+    let userKey = getCurrentUserId().toLowerCase().replace(/[.#$[\]]/g, "_");
+    
+    try {
+        await window.setDoc(window.doc(
+            window.db, 
+            "student_progress", 
+            userKey, "missions", 
+            "mission_" + missionId), {
+            completed: true,
+            xpEarned: scoreData.totalGainedXP,
+            correctAnswers: scoreData.correct,
+            dateCompleted: new Date().toISOString()
+        }, { merge: true });
+
+        // تحديث إجمالي نقاط الطالب في Firebase لتقرأها الداشبورد
+        await window.setDoc(window.doc(window.db, "student_stats", userKey), {
+            totalXP: parseInt(localStorage.getItem(userKey + "_safetyXP")) || 0,
+            lastUpdated: new Date()
+        }, { merge: true });
+        
+        console.log("Progress synced with Firebase!");
+    } catch (e) {
+        console.error("Sync Error:", e);
+    }
+}    
+
+const courses = [
+
+{
+id:1,
+title:"Bus Safety Rules",
+mission:"Mission 01",
+desc:"Learn the most important school bus safety rules before, during and after every trip.",
+img:"1.png",
+xp:15,
+video:"https://www.youtube.com/watch?v=b45AGmJ-YnA",
+duration:"2 min",
+difficulty:"Easy",
+level:"Essential",
+questions:[
+{
+q:"What should students do before crossing the road?",
+options:["Run quickly","Look both ways","Close their eyes"],
+correct:1
+},
+{
+q:"Where should students wait for the bus?",
+options:["Middle of road","Far from edge","Behind cars"],
+correct:1
+},
+{
+q:"Why is bus safety important?",
+options:["Arrive safely","Play games","Waste time"],
+correct:0
+},
+{
+q:"How many steps away from the bus should you stand?",
+options:["1 step","2 steps","At least 10 steps"],
+correct:2
+},
+{
+q:"What is the danger zone around the bus?",
+options:["Inside the bus","Directly in front, back, and sides","The bus roof"],
+correct:1
+}
+]
+},
+
+{
+id:2,
+title:"Safe Behavior Inside the Bus",
+mission:"Mission 02",
+desc:"Understand the safest behavior while riding inside the school bus.",
+img:"2.png",
+video:"https://www.youtube.com/watch?v=ttnQIHGu6rE",
+xp:15,
+duration:"2 min",
+difficulty:"Easy",
+level:"Essential",
+questions:[
+{
+q:"What should students do inside the bus?",
+options:["Stay seated","Jump around","Scream"],
+correct:0
+},
+{
+q:"Why should students stay quiet?",
+options:["Help driver focus","For games","For sleeping"],
+correct:0
+},
+{
+q:"Is it safe to put your hands out of the window?",
+options:["Yes, to wave","No, it is dangerous","Only if the bus is slow"],
+correct:1
+},
+{
+q:"Where should your school bag be kept?",
+options:["On the seat","Under your seat or on your lap","In the aisle"],
+correct:1
+},
+{
+q:"When can you unbuckle your seatbelt?",
+options:["When the bus starts moving","Only after the bus completely stops","Whenever you want"],
+correct:1
+}
+]
+},
+
+{
+id:3,
+title:"Crossing the Road Safely",
+mission:"Mission 03",
+desc:"Learn the correct and safe way to cross roads near school buses.",
+img:"3.png",
+video:"https://www.youtube.com/watch?v=k2ygGvgQ0wQ",
+xp:20,
+duration:"3 min",
+difficulty:"Medium",
+level:"Essential",
+questions:[
+{
+q:"Before crossing students must?",
+options:["Run fast","Look both ways","Use phones"],
+correct:1
+},
+{
+q:"Students should cross?",
+options:["Anywhere","Behind bus","With permission"],
+correct:2
+},
+{
+q:"What should you look for before crossing?",
+options:["Left, Right, and Left again","Only straight ahead","The clouds"],
+correct:0
+},
+{
+q:"Where is the safest place to cross the street?",
+options:["Between parked cars","At a designated crosswalk or corner","From behind the bus"],
+correct:1
+},
+{
+q:"What does a yellow traffic light mean?",
+options:["Speed up","Slow down and prepare to stop","Go as fast as possible"],
+correct:1
+}
+]
+},
+
+{
+id:4,
+title:"Emergency Safety Awareness",
+mission:"Mission 04",
+desc:"Students learn how to stay calm and act correctly during emergencies.",
+img:"4.png",
+video:"https://www.youtube.com/watch?v=uOzjH-rWmvc",
+xp:25,
+duration:"4 min",
+difficulty:"Medium",
+level:"Awareness",
+questions:[
+{
+q:"During emergencies students should?",
+options:["Stay calm","Panic","Push others"],
+correct:0
+},
+{
+q:"Emergency exits are used?",
+options:["Daily","In emergencies only","For fun"],
+correct:1
+},
+{
+q:"Who should you listen to in an emergency?",
+options:["Nobody","The bus driver or supervisor","Your friends"],
+correct:1
+},
+{
+q:"What should you leave behind during an emergency evacuation?",
+options:["Nothing","Your heavy school bag and belongings","Your shoes"],
+correct:1
+},
+{
+q:"Where should students gather after exiting the bus in an emergency?",
+options:["Close to the bus","At a safe distance away from the road","In the middle of the street"],
+correct:1
+}
+]
+},
+
+{
+id:5,
+title:"Smart Travel Habits",
+mission:"Mission 05",
+desc:"Develop smart travel habits that improve school transportation safety.",
+img:"5.png",
+video:"https://www.youtube.com/watch?v=5I61Xt7kCrE",
+xp:25,
+duration:"3 min",
+difficulty:"Medium",
+level:"Awareness",
+questions:[
+{
+q:"Students should arrive?",
+options:["Late","Early","After bus leaves"],
+correct:1
+},
+{
+q:"Safe habits help?",
+options:["Prevent accidents","Create danger","Slow buses"],
+correct:0
+},
+{
+q:"How early should you be at the bus stop?",
+options:["At least 5 minutes before","Exactly on time","10 minutes late"],
+correct:0
+},
+{
+q:"If you drop something near the bus, what should you do?",
+options:["Pick it up quickly","Tell the driver before picking it up","Leave it and run"],
+correct:1
+},
+{
+q:"What should you do if a stranger asks you to get in their car?",
+options:["Get in quickly","Say NO, run away, and tell a trusted adult","Talk to them"],
+correct:1
+}
+]
+},
+
+{
+id:6,
+title:"School Transportation Awareness",
+mission:"Mission 06",
+desc:"Learn transportation awareness and travel responsibility.",
+img:"6.png",
+video:"https://www.youtube.com/watch?v=HTtomc6UR8w",
+xp:30,
+duration:"3 min",
+difficulty:"Hard",
+level:"Awareness",
+questions:[
+{
+q:"Transportation safety protects?",
+options:["Buildings","Students","Toys"],
+correct:1
+},
+{
+q:"Students should?",
+options:["Stay alert","Run inside","Open doors"],
+correct:0
+},
+{
+q:"What is the purpose of the flashing red lights on a school bus?",
+options:["To look beautiful","To tell other cars to stop for students to cross","To speed up"],
+correct:1
+},
+{
+q:"Why should you never play behind a school bus?",
+options:["The driver cannot see you in the blind spots","It is fun","The bus is dirty"],
+correct:0
+},
+{
+q:"Who is responsible for safety on the bus?",
+options:["Only the driver","Everyone (Driver, supervisor, and students)","No one"],
+correct:1
+}
+]
+},
+
+{
+id:7,
+title:"Safety Leadership & Responsibility",
+mission:"Mission 07",
+desc:"Build leadership and responsibility during school transportation.",
+img:"7.png",
+video:"https://www.youtube.com/watch?v=XdKp9lgrEGw",
+xp:35,
+duration:"4 min",
+difficulty:"Hard",
+level:"Leadership",
+questions:[
+{
+q:"A good leader?",
+options:["Helps others","Ignores safety","Causes problems"],
+correct:0
+},
+{
+q:"Responsibility means?",
+options:["Breaking rules","Following rules","Running away"],
+correct:1
+},
+{
+q:"If you see someone bullying a student on the bus, what should you do?",
+options:["Join them","Report it to the driver or supervisor immediately","Ignore it"],
+correct:1
+},
+{
+q:"How can you help younger students on the bus?",
+options:["Show them how to sit properly and follow rules","Scream at them","Take their seats"],
+correct:0
+},
+{
+q:"A safety hero always:",
+options:["Reminds friends to follow safety rules","Breaks the seatbelts","Pushes in line"],
+correct:0
+}
+]
+},
+
+{
+id:8,
+title:"General Safety Awareness",
+mission:"Mission 08",
+desc:"General educational awareness for daily transportation safety.",
+img:"8.png",
+video:"https://www.youtube.com/watch?v=8Hrc_gcIUrU",
+xp:40,
+duration:"5 min",
+difficulty:"Hard",
+level:"Leadership",
+questions:[
+{
+q:"Safety awareness helps?",
+options:["Prevent accidents","Increase danger","Waste time"],
+correct:0
+},
+{
+q:"Students should always?",
+options:["Stay aware","Ignore surroundings","Use phones"],
+correct:0
+},
+{
+q:"What does Rahlat Aman mean to you?",
+options:["A safe and happy journey to and from school","A fast racing game","Just a regular bus ride"],
+correct:1
+},
+{
+q:"When getting off the bus, you should:",
+options:["Push and crowd the door","Wait your turn and hold the handrail","Jump out of the window"],
+correct:1
+},
+{
+q:"Why should we respect the school bus driver?",
+options:["Because they ensure our safe delivery daily","Because they give us candy","They don't matter"],
+correct:0
+}
+]
+}
+
+];
+
+const container = document.getElementById("missions");
+
+// دالة ديناميكية لجلب معرف الطالب الحالي لضمان الفصل التام للبيانات
+function getCurrentUserId() {
+    let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+    return currentUser.id || currentUser.email || "guest";
+}
+
+let userId = getCurrentUserId();
+let totalXP = parseInt(localStorage.getItem(userId + "_safetyXP")) || 0;
+let currentViewingMissionId = null; 
+let overlayScoreTracker = { correct: 0, wrong: 0, totalGainedXP: 0 };
+
+/* AUDIO NOTIFICATION SYSTEM VIA WEB AUDIO API (PERFECT FOR APP EMBEDS) */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSoundEffect(type) {
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); 
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); 
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+    } else if (type === 'wrong') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+    } else if (type === 'warning') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime + 0.08);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    } else if (type === 'success') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); 
+        osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3); 
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+    }
+}
+
+function addStudentPoints(value){
+    let currentId = getCurrentUserId();
+    let points = parseInt(localStorage.getItem("coins_" + currentId)) || 0;
+    points += value;
+    localStorage.setItem("coins_" + currentId, points);
+
+    localStorage.setItem("notifyNow", "🛡️ Safety Reward +" + value + " points");
+}
+
+function render(){
+let currentId = getCurrentUserId();
+container.innerHTML="";
+let completed = 0;
+
+courses.forEach((course,index)=>{
+// جلب حالة المهمة بناءً على الـ id الخاص بالطالب الحالي فقط
+let state = localStorage.getItem(currentId + "_mission_" + course.id);
+let locked = false;
+
+if(index > 0){
+    let prevCourse = courses[index - 1];
+    let prev = localStorage.getItem(currentId + "_mission_" + prevCourse.id);
+    if(prev !== "done"){
+        locked = true;
+    }
+}
+
+if(state==="done") completed++;
+
+let statusText = "Not Started";
+let statusClass = "not";
+let btnText = "Start Mission";
+
+if(state==="progress"){
+    statusText = "In Progress";
+    statusClass = "inprogress";
+}
+
+if(state==="done"){
+    statusText = "Completed";
+    statusClass = "complete";
+    btnText = "Completed";
+}
+
+container.innerHTML += `
+<div class="card ${state==="done"?"completed":""} ${locked?"locked":""}" id="card${course.id}">
+<div class="card-top">
+<img src="${course.img}" class="thumb">
+<div class="content">
+<div class="mission">${course.mission}</div>
+<div class="title">${course.title}</div>
+<div class="desc">${course.desc}</div>
+<div class="meta">
+<span>⏱ ${course.duration}</span>
+<span>⭐ ${course.difficulty}</span>
+<span>🎁 +${course.xp} XP</span>
+</div>
+<div class="bottom">
+<button class="start ${state==="done"?"done":""}" onclick="startMission(${course.id})">
+${btnText}
+</button>
+<div class="status ${statusClass}">
+${locked ? "🔒 Locked" : statusText}
+</div>
+</div>
+<div class="quiz-box" id="quiz${course.id}"></div>
+</div>
+</div>
+</div>
+`;
+});
+
+updateGlobal(completed);
+}
+
+function getEmbedUrl(url) {
+    if(!url) return "";
+    let videoId = "";
+    if(url.includes("youtube.com/watch?v=")) {
+        videoId = url.split("v=")[1].split("&")[0];
+    } else if(url.includes("youtu.be/")) {
+        videoId = url.split("youtu.be/")[1].split("?")[0];
+    }
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+}
+
+function startMission(id){
+    let currentId = getCurrentUserId();
+    let course = courses.find(c => c.id == id);
+    currentViewingMissionId = id;
+    
+    overlayScoreTracker = { correct: 0, wrong: 0, totalGainedXP: 0 };
+
+    document.getElementById("overlayVideoTitle").innerText = course.mission + " - " + course.title;
+    document.getElementById("overlayIframePlayer").src = getEmbedUrl(course.video);
+    
+    renderOverlayQuestions(course);
+    document.getElementById("videoOverlayPage").style.display = "block";
+
+    localStorage.setItem(currentId + "_mission_" + id, "progress");
+    logStudentActivity("Safety Mission", "Started safety mission ID " + id);
+    render();
+}
+
+function renderOverlayQuestions(course) {
+    let container = document.getElementById("overlayQuizContent");
+    let html = "";
+    
+    course.questions.forEach((q, qi) => {
+        html += `
+            <div class="question" style="background: #F8FAFC; 
+            padding: 20px; 
+            border-radius: 18px; 
+            margin-bottom: 15px; 
+            border: 1px solid #E2E8F0;">
+                <h4 style="font-size:16px; 
+                font-weight:700; 
+                margin-bottom:12px; 
+                color:var(--dark);">${qi+1}. ${q.q}</h4>
+                <div class="options-list-group">
+                    ${q.options.map((op, oi) => `
+                        <div class="option" style="background: white; border: 2px solid #E2E8F0; padding: 12px 18px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-weight:600;"
+                             id="opt-${course.id}-${qi}-${oi}"
+                             onclick="selectOverlayAnswer(this, ${oi}, ${q.correct}, ${course.id}, ${qi})">
+                            ${op}
+                        </div>
+                    `).join("")}
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function selectOverlayAnswer(el, selected, correct, courseId, qIndex) {
+    let currentId = getCurrentUserId();
+    let parent = el.parentElement;
+    let sisterOptions = parent.querySelectorAll(".option");
+    sisterOptions.forEach(opt => opt.style.pointerEvents = "none");
+    let isAlreadyDone = localStorage.getItem(currentId + "_mission_" + courseId) === "done";
+    
+    if(selected === correct) {
+        el.classList.add("correct");
+        el.style.background = "#dcfce7";
+        el.style.borderColor = "#22c55e";
+        
+        overlayScoreTracker.correct += 1;
+        
+        if (!isAlreadyDone) {
+            addStudentPoints(5);
+            overlayScoreTracker.totalGainedXP += 5;
+            localStorage.setItem(currentId + "_safetyXP", totalXP);
+            addStudentPoints(5);
+            logStudentActivity("Quiz Answer", `Answered a quiz question correctly in mission ${courseId}`);
+        }
+        
+        playSoundEffect('correct');
+    } else {
+        el.classList.add("wrong");
+        el.style.background = "#fee2e2";
+        el.style.borderColor = "#ef4444";
+        
+        overlayScoreTracker.wrong += 1;
+        playSoundEffect('wrong');
+        
+        let correctSibling = Array.from(parent.children)[correct];
+        if(correctSibling) {
+            correctSibling.style.background = "#dcfce7";
+            correctSibling.style.borderColor = "#22c55e";
+        }
+    }
+    updateStats();
+}
+
+
+async function submitOverlayQuiz() {
+    let currentId = getCurrentUserId();
+    let course = courses.find(c => c.id == currentViewingMissionId);
+    let totalQuestions = course.questions.length;
+    let correctAnswers = overlayScoreTracker.correct;
+    let wrongAnswers = overlayScoreTracker.wrong;
+    let answeredQuestions = course.questions.length;
+
+    // 1. التحقق من إكمال جميع الأسئلة
+    if (answeredQuestions < totalQuestions) {
+        playSoundEffect('warning');
+        document.getElementById("customWarningModal").style.display = "flex";
+        return;
+    }
+
+    // 2. حساب النقاط (تأكدي أن هذه القيم تُحسب أثناء حل الأسئلة)
+    let earnedXP = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 20) : 0;
+    let isAlreadyDone = localStorage.getItem(currentId + "_mission_" + currentViewingMissionId) === "done";
+    
+    // إذا كانت المرة الأولى، نحفظ في Firebase
+    if (!isAlreadyDone) {
+        localStorage.setItem(currentId + "_mission_" + currentViewingMissionId, "done");
+        logStudentActivity("Mission Completed", "Completed Safety Mission ID " + currentViewingMissionId);
+        
+        totalXP += earnedXP;
+        localStorage.setItem(currentId + "_safetyXP", totalXP);
+        addStudentPoints(earnedXP);
+
+        try {
+    let userKey = currentId.toLowerCase().replace(/[.#$[\]]/g, "_");
+    
+    // 1. حفظ بيانات المهمة في مسارها الأصلي
+    await window.setDoc(window.doc(window.db, "student_safety_data", userKey, "missions", "mission_" + currentViewingMissionId), {
+        title: course.title,
+        completed: true,
+        xpEarned: earnedXP,
+        correctAnswers: correctAnswers,
+        wrongAnswers: wrongAnswers,
+        totalQuestions: totalQuestions,
+        dateCompleted: new Date().toISOString(),
+        certificateIssued: true 
+    }, { merge: true });
+
+    // 2. حساب النقاط الجديدة (تقسيم على 2) وإضافتها للداشبورد
+    let pointsToAdd = earnedXP;
+await window.setDoc(
+    window.doc(window.db, "student_dashboard", userKey),
+    {
+        points: increment(pointsToAdd),
+        lastActivity: "Completed: " + course.title,
+        lastSeen: window.serverTimestamp()
+    },
+    { merge: true }
+);
+    console.log("Important items have been saved and active dashboard points have been updated!");
+} catch (e) {
+    console.error("Firebase Error:", e);
+} }
+    // 3. تحديث الواجهة (مهم جداً: استخدمنا نفس الـ IDs الموجودة في صورتك الأصلية)
+    document.getElementById("popEarnedXP").innerText = "+" + earnedXP + " XP";
+    document.getElementById("popCorrectRatio").innerText = correctAnswers + " / " + totalQuestions;
+    // 4. إظهار النتيجة
+    updateStats();
+    document.getElementById("overlayIframePlayer").src = "";
+    playSoundEffect('success');
+    document.getElementById("scoreboardModal").style.display = "flex";
+    
+    if (typeof render === 'function') render();
+}
+
+function closeWarningAlert() {
+    document.getElementById("customWarningModal").style.display = "none";
+}
+
+function clickNextMission() {
+    document.getElementById("scoreboardModal").style.display = "none";
+    document.getElementById("videoOverlayPage").style.display = "none";
+    render();
+}
+
+function closeVideoOverlay() {
+    document.getElementById("overlayIframePlayer").src = "";
+    document.getElementById("videoOverlayPage").style.display = "none";
+    render();
+}
+
+
+function updateGlobal(done){
+    let percent = Math.round((done/courses.length)*100);
+    document.getElementById("globalFill").style.width = percent+"%";
+    document.getElementById("globalText").innerText = percent+"%";
+    document.getElementById("completed").innerText = done+"/8";
+    document.getElementById("streak").innerText = done;
+}
+
+function updateStats(){
+    let currentId = getCurrentUserId();
+    let xpFromStorage = parseInt(localStorage.getItem(currentId + "_safetyXP")) || 0;
+totalXP = xpFromStorage;
+    document.getElementById("xp").innerText = totalXP;
+    let rank = "Beginner";
+    if(totalXP >= 50) rank="Explorer";
+    if(totalXP >= 120) rank="Protector";
+    if(totalXP >= 200) rank="Safety Hero";
+    if(totalXP >= 300) rank="Master Guardian";
+
+    document.getElementById("rank").innerText = rank;
+}
+
+function goBack(){
+    window.location.href="student_dashboard.html";
+}
+
+// البدء الفعلي للبرنامج
+render();
+updateStats();
+
+</script>
+<script>
+
+function logStudentActivity(type, description){
+    let key = getCurrentUserId() + "_studentActivities";
+    let activities =
+    JSON.parse(localStorage.getItem(key)) || [];
+    activities.unshift({
+        type:type,
+        description:description,
+        time:new Date().toLocaleTimeString(),
+        date:new Date().toLocaleDateString()
+    });
+    localStorage.setItem(
+        key,
+        JSON.stringify(activities)
+    );}
+</script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahlat Aman Ultimate Page | News & Schools Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0f172a;
+            --dark-navy: #08111f;
+            --blue: #38bdf8;
+            --gold: #d4af37;
+            --white: #f8fafc;
+            --gray: #94a3b8;
+            --red: #ef4444;
+            --green: #10b981;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body {
+            background: linear-gradient(135deg, var(--dark-navy), var(--navy));
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        header {
+            padding: 20px 5%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .back-dashboard {
+            color: var(--white);
+            text-decoration: none;
+            background: var(--glass);
+            padding: 8px 15px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .back-dashboard:hover { background: var(--gold); color: var(--dark-navy); }
+
+        .live-clock-box { text-align: right; }
+        #clock { color: var(--blue); font-weight: bold; font-size: 1.1rem; }
+        #holiday-status { font-size: 0.8rem; display: block; }
+
+        .container { padding: 25px 5%; max-width: 1400px; margin: auto; }
+
+        .hero {
+            background: linear-gradient(135deg, #132238, #1e3a8a);
+            padding: 30px;
+            border-radius: 25px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-left: 8px solid var(--gold);
+        }
+
+        .hero-left h2 { font-size: 2.2rem; margin-bottom: 10px; color: var(--white); }
+        .hero-right { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .mini-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .mini-card h4 { font-size: 0.8rem; color: var(--gray); margin-bottom: 5px; }
+        .mini-card span { font-weight: bold; font-size: 1rem; display: block; color: var(--blue); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { 
+            background: var(--glass); 
+            padding: 20px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--gold); box-shadow: 0 10px 20px rgba(212,175,55,0.1); }
+        .card h3 { font-size: 1.1rem; color: var(--gold); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+
+        .news-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            background: var(--glass);
+            border: 1px solid var(--blue);
+            color: var(--white);
+            padding: 8px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .tab-btn.active, .tab-btn:hover { background: var(--blue); color: var(--dark-navy); }
+
+        .news-container { min-height: 200px; display: flex; flex-direction: column; gap: 14px; }
+        .news-item { 
+            padding: 16px; 
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+        .news-content { line-height: 1.5; font-size: 0.95rem; }
+        .news-tag { font-size: 0.75rem; background: rgba(56, 189, 248, 0.15); color: var(--blue); padding: 3px 8px; border-radius: 6px; font-weight: 600; margin-right: 8px; text-transform: uppercase; }
+        
+        .like-btn {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--gray);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .like-btn:hover { border-color: var(--blue); color: var(--blue); }
+        .like-btn.liked { background: rgba(56, 189, 248, 0.2); border-color: var(--blue); color: var(--blue); }
+
+        .search-bar { width: 100%; padding: 15px 25px; border-radius: 15px; border: none; background: #0f172a; color: white; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); outline: none; }
+        .search-bar:focus { border-color: var(--gold); }
+        .school-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .school-card { background: var(--glass); padding: 25px; border-radius: 20px; text-align: center; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .school-card:hover { border-color: var(--gold); background: rgba(255,255,255,0.08); transform: translateY(-3px); }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 17, 31, 0.9); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background: #132238; width: 90%; max-width: 550px; padding: 40px; border-radius: 30px;
+            position: relative; border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(212,175,55,0.2);
+        }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: var(--gray); transition: 0.2s; }
+        .close-btn:hover { color: var(--red); }
+
+        .btn-link { 
+            display: inline-block; padding: 12px 25px; border-radius: 12px; text-decoration: none; font-weight: bold; margin: 10px 5px; 
+            transition: 0.3s; text-align: center; min-width: 150px; border: none; cursor: pointer;
+        }
+        .btn-call { background: var(--blue); color: var(--dark-navy); }
+        .btn-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; }
+
+        @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<audio id="snd-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+<audio id="snd-pop" src="https://assets.mixkit.co/active_storage/sfx/2774/2774-preview.mp3"></audio>
+<audio id="snd-bubble" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+
+<header>
+    <a href="parent_dashboard.html" class="back-dashboard">
+        <i class="fas fa-arrow-left"></i> Home Page
+    </a>
+    
+    <div style="text-align: center;">
+        <h1 style="font-size: 1.5rem;">RAHLAT AMAN <span style="color:var(--gold)">ULTIMATE</span></h1>
+    </div>
+
+    <div class="live-clock-box">
+        <div id="clock">00:00:00</div>
+        <span id="holiday-status">Checking Status...</span>
+    </div>
+</header>
+
+<div class="container">
+    <section class="hero">
+        <div class="hero-left">
+            <h2 id="greetingText">Good Morning</h2>
+            <p>Welcome, <strong id="pNameDisplay">Guardian</strong>. The Rahlat Aman ecosystem ensures the high-fidelity tracking, safety orchestration, and node visibility of your registered family children across Oman.</p>
+            <div style="margin-top: 20px;">
+                <span id="sys-active-tag" style="padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">SYSTEM STATUS</span>
+            </div>
+        </div>
+        <div class="hero-right">
+            <div class="mini-card">
+                <h4>Linked Node</h4>
+                <span id="sNameDisplay">No Child Linked</span>
+            </div>
+            <div class="mini-card">
+                <h4>School Vector</h4>
+                <span id="schDisplay">Not Specified</span>
+            </div>
+            <div class="mini-card">
+                <h4>Live Status</h4>
+                <span id="tripStatus" style="color: var(--green);">Arrived Safely</span>
+            </div>
+            <div class="mini-card">
+                <h4>Temp Tracker</h4>
+                <span>36.5 °C</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid4">
+        <div class="card" onclick="playSfx('snd-pop'); showPopup('notif')">
+            <h3>Notifications <i class="fas fa-bell"></i></h3>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="notifCount">Operational Logs</span>
+                <span style="background:var(--green); color:black; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold;">LIVE FEED</span>
+            </div>
+        </div>
+        <div class="card" onclick="playSfx('snd-pop'); showPopup('bus')">
+            <h3>Bus Operations <i class="fas fa-bus"></i></h3>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Active Smart Fleet</span>
+                <i class="fas fa-route" style="color:var(--blue)"></i>
+            </div>
+        </div>
+        <div class="card" onclick="playSfx('snd-pop'); showPopup('support')">
+            <h3>Technical Support <i class="fas fa-headset"></i></h3>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>Ecosystem Control</span>
+                <span style="background:var(--gold); color:black; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:bold;">24/7</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="card" style="margin-bottom: 30px;">
+        <h3 style="margin-bottom: 20px;">Official Oman Education & Transport News Center <i class="fas fa-newspaper"></i></h3>
+        <div class="news-tabs">
+            <button class="tab-btn active" onclick="playSfx('snd-click'); filterNews('all')">All Feed</button>
+            <button class="tab-btn" onclick="playSfx('snd-click'); filterNews('moe')">Ministry of Education</button>
+            <button class="tab-btn" onclick="playSfx('snd-click'); filterNews('mot')">Ministry of Transport</button>
+            <button class="tab-btn" onclick="playSfx('snd-click'); filterNews('met')">Oman Meteorology</button>
+            <button class="tab-btn" onclick="playSfx('snd-click'); filterNews('schools')">School Bulletins</button>
+        </div>
+        <div id="newsFeed" class="news-container"></div>
+    </section>
+
+    <section>
+        <h2 style="margin-bottom: 20px; color: var(--gold);">Oman Schools Infrastructure Directory</h2>
+        <input type="text" class="search-bar" id="searchSchools" placeholder="Search for a school by name or regional wilayat location..." onkeyup="searchEngine()">
+        <div class="school-grid" id="schoolsGrid"></div>
+    </section>
+</div>
+
+<div class="modal" id="globalModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    // دالة تشغيل الصوت
+    function playSfx(id) {
+        const s = document.getElementById(id);
+        s.currentTime = 0;
+        s.play().catch(e => console.log("User interaction required for audio"));
+    }
+
+    const BASE_FIREBASE_URL = "https://YOUR-FIREBASE-PROJECT-ID.firebaseio.com/news_interactions";
+
+    const schoolsData = [
+       { name: "Al Seeb Basic Education School", about: "A leading government school serving the educational sector of Al Seeb region, focusing on tech integration.", manager: "Mr. Mohammed Al Fawri", phone: "24420000", insta: "seeb_school", loc: "Al Seeb" },
+       { name: "Al Khoudh School", about: "A well-established institution focused on academic excellence, safety frameworks, and student digital skills.", manager: "Mr. Salem Al Maawali", phone: "24533000", insta: "alkhoud_school", loc: "Al Khoudh" },
+       { name: "Al Hail School", about: "Features a highly stimulating learning environment explicitly designed for early primary school tracks.", manager: "Mr. Nasser Al Rashdi", phone: "24541122", insta: "alhail_edu", loc: "South Al Hail" },
+       { name: "Al Mawaleh School", about: "A standard model educational structure situated directly in the heart of Al Mawaleh residential sectors.", manager: "Mrs. Fatima Al Busaidiya", phone: "24545000", insta: "moe_oman", loc: "Al Mawaleh" },
+       { name: "Al Sahwa Schools", about: "Combines classic Omani cultural heritage paradigms with an advanced global digital curriculum.", manager: "Mrs. Mona Al Ameriya", phone: "24511000", insta: "alsahwaschools", loc: "Al Mawaleh" },
+       { name: "The British School Muscat", about: "A leading premium international center offering global standard educational competencies within Oman.", manager: "Mr. Kai Vacher", phone: "24600842", insta: "britishschoolmuscat", loc: "Al Qurum" },
+       { name: "ABA Academy", about: "An elite international academy providing high-tier International Baccalaureate structures to modern pupils.", manager: "Dr. Kasson Brauer", phone: "24955800", insta: "abaoman", loc: "Al Khoudh" },
+       { name: "Al Seeb Private School", about: "Provides comprehensive private education frameworks fully aligned with modern ministerial guidelines.", manager: "Mr. Rashid Al Ghasaini", phone: "24422200", insta: "seeb_private", loc: "Al Seeb" }
+    ];
+
+    const structuralNewsDatabase = [
+        { id: "moe_1", category: "moe", tag: "MOE Oman", text: "Ministry of Education announces the official launch of the early smart registration framework on the portal." },
+        { id: "moe_2", category: "moe", tag: "Budget Update", text: "Approval of the unified digital transformation and smart IoT infrastructure budget for public school fleets." },
+        { id: "moe_3", category: "moe", tag: "Exams", text: "Official schedules released for the second-semester cross-evaluation frameworks across all governorates." },
+        { id: "mot_1", category: "mot", tag: "MOTIT Oman", text: "Ministry of Transport, Communications and IT announces new smart corridor expansions for dedicated school lines." },
+        { id: "mot_2", category: "mot", tag: "Eco Fleet", text: "The pilot launch of zero-emission smart electric school buses kicks off successfully in Muscat Governorate." },
+        { id: "mot_3", category: "mot", tag: "Traffic Alert", text: "New structural maintenance updates and smart re-routing setups deployed on the main Sultan Qaboos Road axes." },
+        { id: "met_1", category: "met", tag: "Oman Met", text: "Meteorology Oman issues early alert for convective cloud developments over the Hajar Mountains range." },
+        { id: "met_2", category: "met", tag: "Climate Warning", text: "High temperature warning issued for internal desert sectors; guardians advised to monitor hydration levels." },
+        { id: "met_3", category: "met", tag: "Stability", text: "Atmospheric tracking arrays indicate a highly stable weather formation for the upcoming seventy-two hours." },
+        { id: "schools_1", category: "schools", tag: "Innovation Award", text: "Al Seeb Basic Education School proudly secures first place in the national Al-Batinah AI & Tech Innovation Forum." },
+        { id: "schools_2", category: "schools", tag: "Teacher Day", text: "Preparations underway for the upcoming annual Teacher Appreciation gala event across education zones next week." },
+        { id: "schools_3", category: "schools", tag: "Dismissal Matrix", text: "Updated administrative guidelines issued regarding real-time safety logs and parent notice timelines for early dismissal." }
+    ];
+
+    let globalLikesRegistry = JSON.parse(localStorage.getItem("newsLikesMatrix")) || {};
+
+    function updateSystem() {
+        const now = new Date();
+        const d = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Muscat"}));
+        document.getElementById('clock').innerText = d.toLocaleTimeString('en-US');
+        const hour = d.getHours();
+        document.getElementById('greetingText').innerText = hour < 12 ? "Good Morning" : "Good Evening";
+        const day = d.getDay(); 
+        const statusBadge = document.getElementById('holiday-status');
+        const activeTag = document.getElementById('sys-active-tag');
+        if (day === 5 || day === 6) {
+            statusBadge.innerText = "System is on official weekend leave.";
+            statusBadge.style.color = "var(--red)";
+            activeTag.innerText = "OFFICIAL HOLIDAY";
+            activeTag.style.background = "var(--red)";
+        } else {
+            statusBadge.innerText = "Active operational tracking sequence initialized.";
+            statusBadge.style.color = "var(--green)";
+            activeTag.innerText = "OFFICIAL WORK DAY";
+            activeTag.style.background = "var(--green)";
+        }
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if(currentUser) {
+            document.getElementById('pNameDisplay').innerText = currentUser.fullName || "Guardian User";
+            const childrenKey = "childrenData_" + currentUser.email;
+            const connectedChildren = JSON.parse(localStorage.getItem(childrenKey)) || [];
+            if(connectedChildren.length > 0) {
+                document.getElementById('sNameDisplay').innerText = connectedChildren[0].name;
+                document.getElementById('schDisplay').innerText = connectedChildren[0].school;
+                document.getElementById('tripStatus').innerText = "Arrived Safely Node";
+                document.getElementById('tripStatus').style.color = "var(--green)";
+            } else {
+                document.getElementById('sNameDisplay').innerText = currentUser.studentName || "No Student Linked";
+                document.getElementById('schDisplay').innerText = currentUser.school || "Not Specified";
+            }
+        }
+    }
+
+    function renderSchools(list) {
+        const grid = document.getElementById('schoolsGrid');
+        grid.innerHTML = list.map((s, i) => `
+            <div class="school-card" onclick="playSfx('snd-pop'); openSchoolDetails(${i})">
+                <i class="fas fa-school" style="font-size:2.5rem; color:var(--gold); margin-bottom:15px;"></i>
+                <h3>${s.name}</h3>
+                <p style="color:var(--gray); margin-top:5px;">${s.loc}</p>
+            </div>
+        `).join('');
+    }
+
+    function searchEngine() {
+        const query = document.getElementById('searchSchools').value.toLowerCase();
+        const filtered = schoolsData.filter(s => s.name.toLowerCase().includes(query) || s.loc.toLowerCase().includes(query));
+        renderSchools(filtered);
+    }
+
+    function openSchoolDetails(idx) {
+        const s = schoolsData[idx];
+        const content = `
+            <h2 style="color:var(--gold); margin-bottom:10px;">${s.name}</h2>
+            <p style="line-height:1.6; margin-bottom:20px; color:var(--gray);">${s.about}</p>
+            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; border-left:4px solid var(--blue);">
+                <p style="margin-bottom:8px;"><strong><i class="fas fa-user-tie" style="color:var(--blue); width:20px;"></i> Manager:</strong> ${s.manager}</p>
+                <p style="margin-bottom:8px;"><strong><i class="fas fa-map-marker-alt" style="color:var(--blue); width:20px;"></i> Location:</strong> ${s.loc}</p>
+                <p><strong><i class="fas fa-phone" style="color:var(--blue); width:20px;"></i> Contact Vector:</strong> ${s.phone}</p>
+            </div>
+            <div style="display:flex; justify-content:center; gap:10px; margin-top:25px;">
+                <a href="tel:${s.phone}" class="btn-link btn-call"><i class="fas fa-phone"></i> Call Node</a>
+                <a href="https://instagram.com/${s.insta}" target="_blank" class="btn-link btn-insta"><i class="fab fa-instagram"></i> Instagram Feed</a>
+            </div>
+        `;
+        document.getElementById('modalBody').innerHTML = content;
+        document.getElementById('globalModal').style.display = 'flex';
+    }
+
+    function filterNews(categoryType) {
+        const feed = document.getElementById('newsFeed');
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        if(event && event.target) { event.target.classList.add('active'); }
+        let dynamicNewsSet = (categoryType === 'all') ? structuralNewsDatabase : structuralNewsDatabase.filter(news => news.category === categoryType);
+        feed.innerHTML = dynamicNewsSet.map(news => {
+            const currentLikes = globalLikesRegistry[news.id]?.count || Math.floor(Math.random() * 25) + 5;
+            const isLiked = globalLikesRegistry[news.id]?.status === true ? "liked" : "";
+            if(!globalLikesRegistry[news.id]) { globalLikesRegistry[news.id] = { count: currentLikes, status: false }; }
+            return `
+                <div class="news-item">
+                    <div class="news-content">
+                        <span class="news-tag">${news.tag}</span>
+                        <span>${news.text}</span>
+                    </div>
+                    <button class="like-btn ${isLiked}" onclick="playSfx('snd-bubble'); triggerNewsLike('${news.id}')">
+                        <i class="fas fa-thumbs-up"></i>
+                        <span class="like-counter">${globalLikesRegistry[news.id].count}</span>
+                    </button>
+                </div>
+            `;
+        }).join('');
+        localStorage.setItem("newsLikesMatrix", JSON.stringify(globalLikesRegistry));
+    }
+
+    function triggerNewsLike(newsId) {
+        if (globalLikesRegistry[newsId].status === false) {
+            globalLikesRegistry[newsId].count += 1;
+            globalLikesRegistry[newsId].status = true;
+        } else {
+            globalLikesRegistry[newsId].count -= 1;
+            globalLikesRegistry[newsId].status = false;
+        }
+        localStorage.setItem("newsLikesMatrix", JSON.stringify(globalLikesRegistry));
+        const activeTabBtn = document.querySelector('.tab-btn.active');
+        const activeCategory = activeTabBtn ? activeTabBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'all';
+        filterNews(activeCategory);
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const safeUserKey = currentUser && currentUser.email ? currentUser.email.replace(/[.#$\[\]]/g, "_") : "anonymous_guardian";
+        fetch(`${BASE_FIREBASE_URL}/${safeUserKey}/${newsId}.json`, {
+            method: "PUT",
+            body: JSON.stringify({ likedAt: new Date().toISOString(), currentCounterValue: globalLikesRegistry[newsId].count, status: globalLikesRegistry[newsId].status })
+        });
+    }
+
+    function showPopup(type) {
+        let content = "";
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const childrenKey = currentUser ? "childrenData_" + currentUser.email : "default";
+        const connectedChildren = JSON.parse(localStorage.getItem(childrenKey)) || [];
+        const studentName = connectedChildren.length > 0 ? connectedChildren[0].name : "Student Node";
+
+        if (type === 'support') {
+            content = `<h2 style="color:var(--gold); margin-bottom:15px;">Ecosystem Support Vectors</h2><div class="news-item"><strong>Ministry of Education Support Desk:</strong> 24420000</div><div class="news-item"><strong>Ministry of Transport & Logistics Operations:</strong> 24685555</div><div class="news-item"><strong>Ecosystem Emergency Technical Node:</strong> 9999</div>`;
+        } else if (type === 'notif') {
+            content = `<h2 style="color:var(--gold); margin-bottom:15px;">Telemetry Log System Alerts</h2><div class="news-item" style="border-left: 4px solid var(--green)">[07:15 AM] Secure Check-In: ${studentName} verified inside school zone perimeter.</div><div class="news-item" style="border-left: 4px solid var(--blue)">[01:30 PM] Fleet Dispatch: Smart bus initialized evening return vector.</div><div class="news-item" style="border-left: 4px solid var(--gold)">[Warning] System Router: ROP reports structural congestion on Seeb highway lane.</div>`;
+        } else if (type === 'bus') {
+            content = `<h2 style="color:var(--gold); margin-bottom:15px;">Smart Bus Core Operations</h2><div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:15px; border:1px solid rgba(255,255,255,0.05)"><p style="margin-bottom:10px;">Active Fleet Registry: <strong style="color:var(--blue)">OMAN-BUS-2026</strong></p><p style="margin-bottom:10px;">Assigned System Driver: <strong>Captain Ahmed Al Fawri</strong></p><p style="margin-bottom:10px;">Ecosystem Coordinates: <strong>Seeb Sector Area</strong></p><div style="margin-top:15px; color:var(--green); font-weight:bold;"><i class="fas fa-hourglass-half"></i> Estimated Proximity Window: 8 - 12 Minutes</div></div>`;
+        }
+        document.getElementById('modalBody').innerHTML = content;
+        document.getElementById('globalModal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('globalModal').style.display = 'none'; }
+
+    window.onload = () => {
+        updateSystem();
+        setInterval(updateSystem, 1000);
+        renderSchools(schoolsData);
+        filterNews('all');
+    };
+</script>
+</body>
+</html>

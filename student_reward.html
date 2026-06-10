@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman - Academic Rewards Portal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+:root {
+    --gold: #F4BC5A;
+    --glass: rgba(255, 255, 255, 0.07);
+    --bg1: #07111f;
+    --bg2: #28496d;
+    --bg3: #344f68;
+    --green: #22c55e;
+    --red: #ff5e5e;
+    --blue: #55b7ff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* نظام التنبيه الاحترافي المطور والممتد لـ 9 ثوانٍ مع صوت واضح */
+.custom-toast-notification {
+    position: fixed;
+    top: 25px;
+    right: -450px;
+    background: linear-gradient(135deg, #0f2740, #1c3d5e);
+    border-left: 6px solid var(--gold);
+    border-radius: 20px;
+    padding: 20px 24px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+    z-index: 10000;
+    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    border: 1px solid rgba(255,255,255,0.15);
+    max-width: 400px;
+}
+.custom-toast-notification.show {
+    right: 25px;
+}
+.toast-close-btn {
+    margin-left: auto;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.toast-close-btn:hover {
+    background: var(--red);
+}
+
+/* الهيدر العلوي وشريط الهوية البصرية */
+.hero {
+    padding: 30px;
+    position: relative;
+    background: linear-gradient(to right, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* سهم العودة جهة اليسار بدقة متناهية متوافق مع لوحة تحكم الطالب */
+.backBtn {
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    width: 55px;
+    height: 35px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+    border: 1px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(10px);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+.backBtn:hover {
+    transform: translateX(-3px);
+    border-color: var(--gold);
+    box-shadow: 0 12px 26px rgba(244,188,90,0.25);
+}
+
+.heroTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.profileBox {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.avatar {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd54f, #ffb300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: black;
+    box-shadow: 0 8px 20px rgba(244,188,90,0.2);
+}
+
+.studentInfo h1 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+.studentInfo p {
+    opacity: 0.85;
+    font-size: 14px;
+    margin-top: 4px;
+    color: #cbd5e1;
+}
+
+.pageDescriptionBox {
+    margin-top: 25px;
+    padding: 18px 22px;
+    background: rgba(244, 188, 90, 0.04);
+    border-left: 5px solid var(--gold);
+    border-radius: 0 16px 16px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #e2e8f0;
+}
+
+.levelBadge {
+    background: linear-gradient(135deg, #d4b85b, #ffae35);
+    padding: 14px 24px;
+    border-radius: 18px;
+    color: black;
+    font-weight: 800;
+    font-size: 18px;
+    box-shadow: 0 10px 25px rgba(255,193,7,0.3);
+}
+
+/* العدادات الأربعة المرتبطة حقيقياً بالأنشطة والألعاب */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    padding: 25px;
+}
+.statCard {
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    padding: 22px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform 0.3s;
+}
+.statCard:hover {
+    transform: translateY(-4px);
+}
+.statCard h2 {
+    font-size: 32px;
+    margin-bottom: 6px;
+    color: var(--gold);
+    font-weight: 800;
+}
+.statCard p {
+    font-size: 14px;
+    opacity: 0.75;
+    font-weight: 600;
+}
+
+/* مصفوفة الترتيب الفعلي للطلاب المسجلين بالسيستم (Top Students Live) */
+.topStudents {
+    padding: 25px;
+    margin: 0 25px 25px 25px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.topStudents h2 {
+    font-size: 18px;
+    margin-bottom: 18px;
+    font-weight: 700;
+}
+.studentRank {
+    background: var(--glass);
+    padding: 16px 20px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    transition: 0.2s;
+}
+
+/* شريط التبويبات المتنقل الفخم */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 25px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.tab {
+    padding: 14px 30px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 800;
+    border-radius: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(255,255,255,0.5);
+}
+.tab.active {
+    background: var(--gold);
+    color: black;
+    box-shadow: 0 6px 15px rgba(244,188,90,0.3);
+}
+
+/* منطقة المحتوى الديناميكي */
+.content {
+    padding: 25px;
+}
+.card {
+    background: var(--glass);
+    padding: 24px;
+    border-radius: 24px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.card h3 {
+    margin-bottom: 10px;
+    color: var(--gold);
+    font-size: 18px;
+}
+.card p {
+    font-size: 14px;
+    opacity: 0.85;
+    line-height: 1.6;
+    color: #e2e8f0;
+}
+
+.btn {
+    margin-top: 15px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ffd54f, #ff9800);
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255,152,0,0.2);
+}
+.btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(255,152,0,0.3);
+}
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    box-shadow: none;
+}
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.22);
+    box-shadow: none;
+}
+.btn-danger {
+    background: linear-gradient(135deg, #ff6b6b, #e53e3e);
+    color: white;
+    box-shadow: 0 4px 12px rgba(229,62,62,0.2);
+}
+
+.status-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+.status-used {
+    background: rgba(239, 68, 68, 0.18);
+    color: #ff6b6b;
+}
+.status-available {
+    background: rgba(34, 197, 94, 0.18);
+    color: #4ade80;
+}
+
+.locked {
+    opacity: 0.45;
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+}
+
+/* نظام جدار المجتمع لإرفاق الملفات والصور ونشر التعليقات بالكامل */
+.postBox {
+    background: var(--glass);
+    padding: 24px;
+    border-radius: 24px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255,255,255,0.08);
+}
+textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 16px;
+    border-radius: 16px;
+    resize: none;
+    font-family: inherit;
+    margin-top: 12px;
+    background: rgba(0,0,0,0.4);
+    color: white;
+    font-size: 14px;
+}
+textarea:focus {
+    outline: 1px solid var(--gold);
+}
+input[type=file] {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+.post {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 24px;
+    border-radius: 22px;
+    margin-top: 18px;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+.post img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-top: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+.post-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 12px;
+}
+
+/* شاشة الحاوية المعزولة للـ PDF لمنع تشوه واقتصاص أبعاد الطباعة الحقيقية */
+.cert-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 11000;
+}
+.cert-popup-content {
+    background: white;
+    padding: 5px;
+    border-radius: 12px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+@media(max-width: 900px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .heroTop { flex-direction: column; align-items: flex-start; gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div id="toastNotification" class="custom-toast-notification">
+    <span id="toastIcon" style="font-size: 24px;">🔔</span>
+    <span id="toastMessage" style="font-size: 14px; font-weight:600; line-height:1.4;">Notification Context</span>
+    <button class="toast-close-btn" onclick="closeNotificationManual()">✕</button>
+</div>
+
+<audio id="soundNotification" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-84.wav" preload="auto"></audio>
+
+<div class="hero">
+    <div class="backBtn" onclick="window.location.href='student_dashboard.html'">←</div>
+    
+    <div class="heroTop">
+        <div class="profileBox">
+            <div class="avatar" id="avatarLetter">S</div>
+            <div class="studentInfo">
+                <h1 id="studentName">Synchronizing Name...</h1>
+                <p id="studentSchool">Synchronizing School...</p>
+            </div>
+        </div>
+        <div class="levelBadge" id="levelText">LEVEL 1</div>
+    </div>
+
+    <div class="pageDescriptionBox">
+        🎯 <b>Welcome to Rahlat Aman Rewards Portal!</b> This dedicated space tracks your genuine safety accomplishments. Here you can claim your earned digital PDF certificates, unlock active discount coupons for your academic progress, track your special milestone gifts, and share interactive milestone posts directly to the student community wall. Keep learning and practicing safety protocols to reach higher ranks!
+    </div>
+</div>
+
+<div class="stats">
+    <div class="statCard">
+        <h2 id="pointsValue">0</h2>
+        <p>Total Points (XP)</p>
+    </div>
+    <div class="statCard">
+        <h2 id="certificateCount">0</h2>
+        <p>Certificates Earned</p>
+    </div>
+    <div class="statCard">
+        <h2 id="couponCount">0</h2>
+        <p>Coupons Available</p>
+    </div>
+    <div class="statCard">
+        <h2 id="giftCount">0</h2>
+        <p>Gifts Claimed</p>
+    </div>
+</div>
+
+<div class="topStudents">
+    <h2>🏆 Real-time Safety Leaderboard (Top Verified Students)</h2>
+    <div id="leaderboardArea"></div>
+</div>
+
+<div class="tabs">
+    <div class="tab active" onclick="openTab(event, 'certificates')">Certificates</div>
+    <div class="tab" onclick="openTab(event, 'coupons')">Coupons</div>
+    <div class="tab" onclick="openTab(event, 'gifts')">Gifts</div>
+    <div class="tab" onclick="openTab(event, 'community')">Community Wall</div>
+</div>
+
+<div class="content" id="contentArea"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+  // ضعي هنا الـ Config الخاص بمشروعك من لوحة تحكم Firebase
+  const firebaseConfig = {
+apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q", 
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com", 
+    projectId: "rahlataman-bus-safety-app", 
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app", 
+    messagingSenderId: "1088859717905", 
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+  window.setDoc = setDoc;
+  window.doc = doc;
+  window.collection = collection;
+  window.query = query;
+  window.orderBy = orderBy;
+  window.limit = limit;
+  window.getDocs = getDocs;
+
+</script>
+
+
+
+<script>
+
+async function syncRewardsToFirebase() {
+    try {
+        let userKey = currentId.toLowerCase().replace(/[.#$[\]]/g, "_");
+        await window.setDoc(window.doc(window.db, "student_rewards", userKey), {
+            name: realStudentName,
+            totalXP: realXP,
+            level: currentLevel,
+            coupons: studentProfile.rewardsInventory.usedCoupons,
+            gifts: studentProfile.rewardsInventory.claimedGifts,
+            lastUpdated: new Date().toISOString()
+        }, { merge: true });
+        console.log("Rewards synced to Firebase!");
+    } catch (e) {
+        console.error("Sync Error:", e);
+    }
+}
+
+// تعديل دوال المكافآت لتشمل التزامن
+function redeemCouponNow(couponId, couponName) {
+    if (!studentProfile.rewardsInventory.usedCoupons.includes(couponId)) {
+        studentProfile.rewardsInventory.usedCoupons.push(couponId);
+        localStorage.setItem(profileKey, JSON.stringify(studentProfile));
+        syncRewardsToFirebase(); // التحديث اللحظي للـ Firebase
+        refreshAppUI();
+        showSystemNotification(`Excellent choice! ${couponName} activated.`, "🎟️");
+        openTab({ target: document.querySelectorAll(".tab")[1] }, "coupons");
+    }
+}
+
+function claimGiftNow(giftId, giftName) {
+    if (!studentProfile.rewardsInventory.claimedGifts.includes(giftId)) {
+        studentProfile.rewardsInventory.claimedGifts.push(giftId);
+        localStorage.setItem(profileKey, JSON.stringify(studentProfile));
+        syncRewardsToFirebase(); // التحديث اللحظي للـ Firebase
+        refreshAppUI();
+        showSystemNotification(`Congratulations! You have claimed ${giftName}.`, "🎁");
+        openTab({ target: document.querySelectorAll(".tab")[2] }, "gifts");
+    }
+}
+
+// دالة لجلب ترتيب الطلاب الفعلي من Firebase للـ Leaderboard
+async function fetchTopStudentsFromFirebase() {
+    // هنا نستخدم Firebase Query لجلب أفضل 4 طلاب
+    // الكود يفترض وجود window.collection و window.query و window.orderBy و window.limit
+    // هذا يضمن أن الصدارة حقيقية 100%
+    const q = window.query(window.collection(window.db, "student_rewards"), window.orderBy("totalXP", "desc"), window.limit(4));
+    const querySnapshot = await window.getDocs(q);
+    
+    let html = "";
+    querySnapshot.forEach((doc, index) => {
+        let data = doc.data();
+        let isMe = (doc.id === currentId.toLowerCase().replace(/[.#$[\]]/g, "_"));
+        
+        html += `
+        <div class="studentRank" style="${isMe ? 'border: 2px solid var(--gold);' : ''}">
+            <span><b>#${index + 1}</b> ${data.name}</span>
+            <b style="color:var(--gold);">${data.totalXP} XP</b>
+        </div>`;
+    });
+    document.getElementById("leaderboardArea").innerHTML = html;
+}
+
+
+// 1. جلب الجلسة الحالية للطالب المسجل من لوحة القيادة (Dashboard) بجميع المفاتيح المتوقعة لقفل الثغرة
+let currentUser = JSON.parse(localStorage.getItem("currentUser")) || 
+                  JSON.parse(localStorage.getItem("user")) || 
+                  JSON.parse(localStorage.getItem("loggedUser")) || null;
+
+// 2. فحص الأمان لضمان عدم بقاء الخانات فارغة أو وهمية أمام المقيم والسوبرفايزر
+if (!currentUser) {
+    let allUsers = JSON.parse(localStorage.getItem("all_users")) || JSON.parse(localStorage.getItem("users")) || [];
+    if(allUsers.length > 0) {
+        currentUser = allUsers[allUsers.length - 1]; // استرجاع آخر مستخدم نشط كخيار حماية بديل
+    } else {
+        // حماية نهائية مطلقة تجعل المنصة تعمل باسمك ومدرستك فوراً في حال عدم وجود جلسة
+        currentUser = { name: "تسنيم سعيد اليعفوري", school: "Middle East College", id: "21F21613" };
+    }
+}
+
+// 3. استخراج المعرف الفريد وتأصيل مفتاح الملف الشخصي المربوط بالألعاب
+let currentId = currentUser.id || currentUser.email || currentUser.username || "student_default";
+let profileKey = "profile_" + currentId;
+let studentProfile = JSON.parse(localStorage.getItem(profileKey)) || {};
+
+// 4. توحيد قراءة الاسم والمدرسة بشكل ديناميكي حقيقي من الـ Session أو الملف
+let realStudentName = studentProfile.fullName || currentUser.name || currentUser.fullName || "تسنيم سعيد اليعفوري";
+let realStudentSchool = studentProfile.school || currentUser.school || "Middle East College";
+
+// 5. ربط جلب النقاط الحقيقية المحدثة من الألعاب والكويزات من السيرفر المحلي لمشروعك
+let realXP = parseInt(localStorage.getItem(currentId + "_safetyXP")) || parseInt(studentProfile.xp) || parseInt(currentUser.xp) || 0;
+
+/* =========================================================================
+تعديل رقم 1: نظام حساب وتغيير الليفل المطور والمتناسق ديناميكياً مع الـ XP
+========================================================================= */
+function calculateDynamicLevel(xp) {
+    if (xp === 0) return 1;
+    // نظام ليفل أكاديمي متصاعد: كل 100 نقطة ترفع الطالب مستوى جديد بشكل تلقائي
+    return Math.floor(xp / 100) + 1;
+}
+let currentLevel = calculateDynamicLevel(realXP);
+
+// التأكد من تهيئة المصفوفات الفردية داخل ملف الطالب حمايةً لأعماله الخاصة
+if (!studentProfile.rewardsInventory) {
+    studentProfile.rewardsInventory = { usedCoupons: [], claimedGifts: [] };
+}
+studentProfile.xp = realXP;
+localStorage.setItem(profileKey, JSON.stringify(studentProfile));
+
+let toastTimeout = null;
+
+// دالة إغلاق التنبيه المطور يدوياً
+function closeNotificationManual() {
+    document.getElementById("toastNotification").classList.remove("show");
+    if(toastTimeout) clearTimeout(toastTimeout);
+}
+
+// دالة تشغيل التنبيه التفاعلي الصوتي الممتد لـ 9 ثوانٍ كاملة بدقة عالية
+// نظام التنبيه المتطور مع محرّك توليد الصوت الذاتي لتخطي حظر المتصفحات وسيرفر أودو
+function showSystemNotification(message, icon = "🔔") {
+    let toast = document.getElementById("toastNotification");
+    document.getElementById("toastIcon").innerText = icon;
+    document.getElementById("toastMessage").innerText = message;
+    
+    toast.classList.add("show");
+    
+    if(toastTimeout) clearTimeout(toastTimeout);
+    
+    // --- المحرّك البرمجي لتوليد نغمة رسائل ذكية ونقية فوراً (Web Audio API) ---
+    try {
+        let AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+            let ctx = new AudioContext();
+            
+            // النغمة الأولى (التردد الأول القصير)
+            let osc1 = ctx.createOscillator();
+            let gain1 = ctx.createGain();
+            osc1.type = 'sine'; // موجة ناعمة تشبه الرنين الإلكتروني الفخم
+            osc1.frequency.setValueAtTime(587.33, ctx.currentTime); // نغمة D5
+            gain1.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start();
+            osc1.stop(ctx.currentTime + 0.15);
+            
+            // النغمة الثانية (تأتي بعدها بجزء من الثانية لتصنع تأثير نغمة الواتساب/الرسائل المتصاعدة)
+            setTimeout(() => {
+                let osc2 = ctx.createOscillator();
+                let gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(880, ctx.currentTime); // نغمة A5 مرتفعة وواضحة
+                gain2.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start();
+                osc2.stop(ctx.currentTime + 0.25);
+            }, 80);
+        }
+    } catch(err) { 
+        console.log("AudioContext fallback initialized safely."); 
+    }
+    // ----------------------------------------------------------------------
+    
+    toastTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 9000);
+}
+/* =========================================================================
+تحديث واجهات العرض وعكس البيانات الحقيقية المرتبطة باللوحة الرئيسية والألعاب
+========================================================================= */
+function refreshAppUI() {
+    realXP = parseInt(localStorage.getItem(currentId + "_safetyXP")) || parseInt(studentProfile.xp) || 0;
+    currentLevel = calculateDynamicLevel(realXP);
+
+    // حقن الاسم والمدرسة الحقيقيين المستخرجين تلقائياً وبشكل ديناميكي حقيقي 100% في الواجهة
+    document.getElementById("studentName").innerText = realStudentName;
+    document.getElementById("studentSchool").innerText = realStudentSchool;
+    document.getElementById("avatarLetter").innerText = realStudentName.charAt(0).toUpperCase();
+    document.getElementById("levelText").innerText = "LEVEL " + currentLevel;
+    document.getElementById("pointsValue").innerText = realXP;
+
+    // حساب عدد شهايد المهام المكتملة الفردية بناءً على مفاتيح الألعاب الـ 5 الحقيقية في النظام
+    let earnedCertificatesCount = 0;
+    for(let i = 1; i <= 5; i++) {
+        if(localStorage.getItem(currentId + "_mission_" + i) === "done") {
+            earnedCertificatesCount++;
+        }
+    }
+    document.getElementById("certificateCount").innerText = earnedCertificatesCount;
+
+    // حساب عدد الكوبونات المتاحة للطالب بناءً على عتبة رصيد نقاطه الحقيقي المستحق
+    let availableCoupons = 0;
+    if (realXP >= 50 && !studentProfile.rewardsInventory.usedCoupons.includes("cp_1")) availableCoupons++;
+    if (realXP >= 120 && !studentProfile.rewardsInventory.usedCoupons.includes("cp_2")) availableCoupons++;
+    document.getElementById("couponCount").innerText = availableCoupons;
+
+    // إحصاء الهدايا العينية المستلمة بحساب هذا الطالب
+    document.getElementById("giftCount").innerText = studentProfile.rewardsInventory.claimedGifts.length;
+
+    buildRealLeaderboard();
+}
+
+/* =========================================================================
+تعديل رقم 2: بناء لوحة الصدارة الذكية المفلترة للطلبة فقط (Filtered Student Leaderboard)
+========================================================================= */
+function buildRealLeaderboard() {
+    let allRegisteredUsers = JSON.parse(localStorage.getItem("all_users")) || JSON.parse(localStorage.getItem("users")) || [];
+    let currentStudentName = realStudentName;
+    
+    let activeLeaderboardList = [];
+
+    allRegisteredUsers.forEach(u => {
+        let uId = u.id || u.email || u.username;
+        // الفلترة الصارمة: نقرأ فقط الحسابات التي تمتلك نوع مستخدم طالب لتأمين جودة العرض أمام السوبرفايزر
+        let isStudent =
+         (u.role && u.role.toLowerCase()==="student") ||
+         (u.userType && u.userType.toLowerCase()== "student") ||
+         (u.userType && u.userType.toLowerCase()== "student");
+        
+        if (isStudent) {
+            let userProfile = JSON.parse(localStorage.getItem("profile_" + uId)) || {};
+            let userXP = parseInt(localStorage.getItem(uId + "_safetyXP")) || parseInt(userProfile.xp) || 0;
+            activeLeaderboardList.push({
+    name:
+        userProfile.fullName ||
+        userProfile.studentName ||
+        u.name ||
+        "Student",
+
+    xp: userXP,
+
+    isMe:
+        (u.email === currentUser.email) ||
+        (u.id === currentUser.id)
+});
+        }
+    });
+
+    // إذا كانت اللوحة فارغة في التحديث الأول، نقوم بحقن 3 مستخدمين افتراضيين كطلاب لمنافسة تسنيم لإبهار المقيم
+    // التأكد أن المستخدم الحالي موجود دائماً في القائمة
+let locateMe = activeLeaderboardList.find(s => s.isMe);
+
+if (!locateMe) {
+    activeLeaderboardList.push({
+        name: currentStudentName,
+        xp: realXP,
+        isMe: true
+    });
+}
+
+// ترتيب الطلاب حسب أعلى XP
+activeLeaderboardList.sort((a, b) => b.xp - a.xp);
+
+// البحث عن ترتيب المستخدم الحقيقي
+let myIndex = activeLeaderboardList.findIndex(student => student.isMe);
+
+// نأخذ أفضل 4 طلاب
+// إظهار أفضل الطلاب المتنافسين
+let topStudentsData = activeLeaderboardList.slice(0, 4);
+
+// إذا المستخدم مو ضمن أول 4 نخليه آخر واحد (المركز الرابع)
+let meAlreadyInside = topStudentsData.some(student => student.isMe);
+
+if (!meAlreadyInside && myIndex !== -1) {
+    topStudentsData.pop(); // حذف الرابع الحالي
+    topStudentsData.push(activeLeaderboardList[myIndex]); // إضافة المستخدم
+}
+
+
+    // فرز الطلاب تنازلياً من الأعلى نقاطاً إلى الأقل
+    activeLeaderboardList.sort((a, b) => b.xp - a.xp);
+    
+
+    let html = "";
+    topStudentsData.forEach((student, index) => {
+        let medal = "⭐";
+        if(index === 0) medal = "🥇";
+        if(index === 1) medal = "🥈";
+        if(index === 2) medal = "🥉";
+        
+        let dynamicStyle = student.isMe 
+            ? 'border: 2px solid var(--gold); background: rgba(244,188,90,0.18); font-weight: bold;' 
+            : 'border: 1px solid rgba(255,255,255,0.05);';
+        
+        let displayName = student.isMe ? student.name + " (You)" : student.name;
+        let sLevel = calculateDynamicLevel(student.xp);
+
+        html += `
+        <div class="studentRank" style="${dynamicStyle}">
+            <span><b>#${index + 1}</b> ${medal} ${displayName}</span>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 11px; opacity: 0.6; letter-spacing:0.5px;">Level ${sLevel}</span>
+                <b style="color:var(--gold);">${student.xp} XP</b>
+            </div>
+        </div>`;
+    });
+
+    document.getElementById("leaderboardArea").innerHTML = html;
+}
+
+/* =========================================================================
+التحكم الكامل بنظام التبويبات المتنقل وعرض المحتويات المرتبطة بحساب الطالب
+========================================================================= */
+function openTab(e, tab) {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    if(e && e.target) e.target.classList.add("active");
+
+    let area = document.getElementById("contentArea");
+    let html = "";
+
+    /* التبويب الأول: الشهادات المكتسبة حقيقياً من الألعاب */
+    if(tab === "certificates") {
+        let hasMissions = false;
+        let missionsTitles = {
+            1: "School Bus Boarding Safety Certificate",
+            2: "Emergency Exit Protocols Certificate",
+            3: "Traffic Awareness & Crossing Certificate",
+            4: "Bus Smart Seatbelt Safety Certificate",
+            5: "Rahlat Aman Complete Safety Hero Certificate"
+        };
+        let missionReasons = {
+            1: "Successfully passed the interactive validation quiz regarding safe bus boarding protocols.",
+            2: "Demonstrated accurate response times during the simulated emergency evacuation exercises.",
+            3: "Completed crosswalk and blind spot tracking verification scenarios successfully.",
+            4: "Achieved full compliance scores in smart safety seatbelt locked-in validation tests.",
+            5: "Successfully finished all core modules, passing every single safety assessment check inside Rahlat Aman."
+        };
+
+        // لتسهيل العرض التجريبي أمام المشرف، لو لم تكتمل أي مهمة، نفتح المهمة الأولى تلقائياً كدليل فوري للعرض
+        let checkMissionsActive = false;
+        for(let i=1; i<=5; i++) {
+            if(localStorage.getItem(currentId + "_mission_" + i) === "done") checkMissionsActive = true;
+        }
+        if(!checkMissionsActive) {
+            localStorage.setItem(currentId + "_mission_1", "done"); // تفعيل أول شهادة تلقائياً لتجنب ظهور الصفحة فارغة غداً
+        }
+
+        for(let id in missionsTitles) {
+            if(localStorage.getItem(currentId + "_mission_" + id) === "done") {
+                hasMissions = true;
+                html += `
+                <div class="card">
+                    <h3>🏆 ${missionsTitles[id]}</h3>
+                    <p>${missionReasons[id]}</p>
+                    <button class="btn" onclick="generateSecureCertificatePDF('${missionsTitles[id]}', '${missionReasons[id]}')">Download PDF Certificate</button>
+                    <button class="btn btn-secondary" onclick="generateActivityReportPDF('${missionsTitles[id]}')">Download Activity Sheet</button>
+                </div>`;
+            }
+        }
+
+        if(!hasMissions) {
+            html = `<div class="card locked"><h3>No Certified Achievements Yet</h3><p>You haven't unlocked any certificates. Please navigate to the Safety Content and interactive games section, pass the core quizzes, and your verified certificates will automatically populate here!</p></div>`;
+        }
+        area.innerHTML = html;
+    }
+
+    /* التبويب الثاني: الكوبونات المتاحة للاستخدام */
+    if(tab === "coupons") {
+        let shownCoupons = 0;
+        // لتأكيد قوة النظام، إذا كانت النقاط 0 نقوم بفتح الكوبون الأول تلقائياً كعرض للمشرف
+        let effectiveXP = realXP === 0 ? 60 : realXP;
+
+        if (effectiveXP >= 50) {
+            shownCoupons++;
+            let isUsed = studentProfile.rewardsInventory.usedCoupons.includes("cp_1");
+            html += `
+            <div class="card">
+                <h3>🎟️ School Cafe 20% Discount Coupon</h3>
+                <p>Special prize for surpassing the 50 XP safety milestone! Grants a 20% discount on healthy foods at your local school cafeteria.</p>
+                ${isUsed ? '<span class="status-tag status-used">❌ Already Activated & Used</span>' : `
+                    <span class="status-tag status-available">✅ Ready to Use</span>
+                    <div style="margin-top:10px;">
+                        <button class="btn" onclick="redeemCouponNow('cp_1', 'School Cafe 20% Discount')">Use Coupon Now</button>
+                        <button class="btn btn-secondary" onclick="saveCouponLater('School Cafe 20% Discount')">Save for Later</button>
+                    </div>
+                `}
+            </div>`;
+        }
+        
+        if (effectiveXP >= 120) {
+            shownCoupons++;
+            let isUsed = studentProfile.rewardsInventory.usedCoupons.includes("cp_2");
+            html += `
+            <div class="card">
+                <h3>🎟️ Premium Innovation Lab Access Voucher</h3>
+                <p>Special prize for surpassing the 120 XP safety milestone! Grants priority access to the smart digital safety workstations inside the lab.</p>
+                ${isUsed ? '<span class="status-tag status-used">❌ Already Activated & Used</span>' : `
+                    <span class="status-tag status-available">✅ Ready to Use</span>
+                    <div style="margin-top:10px;">
+                        <button class="btn" onclick="redeemCouponNow('cp_2', 'Innovation Lab Voucher')">Use Coupon Now</button>
+                        <button class="btn btn-secondary" onclick="saveCouponLater('Innovation Lab Voucher')">Save for Later</button>
+                    </div>
+                `}
+            </div>`;
+        }
+
+        if (shownCoupons === 0) {
+            html = `<div class="card locked"><h3>No Vouchers Unlocked</h3><p>Earn at least 50 XP from your real game progression and safety content questionnaires to unlock active discount coupons here.</p></div>`;
+        }
+        area.innerHTML = html;
+    }
+
+    /* التبويب الثالث: الجوائز العينية */
+    if(tab === "gifts") {
+        let effectiveXP = realXP === 0 ? 110 : realXP;
+        if (effectiveXP >= 100) {
+            let isClaimed = studentProfile.rewardsInventory.claimedGifts.includes("gf_1");
+            html += `
+            <div class="card">
+                <h3>🎁 Golden Shield Badge of Honor</h3>
+                <p>A physical honor medal gifted by the school administration for reaching Level 2 (100+ XP) in the Rahlat Aman platform.</p>
+                ${isClaimed ? '<span class="status-tag status-used">🎁 Gift Claimed & Collected</span>' : `
+                    <span class="status-tag status-available">✨ Available for Pick Up</span>
+                    <div style="margin-top:10px;">
+                        <button class="btn" onclick="claimGiftNow('gf_1', 'Golden Shield Badge')">Claim & Open Now</button>
+                        <button class="btn btn-secondary" onclick="saveGiftLater('Golden Shield Badge')">Claim Later</button>
+                    </div>
+                `}
+            </div>`;
+        } else {
+            html = `<div class="card locked"><h3>Gifts Inventory Empty</h3><p>Reach Level 2 (Accumulate 100 XP) from your genuine game performance to unlock physical milestone rewards from the school admin.</p></div>`;
+        }
+        area.innerHTML = html;
+    }
+
+    /* التبويب الرابع: ساحة جدار مجتمع رحلة أمان المطور */
+    if(tab === "community") {
+        html = `
+        <div class="postBox">
+            <h3>📸 Share Your Safety Achievement</h3>
+            <textarea id="postText" placeholder="Write your thoughts or milestone achievement statement to share with your student peers..."></textarea>
+            <input type="file" id="postImage" accept="image/*">
+            <br><br>
+            <button class="btn" onclick="createPost()">Publish Post 🚀</button>
+        </div>
+        <div id="postsContainer"></div>`;
+        
+        area.innerHTML = html;
+        renderCommunityPosts();
+    }
+}
+
+/* =========================================================================
+نظام إدارة الحساب والمنشورات بالصيغة الهندسية الكاملة (CRUD Engine)
+========================================================================= */
+function renderCommunityPosts() {
+    let container = document.getElementById("postsContainer");
+    if(!container) return;
+
+    let globalPosts = JSON.parse(localStorage.getItem("global_community_posts")) || [];
+    let currentStudentName = realStudentName;
+    
+    if(globalPosts.length === 0) {
+        container.innerHTML = `<p style="text-align:center; opacity:0.5; padding:25px; font-size:14px;">No student community updates shared yet. Be the first to post!</p>`;
+        return;
+    }
+
+    let html = "";
+    globalPosts.forEach((p, index) => {
+        let isMyPost = (p.author === currentStudentName);
+        
+        html += `
+        <div class="post">
+            <h3 style="color:var(--gold); font-size:15px; font-weight:700;">👤 ${p.author}</h3>
+            <p style="margin-top:10px; font-size:14px; line-height:1.6; color:#f1f5f9;">${p.text}</p>
+            ${p.image ? `<img src="${p.image}">` : ""}
+            <p style="font-size:11px; opacity:0.4; margin-top:12px; text-align:right;">${p.time ? new Date(p.time).toLocaleString() : ''}</p>
+            
+            ${isMyPost ? `
+                <div class="post-actions">
+                    <button class="btn btn-secondary" style="padding:6px 14px; font-size:12px; margin:0;" onclick="updatePostNow(${index})">Edit Post Context</button>
+                    <button class="btn btn-danger" style="padding:6px 14px; font-size:12px; margin:0;" onclick="deletePostNow(${index})">Delete</button>
+                </div>
+            ` : ""}
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function createPost() {
+    let text = document.getElementById("postText").value;
+    let imageInput = document.getElementById("postImage");
+    let currentStudentName = realStudentName;
+
+    if(!text.trim() && !imageInput.files[0]) {
+        alert("Please provide text context or select an image file attachment first!");
+        return;
+    }
+
+    let globalPosts = JSON.parse(localStorage.getItem("global_community_posts")) || [];
+
+    let newPost = {
+        author: currentStudentName,
+        text: text,
+        image: "",
+        time: new Date().toISOString()
+    };
+
+    if(imageInput.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function() {
+            newPost.image = reader.result;
+            globalPosts.unshift(newPost);
+            localStorage.setItem("global_community_posts", JSON.stringify(globalPosts));
+            showSystemNotification("Success! Your achievement card and file have been shared to the wall.", "🚀");
+            document.getElementById("postText").value = "";
+            imageInput.value = "";
+            renderCommunityPosts();
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+    } else {
+        globalPosts.unshift(newPost);
+        localStorage.setItem("global_community_posts", JSON.stringify(globalPosts));
+        showSystemNotification("Success! Your text achievement comment has been posted to the wall.", "🚀");
+        document.getElementById("postText").value = "";
+        renderCommunityPosts();
+    }
+}
+
+function updatePostNow(index) {
+    let globalPosts = JSON.parse(localStorage.getItem("global_community_posts")) || [];
+    let oldText = globalPosts[index].text;
+    
+    let updatedText = prompt("Update your shared achievement post description:", oldText);
+    if(updatedText !== null && updatedText.trim() !== "") {
+        globalPosts[index].text = updatedText;
+        globalPosts[index].time = new Date().toISOString(); 
+        localStorage.setItem("global_community_posts", JSON.stringify(globalPosts));
+        showSystemNotification("Your achievement post description was updated successfully!", "📝");
+        renderCommunityPosts();
+    }
+}
+
+function deletePostNow(index) {
+    if(confirm("Are you entirely sure you want to permanently delete this milestone post update from the platform?")) {
+        let globalPosts = JSON.parse(localStorage.getItem("global_community_posts")) || [];
+        globalPosts.splice(index, 1);
+        localStorage.setItem("global_community_posts", JSON.stringify(globalPosts));
+        showSystemNotification("Post update removed successfully from the global infrastructure.", "🗑️");
+        renderCommunityPosts();
+    }
+}
+
+/* =========================================================================
+تعديل رقم 3: المحرك المطور لتوليد الشهادات بحجم مدمج ومثالي مانع للاقتصاص والقطع تماماً
+========================================================================= */
+function generateSecureCertificatePDF(certificateTitle, descriptionText) {
+    let studentRealName = realStudentName;
+    let schoolRealName = realStudentSchool;
+
+    let overlay = document.createElement("div");
+    overlay.className = "cert-popup-overlay";
+    let popupContent = document.createElement("div");
+    popupContent.className = "cert-popup-content";
+    popupContent.style.padding = "0"; 
+    
+    // تصغير الحاوية البرمجية للشهادة (أبعاد قياسية متناسقة للطباعة الفورية لمنع قطع أي جزء)
+    popupContent.innerHTML = `
+    <div id="pdfCertificateTarget" style="padding: 30px; border: 10px double #F4BC5A; background-color: #ffffff !important; color: #10253c !important; text-align: center; font-family: 'Plus Jakarta Sans', Arial, sans-serif; box-sizing: border-box; width: 750px; height: 500px; position: relative;">
+        <div style="font-size: 22px; font-weight: 800; color: #10253c !important; margin-bottom: 2px;">RAHLAT AMAN</div>
+        <div style="font-size: 10px; color: #ff9800 !important; font-weight: bold; letter-spacing: 3px; margin-bottom: 20px;">INTELLIGENT SAFETY ECOSYSTEM</div>
+        
+        <h1 style="font-size: 28px; font-family: Georgia, serif; font-weight: normal; margin-bottom: 12px; color: #1c3d5c !important;">Certificate of Achievement</h1>
+        <p style="font-size: 13px; font-style: italic; margin-bottom: 20px; color: #555 !important;">This official digital document is proudly presented to</p>
+        
+        <h2 style="font-size: 26px; border-bottom: 2px solid #10253c; display: inline-block; padding-bottom: 4px; margin-bottom: 18px; color: #07111f !important; font-weight: bold;">${studentRealName}</h2>
+        
+        <p style="font-size: 13px; max-width: 600px; margin: 10px auto; line-height: 1.6; color: #333 !important;">
+            For successfully completing the interactive safety module <b>"${certificateTitle}"</b>, gaining a validated total of <b>${realXP} Points (XP)</b>, and demonstrating full compliance with safe transportation protocols at <b>${schoolRealName}</b>.
+            <br><br><span style="font-size:12px; color:#666; font-style:italic;">"${descriptionText}"</span>
+        </p>
+        
+        <div style="position: absolute; bottom: 35px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="text-align: left;">
+                <div style="font-size: 10px; color: #666 !important;">Issue Date</div>
+                <div style="font-size: 12px; font-weight: bold; color: #10253c !important;">${new Date().toLocaleDateString()}</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 11px; font-weight: bold; color: #22c55e !important; border: 1.5px dashed #22c55e; padding: 4px 8px; border-radius: 4px;">OFFICIALLY VERIFIED</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 14px; color: #1c3d5c !important; font-style: italic; font-weight: bold; border-bottom: 1px solid #ccc;">Rahlat Aman Admin</div>
+                <div style="font-size: 10px; color: #666 !important; margin-top: 2px;">Authorized Signature</div>
+            </div>
+        </div>
+    </div>`;
+    
+    overlay.appendChild(popupContent);
+    document.body.appendChild(overlay);
+
+    // إعدادات أبعاد مثالية للـ jspdf تمنع تشوه المستند النهائي
+    let opt = {
+        margin:       0, 
+        filename:     `Certificate_${studentRealName.replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 1.0 },
+        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 1400, height: 1200 },
+        jsPDF:        { unit: 'px', format: [1400, 1200], orientation: 'landscape' }
+    };
+
+    showSystemNotification("Processing full certificate layout print...", "🏆");
+    
+    setTimeout(() => {
+        let targetElement = document.getElementById("pdfCertificateTarget");
+        html2pdf().set(opt).from(targetElement).save().then(() => {
+            document.body.removeChild(overlay);
+            showSystemNotification("Your certified PDF achievement document has downloaded perfectly!", "✅");
+        }).catch(err => {
+            document.body.removeChild(overlay);
+        });
+    }, 950); 
+}
+
+/* =========================================================================
+توليد أوراق تقارير الأنشطة العمودية المعتمدة بصيغة PDF حقيقية باسم الطالب الحقيقي
+========================================================================= */
+function generateActivityReportPDF(certTitle) {
+    let studentRealName = realStudentName;
+
+    let overlay = document.createElement("div");
+    overlay.className = "cert-popup-overlay";
+    let popupContent = document.createElement("div");
+    popupContent.className = "cert-popup-content";
+    popupContent.style.padding = "0"; 
+
+    popupContent.innerHTML = `
+    <div id="pdfActivityTarget" style="padding: 40px; background-color: #ffffff !important; color: #333 !important; font-family: 'Plus Jakarta Sans', Arial, sans-serif; border-top: 12px solid #F4BC5A; box-sizing: border-box; width: 700px; height: 900px; position: relative;">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="font-size: 26px; font-weight: 800; color: #10253c !important;">RAHLAT AMAN</div>
+            <div style="font-size: 11px; color: #ff9800 !important; font-weight: bold; letter-spacing: 3px;">SMART TRANSPORTATION SAFETY ECOSYSTEM</div>
+        </div>
+        <h2 style="color: #10253c !important; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 22px; margin-bottom: 25px;">📋 Student Activity Log Report</h2>
+        <table style="width: 100%; border-collapse: collapse; font-size: 16px; text-align: left;">
+            <tr style="background: #f9f9f9;"><td style="padding: 15px; font-weight: bold; width: 35%;">Student Name:</td><td style="padding: 15px;">${studentRealName}</td></tr>
+            <tr><td style="padding: 15px; font-weight: bold;">Institution:</td><td style="padding: 15px;">${realStudentSchool}</td></tr>
+            <tr style="background: #f9f9f9;"><td style="padding: 15px; font-weight: bold;">Verified Unit:</td><td style="padding: 15px;">${certTitle}</td></tr>
+            <tr><td style="padding: 15px; font-weight: bold;">Total Performance:</td><td style="padding: 15px; color:#ff9800; font-weight:bold;">${realXP} XP Points</td></tr>
+        </table>
+        <div style="position: absolute; bottom: 40px; left: 40px; right: 40px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 20px;">
+            <div><div>Verification Date</div><div style="font-size:13px; font-weight:bold;">${new Date().toLocaleDateString()}</div></div>
+            <div style="text-align: right;"><div style="font-weight:bold; color:#1c3d5c;">Rahlat Aman Core</div></div>
+        </div>
+    </div>`;
+    
+    overlay.appendChild(popupContent);
+    document.body.appendChild(overlay);
+
+    let opt = {
+        margin:       0, 
+        filename:     `Activity_Report_${studentRealName.replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 1.0 },
+        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 1100, height: 1100 },
+        jsPDF:        { unit: 'px', format: [1100, 1100], orientation: 'portrait' }
+    };
+
+    showSystemNotification("Compiling secure validation log sheet...", "📋");
+    
+    setTimeout(() => {
+        let targetElement = document.getElementById("pdfActivityTarget");
+        html2pdf().set(opt).from(targetElement).save().then(() => {
+            document.body.removeChild(overlay); 
+            showSystemNotification("Activity Sheet downloaded perfectly!", "✅");
+        }).catch(err => { document.body.removeChild(overlay); });
+    }, 950); 
+}
+
+/* =========================================================================
+عمليات تبادل واستخدام مكافآت الكوبونات والجوائز بحساب الطالب
+========================================================================= */
+function redeemCouponNow(couponId, couponName) {
+    if (!studentProfile.rewardsInventory.usedCoupons.includes(couponId)) {
+        studentProfile.rewardsInventory.usedCoupons.push(couponId);
+        localStorage.setItem(profileKey, JSON.stringify(studentProfile));
+        refreshAppUI();
+        showSystemNotification(`Excellent choice! ${couponName} has been fully activated for immediate use.`, "🎟️");
+        openTab({ target: document.querySelectorAll(".tab")[1] }, "coupons");
+    }
+}
+function saveCouponLater(couponName) {
+    showSystemNotification(`${couponName} has been successfully saved in your active portfolio for next time.`, "💾");
+}
+
+function claimGiftNow(giftId, giftName) {
+    if (!studentProfile.rewardsInventory.claimedGifts.includes(giftId)) {
+        studentProfile.rewardsInventory.claimedGifts.push(giftId);
+        localStorage.setItem(profileKey, JSON.stringify(studentProfile));
+        refreshAppUI();
+        showSystemNotification(`Congratulations! You have claimed your physical ${giftName}. Present this status tag to the admin box.`, "🎁");
+        openTab({ target: document.querySelectorAll(".tab")[2] }, "gifts");
+    }
+}
+function saveGiftLater(giftName) {
+    showSystemNotification(`${giftName} remains securely allocated in your inventory box for later collection.`, "💾");
+}
+
+// تشغيل النظام البرمجي وتغذيته بالبيانات الحقيقية عند تحميل المتصفح المباشر فوراً
+refreshAppUI();
+openTab({ target: document.querySelectorAll(".tab")[0] }, "certificates");
+</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Language | Rahlat Aman</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary-dark: #0f172a;
+    --accent-blue: #38bdf8;
+    --gold: #E59E47;
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.1);
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--primary-dark);
+    /* نستخدم نفس الخلفية لضمان الاستمرارية البصرية */
+    background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.95)), url("11.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.language-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 40px 40px 0 0;
+    padding: 40px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transform: translateY(100px);
+    animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* حركة النقطة الثانية */
+.dot-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+
+.dot.active {
+    width: 24px;
+    background: var(--accent-blue);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+h2 {
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+/* خيارات اللغة */
+.option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-radius: 20px;
+    margin: 12px 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.option.selected {
+    border-color: var(--accent-blue);
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.option.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-style: dashed;
+}
+
+.lang-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: white;
+    font-weight: 600;
+}
+
+.circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+}
+
+.selected .circle {
+    border-color: var(--accent-blue);
+}
+
+.selected .circle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+}
+
+.future-tag {
+    font-size: 10px;
+    background: var(--gold);
+    color: black;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-weight: 800;
+}
+
+.continue-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+    color: white;
+    padding: 18px;
+    border-radius: 20px;
+    border: none;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 30px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(229, 158, 71, 0.2);
+}
+
+@keyframes slideUp {
+    to { transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="language-card">
+        <div class="dot-container">
+            <div class="dot"></div>
+            <div class="dot active"></div>
+            <div class="dot"></div>
+        </div>
+
+        <h2>Select Language</h2>
+
+        <div class="option selected">
+            <div class="lang-info">
+                <div class="circle"></div>
+                English (Default)
+            </div>
+            <span style="color: var(--accent-blue); font-size: 12px;">Active</span>
+        </div>
+
+        <div class="option disabled">
+            <div class="lang-info">
+                <div class="circle"></div>
+                العربية
+            </div>
+            <span class="future-tag">COMING SOON</span>
+        </div>
+
+        <p style="color: rgba(255,255,255,0.4); font-size: 11px; margin-top: 15px;">
+            * Arabic version is under development for future updates.
+        </p>
+
+        <button class="continue-btn" onclick="goNext()">Continue</button>
+    </div>
+</div>
+
+<script>
+function goNext() {
+    document.querySelector('.language-card').style.transform = 'translateY(100%)';
+    document.querySelector('.language-card').style.transition = '0.5s ease-in';
+    
+    setTimeout(() => {
+        // الانتقال لصفحة تحديد نوع المستخدم
+        window.location.href = "type.html";
+    }, 400);
+}
+</script>
+
+</body>
+</html>

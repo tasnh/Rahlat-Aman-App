@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rahlat Aman | Driver Management Center</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* 1. الإضافة الأولى: وصف الصفحة في الأعلى */
+.page-description {
+    background: rgba(212, 175, 55, 0.1);
+    border-right: 5px solid #d4af37;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 20px 30px 0 30px;
+    line-height: 1.6;
+}
+
+/* الحفاظ على الهوية البصرية لرحلة أمان */
+*{ margin:0; padding:0; box-sizing:border-box; font-family:Arial,Helvetica,sans-serif; }
+body{ background:#081120; color:#fff; min-height:100vh; }
+
+header{
+    background:linear-gradient(90deg,#0f172a,#14233c);
+    padding:18px 30px; display:flex; justify-content:space-between; align-items:center;
+    border-bottom:2px solid rgba(255,255,255,.06); position:sticky; top:0; z-index:100;
+}
+header h1 span{ color:#d4af37; }
+
+.back-btn{ text-decoration:none; color:#fff; background:rgba(255,255,255,.06); padding:10px 15px; border-radius:12px; transition:.3s; }
+.back-btn:hover{ background:#d4af37; color:#000; }
+
+.container{ padding:30px; max-width:1500px; margin:auto; }
+
+/* الإحصائيات الستة */
+.hero{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-bottom:28px; }
+.card{ background:rgba(255,255,255,.04); padding:22px; border-radius:18px; border:1px solid rgba(255,255,255,.05); transition:.3s; }
+.card:hover{ transform:translateY(-4px); border-color:#d4af37; }
+.stat-title{ font-size:14px; color:#9ca3af; margin-bottom:10px; }
+.stat-value{ font-size:30px; font-weight:bold; color:#fff; }
+
+.grid{ display:grid; grid-template-columns:1.3fr .9fr; gap:25px; }
+.section{ background:rgba(255,255,255,.04); padding:25px; border-radius:22px; border:1px solid rgba(255,255,255,.05); margin-bottom:25px; }
+.section h2{ font-size:22px; margin-bottom:18px; color:#d4af37; }
+
+.search{ width:100%; padding:14px; border:none; outline:none; border-radius:12px; background:#0f172a; color:#fff; margin-bottom:18px; }
+
+/* 2. الإضافة الثانية: تكبير بوكس الـ Admin-Driver Hub */
+.big-input {
+    width: 100%;
+    min-height: 200px; /* الحجم الكبير المطلوب */
+    background: #0f172a;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px;
+    padding: 15px;
+    font-size: 16px;
+    resize: none;
+    margin-bottom: 15px;
+}
+
+.driver-item{
+    background:rgba(255,255,255,.03); padding:16px; border-radius:14px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 12px;
+}
+.driver-info h3{ font-size:18px; margin-bottom:6px; }
+.driver-info p{ font-size:14px; color:#cbd5e1; }
+
+.actions{ display:flex; gap:10px; flex-wrap:wrap; }
+.btn{ border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:bold; transition:.3s; }
+.blue{background:#38bdf8;color:#000;}
+.gold{background:#d4af37;color:#000;}
+.red{background:#ef4444;color:#fff;}
+.green{background:#10b981;color:#fff;}
+
+.chart-container { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 15px; margin-top: 10px; }
+
+.modal{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.7); display:none; justify-content:center; align-items:center; z-index:999; }
+.modal-box{ background:#132238; width:100%; max-width:600px; padding:28px; border-radius:24px; border:2px solid #d4af37; position:relative; }
+.close{ position:absolute; top:15px; right:18px; font-size:25px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header>
+    <a href="admin_dashboard.html" class="back-btn"><i class="fa fa-arrow-left"></i> Back</a>
+    <h1>Driver <span>Center</span></h1>
+    <div class="clock" id="clock">--:--</div>
+</header>
+
+<!-- قسم الوصف المضاف -->
+<div class="page-description">
+    <h3 style="color:#d4af37; margin-bottom:5px;"><i class="fa fa-info-circle"></i> Driver Fleet Overview</h3>
+    <p> This page is used to manage 42 drivers in the Safe Journey system. It allows you to monitor fleet performance, send direct instructions, review evaluations, and communicate instantly with drivers to ensure student safety.</p>
+</div>
+
+<div class="container">
+    <div class="hero">
+        <div class="card"><div class="stat-title">Total Drivers</div><div class="stat-value">42</div></div>
+        <div class="card"><div class="stat-title">Drivers On-Duty</div><div class="stat-value">38</div></div>
+        <div class="card"><div class="stat-title">Fuel Efficiency</div><div class="stat-value">88%</div></div>
+        <div class="card"><div class="stat-title">Avg. Rating</div><div class="stat-value">4.8/5</div></div>
+        <div class="card"><div class="stat-title">Completed Trips</div><div class="stat-value">1,240</div></div>
+        <div class="card"><div class="stat-title">Safety Violations</div><div class="stat-value">0</div></div>
+    </div>
+
+    <div class="grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 25px;">
+        <div class="section">
+            <h2><i class="fa fa-medal"></i> Top Performing Drivers</h2>
+            <div class="chart-container"><canvas id="bestDriverChart" height="150"></canvas></div>
+        </div>
+        <div class="section">
+            <h2><i class="fa fa-chart-line"></i> Fleet Performance Index</h2>
+            <div class="chart-container"><canvas id="fleetChart" height="150"></canvas></div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div>
+            <div class="section">
+                <h2><i class="fa fa-id-card"></i> Driver Directory (42 Total)</h2>
+                <input type="text" class="search" placeholder="Search by name, bus number, or area..." onkeyup="searchDriver(this.value)">
+                <div id="driverList"></div>
+            </div>
+        </div>
+
+        <div>
+            <div class="section hub-box">
+                <h2><i class="fa fa-bullhorn"></i> Admin-Driver Hub</h2>
+                <!-- تم تكبير البوكس هنا -->
+                <textarea class="big-input" id="adminMsg" placeholder="Send official instructions to the entire fleet of 42 drivers..."></textarea>
+                <button class="btn blue" style="width:100%; font-size:18px;" onclick="sendToDrivers()">Send Message to Fleet</button>
+            </div>
+
+            <div class="section">
+                <h2><i class="fa fa-star"></i> Performance Feedback</h2>
+                <div class="request-item" style="padding:10px; border-bottom:1px solid #333;">
+                    <b>Salem Al-Hinai:</b> ★★★★★ "Very punctual today." - Parent
+                </div>
+                <div class="request-item" style="padding:10px;">
+                    <b>Said Al-Ghafri:</b> ★★★★☆ "Good driving, bus AC is perfect."
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<script>
+const drivers = [
+    { name: "Salem Al-Hinai", bus: "B-44", area: "Seeb / Al Hail", students: 24, phone: "90001111", status: "On-Duty", rating: 4.9 },
+    { name: "Said Al-Ghafri", bus: "B-12", area: "Al Khoud", students: 18, phone: "90002222", status: "On-Duty", rating: 4.7 },
+    { name: "Khalid Al-Balushi", bus: "B-09", area: "Mabela", students: 30, phone: "90003333", status: "Break", rating: 4.5 },
+    { name: "Nasser Al-Rawahi", bus: "B-21", area: "Bousher", students: 22, phone: "90004444", status: "On-Duty", rating: 4.8 }
+];
+
+function renderDrivers(list) {
+    const box = document.getElementById("driverList");
+    box.innerHTML = list.map((d, i) => `
+        <div class="driver-item">
+            <div class="driver-info">
+                <h3>${d.name} <span style="font-size:12px; color:#d4af37;">(Bus: ${d.bus})</span></h3>
+                <p><i class="fa fa-location-dot"></i> ${d.area} | <i class="fa fa-users"></i> ${d.students} Students</p>
+                <p>Status: <span style="color:${d.status==='On-Duty'?'#10b981':'#f59e0b'}">${d.status}</span></p>
+            </div>
+            <div class="actions">
+                <button class="btn blue" onclick="viewDriver(${i})">View</button>
+                <!-- 3. الإضافة الثالثة: تفعيل الكول والمسج -->
+                <button class="btn green" onclick="window.location.href='tel:${d.phone}'">Call</button>
+                <button class="btn gold" onclick="window.location.href='driver_messages.html'">Message</button>
+                <button class="btn red" onclick="handleSuspend('${d.name}')">Suspend</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function viewDriver(i) {
+    const d = drivers[i];
+    document.getElementById("modalContent").innerHTML = `
+        <h2>Driver Profile: ${d.name}</h2>
+        <p><strong>Bus Assigned:</strong> ${d.bus}</p>
+        <p><strong>Operational Area:</strong> ${d.area}</p>
+        <p><strong>Total Students:</strong> ${d.students}</p>
+        <p><strong>Phone:</strong> ${d.phone}</p>
+        <p><strong>Average Performance:</strong> ${d.rating}/5</p>
+        <hr style="margin:15px 0; opacity:0.1;">
+        <h3>Daily Logs</h3>
+        <p>Trip Started: 06:15 AM</p>
+        <p>Last Sync: 2 minutes ago</p>
+    `;
+    document.getElementById("modal").style.display = "flex";
+}
+
+function searchDriver(val) {
+    val = val.toLowerCase();
+    const filtered = drivers.filter(d => d.name.toLowerCase().includes(val) || d.bus.toLowerCase().includes(val) || d.area.toLowerCase().includes(val));
+    renderDrivers(filtered);
+}
+
+function handleSuspend(name) {
+    if(confirm("Suspend " + name + " from duty?")) alert(name + " has been marked as suspended.");
+}
+
+function sendToDrivers() {
+    if(document.getElementById("adminMsg").value) {
+        alert("Instructions broadcasted to all 42 drivers! ✅");
+        document.getElementById("adminMsg").value = "";
+    }
+}
+
+function initCharts() {
+    new Chart(document.getElementById('bestDriverChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Salem', 'Said', 'Khalid', 'Nasser'],
+            datasets: [{ label: 'Performance Score', data: [98, 92, 85, 95], backgroundColor: '#d4af37' }]
+        },
+        options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#fff' } }, x: { ticks: { color: '#fff' } } } }
+    });
+
+    new Chart(document.getElementById('fleetChart'), {
+        type: 'line',
+        data: {
+            labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'],
+            datasets: [{ label: 'Fleet Sync Rate', data: [90, 95, 93, 98, 96], borderColor: '#38bdf8', tension: 0.3 }]
+        },
+        options: { scales: { y: { display: false }, x: { ticks: { color: '#fff' } } } }
+    });
+}
+
+function closeModal() { document.getElementById("modal").style.display = "none"; }
+function updateClock(){ document.getElementById("clock").innerText = new Date().toLocaleTimeString(); }
+
+setInterval(updateClock, 1000);
+renderDrivers(drivers);
+window.onload = initCharts;
+</script>
+</body>
+</html>

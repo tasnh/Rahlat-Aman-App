@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Parent Dashboard</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#F3F6FB;
+}
+
+/* HEADER */
+.header{
+  background:linear-gradient(90deg,#d16ba5,#a4508b);
+  padding:20px;
+  border-radius:0 0 40px 40px;
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+}
+
+/* SLIDER */
+.banner{
+  width:90%;
+  margin:15px auto;
+}
+
+.banner img{
+  width:100%;
+  height:180px;
+  border-radius:20px;
+  object-fit:cover;
+}
+
+/* CARDS */
+.container{
+  padding:15px;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  margin:10px 0;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  transition:0.2s;
+}
+
+.card:hover{
+  transform:scale(1.03);
+}
+
+.card img{
+  width:35px;
+}
+
+/* MENU */
+.menu{
+  position:fixed;
+  right:-100%;
+  top:0;
+  width:75%;
+  height:100%;
+  background:#ffd6e7;
+  transition:0.4s;
+  padding:15px;
+  z-index:1000;
+}
+
+.menu.active{
+  right:0;
+}
+
+.menu-item{
+  background:white;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  font-weight:bold;
+}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.4);
+  display:none;
+}
+
+.overlay.active{
+  display:block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="user">
+    <img src="my.png" class="avatar">
+    <div>
+      <div><b>Welcome Parent</b></div>
+      <div id="name"></div>
+    </div>
+  </div>
+
+  <div onclick="openMenu()" style="cursor:pointer;">☰</div>
+</div>
+
+<div class="banner">
+  <img id="slider" src="parent.png">
+</div>
+
+<div class="container">
+  <div class="card"><img src="childstatus.png"> Child Status</div>
+  <div class="card"><img src="notification.png"> Notification</div>
+  <div class="card"><img src="schoolupdates.png"> School Updates</div>
+  <div class="card"><img src="progress.png"> progress</div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+<div class="menu" id="menu">
+  <div class="menu-item">Profile</div>
+  <div class="menu-item">My Child Status</div>
+  <div class="menu-item">Notification</div>
+  <div class="menu-item">Feedback</div>
+  <div class="menu-item">Report</div>
+  <div class="menu-item">Settings</div>
+  <div class="menu-item" onclick="logout()" style="color:red;">Logout</div>
+</div>
+
+<script>
+
+/* 🔐 حماية */
+let role = localStorage.getItem("role");
+if(role !== "Parent"){
+  window.location.href="login.html";
+}
+
+/* 👤 أسماء */
+let parents = [
+"Muneera Al Harthi",
+"Fatma Al Busaidi",
+"Aisha Al Balushi",
+"Maryam Al Zadjali",
+"Khawla Al Amri"
+];
+
+document.getElementById("name").innerText =
+parents[Math.floor(Math.random()*parents.length)];
+
+/* 🎞️ Slider */
+let imgs=["parent.png","menustudent.png"];
+let i=0;
+
+setInterval(()=>{
+  i=(i+1)%imgs.length;
+  document.getElementById("slider").src=imgs[i];
+},5000);
+
+/* MENU */
+function openMenu(){
+  menu.classList.add("active");
+  overlay.classList.add("active");
+}
+
+function closeMenu(){
+  menu.classList.remove("active");
+  overlay.classList.remove("active");
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href="welcome.html";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rahlat Aman | Parent Center</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, query, where, getDocs,
+  doc, getDoc, updateDoc, addDoc, serverTimestamp,
+  orderBy, limit
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const cfg = {
+  apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+  authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+  projectId: "rahlataman-bus-safety-app",
+  storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+  messagingSenderId: "1088859717905",
+  appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+const app = initializeApp(cfg);
+const db  = getFirestore(app);
+
+window._db = db;
+window._fb = { collection, query, where, getDocs, doc, getDoc, updateDoc, addDoc, serverTimestamp, orderBy, limit };
+window._fbReady = true;
+document.dispatchEvent(new Event("fbReady"));
+</script>
+
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root{
+  --ink:#040c18;
+  --deep:#070f1e;
+  --panel:#0b1628;
+  --surface:rgba(255,255,255,.038);
+  --rim:rgba(255,255,255,.07);
+  --gold:#d4a832;
+  --gold-dim:rgba(212,168,50,.15);
+  --sky:#38c5f5;
+  --sky-dim:rgba(56,197,245,.12);
+  --mint:#12d49a;
+  --mint-dim:rgba(18,212,154,.12);
+  --rose:#ff5f6d;
+  --rose-dim:rgba(255,95,109,.12);
+  --amber:#f59e0b;
+  --text:#e8edf5;
+  --muted:#6b7d9a;
+  --font:'Sora',sans-serif;
+  --mono:'Space Mono',monospace;
+  --r:18px;
+  --r-sm:12px;
+  --shadow:0 20px 50px rgba(0,0,0,.45);
+  --glow-gold:0 0 28px rgba(212,168,50,.22);
+  --glow-sky:0 0 28px rgba(56,197,245,.18);
+}
+
+/* ─── RESET ───────────────────────────────────────────────── */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font);
+  background:var(--ink);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* mesh bg */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 10%, rgba(212,168,50,.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 80%, rgba(56,197,245,.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 50% 50%, rgba(18,212,154,.03) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ─── SCROLLBAR ─────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--deep);}
+::-webkit-scrollbar-thumb{background:rgba(212,168,50,.35);border-radius:10px;}
+
+/* ─── HEADER ────────────────────────────────────────────── */
+header{
+  position:sticky;top:0;z-index:200;
+  background:rgba(4,12,24,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--rim);
+  padding:0 32px;
+  height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.h-left{display:flex;align-items:center;gap:16px;}
+.back-btn{
+  display:flex;align-items:center;gap:8px;
+  text-decoration:none;color:var(--muted);
+  background:var(--surface);
+  border:1px solid var(--rim);
+  padding:8px 14px;border-radius:10px;
+  font-size:13px;font-weight:600;letter-spacing:.3px;
+  transition:.25s;
+}
+.back-btn:hover{color:var(--gold);border-color:var(--gold);background:var(--gold-dim);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),#b8860b);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:#000;
+  box-shadow:var(--glow-gold);
+}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:.5px;}
+.logo-text span{color:var(--gold);} 
+.h-right{display:flex;align-items:center;gap:14px;}
+.clock-chip{
+  font-family:var(--mono);font-size:13px;color:var(--sky);
+  background:var(--sky-dim);border:1px solid rgba(56,197,245,.2);
+  padding:6px 12px;border-radius:8px;letter-spacing:1px;
+}
+.pulse-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--mint);
+  box-shadow:0 0 8px var(--mint);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.6);opacity:.5;}}
+
+/* toast */
+.toast{
+  position:fixed;top:80px;right:24px;z-index:9999;
+  background:#0d1f35;border:1px solid var(--rim);
+  border-left:3px solid var(--mint);
+  padding:14px 20px;border-radius:14px;
+  min-width:280px;max-width:360px;
+  box-shadow:var(--shadow);
+  display:none;animation:toastIn .35s cubic-bezier(.34,1.56,.64,1);
+  display:flex;align-items:center;gap:12px;
+}
+.toast.show{display:flex;}
+@keyframes toastIn{from{transform:translateX(30px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast-icon{font-size:20px;}
+.toast-body h4{font-size:13px;font-weight:700;margin-bottom:2px;}
+.toast-body p{font-size:12px;color:var(--muted);}
+
+/* ─── MAIN LAYOUT ───────────────────────────────────────── */
+.container{
+  position:relative;z-index:1;
+  padding:28px 32px;
+  max-width:1560px;margin:auto;
+}
+
+/* ─── WELCOME BAND ─────────────────────────────────────── */
+.welcome-band{
+  background:linear-gradient(135deg,rgba(212,168,50,.1),rgba(56,197,245,.06));
+  border:1px solid rgba(212,168,50,.2);
+  border-radius:var(--r);
+  padding:24px 30px;
+  margin-bottom:28px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.welcome-band::after{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(212,168,50,.12),transparent 70%);
+}
+.wb-text h2{
+  font-size:20px;font-weight:700;
+  background:linear-gradient(90deg,#fff,var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.wb-text p{color:var(--muted);font-size:13.5px;margin-top:5px;line-height:1.6;}
+.wb-badge{
+  font-size:12px;font-weight:600;letter-spacing:.5px;
+  background:var(--gold-dim);border:1px solid rgba(212,168,50,.3);
+  color:var(--gold);padding:8px 16px;border-radius:30px;white-space:nowrap;
+}
+
+/* ─── STAT STRIP ────────────────────────────────────────── */
+.stat-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:28px;
+}
+.stat-card{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:var(--r);
+  padding:20px 22px;
+  display:flex;align-items:center;gap:16px;
+  transition:.3s;position:relative;overflow:hidden;
+}
+.stat-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--accent-color,var(--gold));
+  opacity:.7;
+}
+.stat-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.12);}
+.stat-icon{
+  width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;background:var(--icon-bg,var(--gold-dim));color:var(--accent-color,var(--gold));
+}
+.stat-data{}
+.stat-label{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px;}
+.stat-num{
+  font-size:26px;font-weight:800;
+  font-family:var(--mono);
+  color:var(--text);
+  display:flex;align-items:baseline;gap:4px;
+}
+.stat-num sup{font-size:12px;color:var(--muted);font-family:var(--font);}
+.stat-loading{
+  font-size:22px;font-weight:800;font-family:var(--mono);
+  color:var(--muted);animation:blink 1s infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* satisfaction */
+.sat-ring{
+  width:54px;height:54px;position:relative;flex-shrink:0;
+}
+.sat-ring canvas{position:absolute;inset:0;}
+.sat-center{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;font-family:var(--mono);
+}
+
+/* ─── MAIN GRID ─────────────────────────────────────────── */
+.main-grid{
+  display:grid;
+  grid-template-columns:1fr 420px;
+  gap:20px;
+}
+
+/* ─── SECTION ───────────────────────────────────────────── */
+.section{
+  background:var(--panel);
+  border:1px solid var(--rim);
+  border-radius:var(--r);
+  padding:24px;
+  margin-bottom:20px;
+  transition:.3s;
+}
+.section:hover{border-color:rgba(255,255,255,.1);}
+.sec-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;gap:10px;flex-wrap:wrap;
+}
+.sec-title{
+  display:flex;align-items:center;gap:10px;
+  font-size:15px;font-weight:700;letter-spacing:.3px;
+}
+.sec-icon{
+  width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.sec-badge{
+  font-size:11px;font-weight:600;letter-spacing:.4px;
+  padding:4px 10px;border-radius:20px;
+}
+
+/* ─── CHARTS ────────────────────────────────────────────── */
+.charts-row{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:18px;
+  margin-bottom:20px;
+}
+.chart-wrap{position:relative;}
+.chart-wrap canvas{max-height:200px;}
+
+/* best parent podium */
+.podium-bars{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  align-items:flex-end;gap:10px;height:140px;
+  padding:0 8px;
+}
+.pod-bar-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.pod-bar{
+  width:100%;border-radius:8px 8px 4px 4px;
+  background:linear-gradient(180deg,var(--sky),rgba(56,197,245,.3));
+  transition:height .8s cubic-bezier(.34,1.56,.64,1);
+  position:relative;cursor:pointer;
+}
+.pod-bar.rank1{background:linear-gradient(180deg,var(--gold),rgba(212,168,50,.3));}
+.pod-bar .score-tip{
+  position:absolute;top:-24px;left:50%;transform:translateX(-50%);
+  font-size:10px;font-weight:700;font-family:var(--mono);
+  white-space:nowrap;color:#fff;
+}
+.pod-name{font-size:10px;font-weight:600;color:var(--muted);text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pod-rank{
+  font-size:11px;font-weight:700;
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface);color:var(--muted);
+}
+.pod-rank.r1{background:var(--gold-dim);color:var(--gold);}
+
+/* ─── SEARCH ────────────────────────────────────────────── */
+.search-wrap{
+  position:relative;margin-bottom:18px;
+}
+.search-wrap i{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:14px;pointer-events:none;
+}
+.search-input{
+  width:100%;
+  padding:12px 14px 12px 40px;
+  background:#070e1c;
+  border:1px solid var(--rim);
+  border-radius:var(--r-sm);
+  color:var(--text);font-size:14px;font-family:var(--font);
+  outline:none;transition:.25s;
+}
+.search-input:focus{border-color:var(--gold);background:#09111f;}
+.search-input::placeholder{color:var(--muted);}
+
+/* ─── PARENT LIST ───────────────────────────────────────── */
+.parent-list{display:flex;flex-direction:column;gap:10px;}
+.parent-item{
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--rim);
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+  transition:.25s;
+}
+.parent-item:hover{border-color:rgba(212,168,50,.25);background:rgba(212,168,50,.04);}
+.p-avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--sky-dim),var(--gold-dim));
+  border:2px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:var(--gold);
+}
+.p-info{flex:1;min-width:0;}
+.p-name{font-size:14px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.p-meta{font-size:12px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;}
+.p-meta span{display:flex;align-items:center;gap:4px;}
+.p-meta i{font-size:10px;}
+.p-actions{display:flex;gap:7px;flex-wrap:wrap;}
+.btn{
+  border:none;cursor:pointer;font-family:var(--font);
+  font-weight:600;letter-spacing:.3px;
+  border-radius:9px;transition:.2s;
+  display:flex;align-items:center;gap:6px;
+}
+.btn:hover{transform:scale(1.05);}
+.btn:active{transform:scale(.97);}
+.btn-sm{padding:7px 12px;font-size:12px;}
+.btn-blue{background:var(--sky-dim);color:var(--sky);border:1px solid rgba(56,197,245,.25);}
+.btn-blue:hover{background:var(--sky);color:#000;}
+.btn-gold{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(212,168,50,.25);}
+.btn-gold:hover{background:var(--gold);color:#000;}
+.btn-green{background:var(--mint-dim);color:var(--mint);border:1px solid rgba(18,212,154,.25);}
+.btn-green:hover{background:var(--mint);color:#000;}
+.btn-red{background:var(--rose-dim);color:var(--rose);border:1px solid rgba(255,95,109,.25);}
+.btn-red:hover{background:var(--rose);color:#fff;}
+.btn-full{width:100%;justify-content:center;padding:13px;font-size:14px;}
+.no-child-note{
+  font-size:11px;background:rgba(245,158,11,.1);border:1px dashed rgba(245,158,11,.3);
+  color:var(--amber);padding:4px 10px;border-radius:20px;white-space:nowrap;
+}
+
+/* status dot */
+.status-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+  background:var(--rose);display:inline-block;
+}
+.status-dot.active{background:var(--mint);box-shadow:0 0 6px var(--mint);}
+
+/* ─── RIGHT PANEL ────────────────────────────────────────── */
+
+/* satisfaction big */
+.sat-big{
+  text-align:center;padding:20px 0 10px;
+}
+.sat-big canvas{max-width:140px;margin:auto;}
+.sat-pct{
+  font-size:36px;font-weight:800;font-family:var(--mono);
+  color:var(--mint);margin:10px 0 4px;
+}
+.sat-note{font-size:12px;color:var(--muted);}
+
+/* feedback items */
+.fb-item{
+  padding:14px;border-radius:12px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--rim);
+  margin-bottom:10px;
+  transition:.25s;
+}
+.fb-item:hover{border-color:rgba(255,255,255,.1);}
+.fb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.fb-who{font-size:13px;font-weight:700;}
+.fb-when{font-size:11px;color:var(--muted);font-family:var(--mono);}
+.fb-type{
+  font-size:10px;font-weight:700;letter-spacing:.5px;
+  padding:3px 8px;border-radius:20px;white-space:nowrap;
+}
+.fb-type.feedback{background:rgba(56,197,245,.15);color:var(--sky);}
+.fb-type.rating{background:var(--gold-dim);color:var(--gold);}
+.fb-type.meeting{background:var(--mint-dim);color:var(--mint);}
+.fb-text{font-size:12.5px;color:#b0bec5;line-height:1.6;margin-bottom:10px;}
+.fb-stars{color:var(--gold);font-size:13px;margin-bottom:10px;}
+.fb-footer{display:flex;justify-content:space-between;align-items:center;}
+.replied-badge{
+  font-size:10px;font-weight:700;letter-spacing:.4px;
+  padding:3px 9px;border-radius:20px;
+}
+.replied-badge.yes{background:var(--mint-dim);color:var(--mint);}
+.replied-badge.no{background:var(--rose-dim);color:var(--rose);}
+
+/* reply area */
+.reply-area{
+  display:none;margin-top:12px;
+  background:#070e1c;border-radius:10px;
+  border:1px solid var(--rim);padding:10px;
+}
+.reply-area.open{display:block;}
+.reply-area textarea{
+  width:100%;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:var(--font);font-size:12.5px;
+  resize:none;min-height:60px;
+}
+.reply-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px;}
+
+/* meeting items */
+.mtg-item{
+  padding:14px;border-radius:12px;
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--rim);
+  margin-bottom:10px;transition:.25s;
+}
+.mtg-item:hover{border-color:rgba(56,197,245,.2);}
+.mtg-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+.mtg-who{font-size:13.5px;font-weight:700;}
+.mtg-staff{font-size:12px;color:var(--sky);}
+.mtg-time{font-size:11px;color:var(--muted);font-family:var(--mono);margin:5px 0;}
+.mtg-comment{font-size:12px;color:#b0bec5;line-height:1.5;margin:6px 0;}
+.mtg-status{
+  font-size:10px;font-weight:700;letter-spacing:.5px;
+  padding:3px 10px;border-radius:20px;
+}
+.mtg-status.pending{background:rgba(245,158,11,.15);color:var(--amber);}
+.mtg-status.confirmed{background:var(--mint-dim);color:var(--mint);}
+
+/* ─── COMM HUB ──────────────────────────────────────────── */
+.alert-types{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;
+}
+.alert-type-btn{
+  padding:10px;border-radius:10px;border:none;cursor:pointer;
+  background:var(--surface);border:1px solid var(--rim);
+  color:var(--muted);font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:8px;transition:.25s;
+  font-family:var(--font);
+}
+.alert-type-btn:hover,.alert-type-btn.sel{
+  background:var(--gold-dim);border-color:rgba(212,168,50,.4);color:var(--gold);
+}
+.alert-type-btn i{font-size:16px;}
+.comm-textarea{
+  width:100%;min-height:90px;padding:12px;
+  background:#070e1c;border:1px solid var(--rim);
+  border-radius:12px;color:var(--text);
+  font-family:var(--font);font-size:13px;resize:none;
+  outline:none;transition:.25s;margin-bottom:12px;
+}
+.comm-textarea:focus{border-color:var(--gold);}
+.comm-textarea::placeholder{color:var(--muted);}
+
+/* event form */
+.event-form{display:none;margin-top:14px;}
+.event-form.open{display:block;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.input-field{
+  width:100%;padding:11px 13px;
+  background:#070e1c;border:1px solid var(--rim);
+  border-radius:10px;color:var(--text);
+  font-family:var(--font);font-size:13px;outline:none;transition:.25s;
+}
+.input-field:focus{border-color:var(--gold);}
+.input-field::placeholder{color:var(--muted);}
+input[type="date"].input-field::-webkit-calendar-picker-indicator{filter:invert(.5);}
+.form-label{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.4px;margin-bottom:6px;display:block;text-transform:uppercase;}
+
+/* event list */
+.event-item{
+  padding:12px;border-radius:10px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--rim);margin-bottom:8px;
+}
+.event-name{font-size:13px;font-weight:700;margin-bottom:3px;}
+.event-meta{font-size:11px;color:var(--muted);display:flex;gap:10px;}
+
+/* ─── MODAL ─────────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:#0b1628;
+  border:1px solid var(--rim);
+  border-radius:22px;
+  width:100%;max-width:680px;
+  max-height:90vh;overflow-y:auto;
+  padding:28px;
+  box-shadow:var(--shadow);
+  animation:modalIn .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+@keyframes modalIn{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-close{
+  position:absolute;top:18px;right:18px;
+  width:32px;height:32px;border-radius:8px;
+  background:var(--surface);border:1px solid var(--rim);
+  color:var(--muted);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:.2s;
+}
+.modal-close:hover{background:var(--rose-dim);color:var(--rose);}
+.modal-title{font-size:20px;font-weight:800;margin-bottom:20px;
+  background:linear-gradient(90deg,#fff,var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* detail grid in modal */
+.detail-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin-bottom:18px;
+}
+.detail-card{
+  background:rgba(255,255,255,.025);
+  border:1px solid var(--rim);
+  border-radius:12px;padding:14px;
+}
+.detail-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;}
+.detail-val{font-size:14px;font-weight:600;}
+.detail-card.span2{grid-column:span 2;}
+
+/* activity gauge */
+.activity-gauge{
+  display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,.025);border:1px solid var(--rim);
+  border-radius:12px;padding:14px;margin-bottom:16px;
+}
+.gauge-bar-wrap{flex:1;}
+.gauge-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;}
+.gauge-bar{height:8px;border-radius:50px;background:rgba(255,255,255,.07);overflow:hidden;}
+.gauge-fill{height:100%;border-radius:50px;transition:width 1s cubic-bezier(.34,1.56,.64,1);}
+.gauge-icon{font-size:22px;width:40px;text-align:center;}
+
+/* ─── LOADER ─────────────────────────────────────────────── */
+.skeleton{
+  background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* ─── EMPTY STATE ───────────────────────────────────────── */
+.empty-state{
+  text-align:center;padding:40px 20px;
+  color:var(--muted);
+}
+.empty-state i{font-size:36px;margin-bottom:12px;display:block;opacity:.4;}
+.empty-state p{font-size:13px;}
+
+/* ─── TABS ───────────────────────────────────────────────── */
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.tab{
+  padding:7px 14px;border-radius:8px;cursor:pointer;
+  font-size:12px;font-weight:600;letter-spacing:.3px;
+  background:var(--surface);border:1px solid var(--rim);
+  color:var(--muted);transition:.2s;
+}
+.tab.active{background:var(--gold-dim);border-color:rgba(212,168,50,.4);color:var(--gold);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media(max-width:1100px){
+  .main-grid{grid-template-columns:1fr;}
+  .charts-row{grid-template-columns:1fr;}
+  .stat-strip{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:600px){
+  .container{padding:18px 16px;}
+  header{padding:0 18px;}
+  .stat-strip{grid-template-columns:1fr 1fr;}
+  .detail-grid{grid-template-columns:1fr;}
+  .detail-card.span2{grid-column:span 1;}
+}
+</style>
+</head>
+<body>
+
+<!-- Sounds -->
+<audio id="sndBubble" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" preload="auto"></audio>
+<audio id="sndSend"   src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" preload="auto"></audio>
+<audio id="sndSuccess"src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+<audio id="sndError"  src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✓</span>
+  <div class="toast-body">
+    <h4 id="toastTitle">Done</h4>
+    <p  id="toastMsg"></p>
+  </div>
+</div>
+
+<!-- ═══ HEADER ════════════════════════════════════════════ -->
+<header>
+  <div class="h-left">
+    <a href="admin_dashboard.html" class="back-btn"><i class="fa fa-arrow-left"></i> Back</a>
+    <div class="logo">
+      <div class="logo-mark"><i class="fa fa-shield-halved"></i></div>
+      <div class="logo-text">RAHLAT <span>AMAN</span></div>
+    </div>
+  </div>
+  <div class="h-right">
+    <div class="pulse-dot"></div>
+    <div class="clock-chip" id="clock">00:00:00</div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════ -->
+<div class="container">
+
+  <!-- Welcome band -->
+  <div class="welcome-band">
+    <div class="wb-text">
+      <h2>Parent Center — Admin Control</h2>
+      <p>Trust and collaboration are always at your side. We're always here with confidence, protecting your child in Rahlat Aman. These are the records of every registered parent.</p>
+    </div>
+    <div class="wb-badge"><i class="fa fa-circle-check"></i> &nbsp;Live Firebase Data</div>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="stat-strip">
+    <!-- Total Parents -->
+    <div class="stat-card" style="--accent-color:var(--gold);--icon-bg:var(--gold-dim);">
+      <div class="stat-icon"><i class="fa fa-users"></i></div>
+      <div class="stat-data">
+        <div class="stat-label">Total Parents</div>
+        <div class="stat-num"><span class="stat-loading" id="st-total">·</span></div>
+      </div>
+    </div>
+    <!-- Total Meetings -->
+    <div class="stat-card" style="--accent-color:var(--sky);--icon-bg:var(--sky-dim);">
+      <div class="stat-icon"><i class="fa fa-handshake"></i></div>
+      <div class="stat-data">
+        <div class="stat-label">Meetings Booked</div>
+        <div class="stat-num"><span class="stat-loading" id="st-meetings">·</span></div>
+      </div>
+    </div>
+    <!-- Feedback replied -->
+    <div class="stat-card" style="--accent-color:var(--mint);--icon-bg:var(--mint-dim);">
+      <div class="stat-icon"><i class="fa fa-reply"></i></div>
+      <div class="stat-data">
+        <div class="stat-label">Feedback Replied</div>
+        <div class="stat-num"><span class="stat-loading" id="st-replied">·</span></div>
+      </div>
+    </div>
+    <!-- Feedback pending -->
+    <div class="stat-card" style="--accent-color:var(--rose);--icon-bg:var(--rose-dim);">
+      <div class="stat-icon"><i class="fa fa-clock"></i></div>
+      <div class="stat-data">
+        <div class="stat-label">Feedback Pending</div>
+        <div class="stat-num"><span class="stat-loading" id="st-pending">·</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="charts-row">
+    <!-- Best 4 Parents -->
+    <div class="section">
+      <div class="sec-head">
+        <div class="sec-title">
+          <div class="sec-icon" style="background:var(--gold-dim);color:var(--gold);"><i class="fa fa-trophy"></i></div>
+          <span>Best Parents — Rahlat Aman</span>
+        </div>
+        <span class="sec-badge" style="background:var(--gold-dim);color:var(--gold);border:1px solid rgba(212,168,50,.25);">Top 4 Engagement</span>
+      </div>
+      <div class="podium-bars" id="podiumBars">
+        <!-- filled by JS -->
+        <div class="pod-bar-wrap"><div class="skeleton" style="width:100%;height:60px;border-radius:8px;"></div></div>
+        <div class="pod-bar-wrap"><div class="skeleton" style="width:100%;height:40px;border-radius:8px;"></div></div>
+        <div class="pod-bar-wrap"><div class="skeleton" style="width:100%;height:80px;border-radius:8px;"></div></div>
+        <div class="pod-bar-wrap"><div class="skeleton" style="width:100%;height:50px;border-radius:8px;"></div></div>
+      </div>
+    </div>
+
+    <!-- System chart -->
+    <div class="section">
+      <div class="sec-head">
+        <div class="sec-title">
+          <div class="sec-icon" style="background:var(--sky-dim);color:var(--sky);"><i class="fa fa-chart-bar"></i></div>
+          <span>System Overview</span>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="sysChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Satisfaction (above directory) -->
+  <div class="section" style="margin-bottom:20px;">
+    <div class="sec-head">
+      <div class="sec-title">
+        <div class="sec-icon" style="background:var(--mint-dim);color:var(--mint);"><i class="fa fa-star"></i></div>
+        <span>Parent Satisfaction Rate</span>
+      </div>
+      <span class="sec-badge" style="background:var(--mint-dim);color:var(--mint);border:1px solid rgba(18,212,154,.25);">Stars → %</span>
+    </div>
+    <div style="display:grid;grid-template-columns:160px 1fr;gap:24px;align-items:center;flex-wrap:wrap;">
+      <div class="sat-big">
+        <canvas id="satChart" width="140" height="140"></canvas>
+        <div class="sat-pct" id="satPct">—</div>
+        <div class="sat-note">avg ×1.5 per star</div>
+      </div>
+      <div id="satBreakdown" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- LEFT ─ Directory + Meetings -->
+    <div>
+
+      <!-- Parent Directory -->
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">
+            <div class="sec-icon" style="background:var(--gold-dim);color:var(--gold);"><i class="fa fa-address-book"></i></div>
+            <span>Parent Directory</span>
+          </div>
+          <span class="sec-badge" style="background:var(--surface);color:var(--muted);border:1px solid var(--rim);" id="dirCount">Loading…</span>
+        </div>
+        <div class="search-wrap">
+          <i class="fa fa-search"></i>
+          <input class="search-input" id="searchInput" type="text" placeholder="Search by name, student, phone…" oninput="filterParents(this.value)">
+        </div>
+        <div class="parent-list" id="parentList">
+          <!-- skeleton -->
+          <div class="skeleton" style="height:76px;border-radius:14px;"></div>
+          <div class="skeleton" style="height:76px;border-radius:14px;"></div>
+          <div class="skeleton" style="height:76px;border-radius:14px;"></div>
+        </div>
+      </div>
+
+      <!-- Meetings -->
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">
+            <div class="sec-icon" style="background:var(--sky-dim);color:var(--sky);"><i class="fa fa-calendar-check"></i></div>
+            <span>Meeting Requests</span>
+          </div>
+          <span class="sec-badge" style="background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25);" id="mtgBadge">·</span>
+        </div>
+        <div id="meetingList">
+          <div class="skeleton" style="height:90px;border-radius:12px;margin-bottom:10px;"></div>
+          <div class="skeleton" style="height:90px;border-radius:12px;"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT ─ Feedback + Communication -->
+    <div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">
+            <div class="sec-icon" style="background:var(--gold-dim);color:var(--gold);"><i class="fa fa-comment-dots"></i></div>
+            <span>Parent Feedback</span>
+          </div>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="fbTab('all',this)">All</div>
+          <div class="tab" onclick="fbTab('feedback',this)">Messages</div>
+          <div class="tab" onclick="fbTab('rating',this)">Ratings</div>
+          <div class="tab" onclick="fbTab('meeting',this)">Meetings</div>
+        </div>
+        <div id="feedbackList">
+          <div class="skeleton" style="height:100px;border-radius:12px;margin-bottom:10px;"></div>
+          <div class="skeleton" style="height:100px;border-radius:12px;"></div>
+        </div>
+      </div>
+
+      <!-- Communication Hub -->
+      <div class="section">
+        <div class="sec-head">
+          <div class="sec-title">
+            <div class="sec-icon" style="background:var(--sky-dim);color:var(--sky);"><i class="fa fa-satellite-dish"></i></div>
+            <span>Communication Hub</span>
+          </div>
+        </div>
+
+        <!-- Alert type selection -->
+        <div class="form-label">Notification Type</div>
+        <div class="alert-types" id="alertTypes">
+          <button class="alert-type-btn sel" onclick="selAlert(this,'vacation')"><i class="fa fa-umbrella-beach"></i>Weekly Vacation</button>
+          <button class="alert-type-btn" onclick="selAlert(this,'activity')"><i class="fa fa-star"></i>Activity / Event</button>
+          <button class="alert-type-btn" onclick="selAlert(this,'weather')"><i class="fa fa-cloud-bolt"></i>Weather Alert</button>
+          <button class="alert-type-btn" onclick="selAlert(this,'safety')"><i class="fa fa-triangle-exclamation"></i>Safety Notice</button>
+        </div>
+
+        <div class="form-label" style="margin-top:12px;">Message</div>
+        <textarea class="comm-textarea" id="commText" placeholder="Write your notification to parents…"></textarea>
+        <button class="btn btn-blue btn-full" onclick="sendNotification()">
+          <i class="fa fa-paper-plane"></i> Send Notification to All Parents
+        </button>
+
+        <!-- Event / Activity section -->
+        <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--rim);">
+          <div class="sec-head" style="margin-bottom:14px;">
+            <div class="sec-title" style="font-size:14px;">
+              <div class="sec-icon" style="background:var(--mint-dim);color:var(--mint);width:28px;height:28px;border-radius:8px;font-size:12px;"><i class="fa fa-calendar-plus"></i></div>
+              Publish School Activity
+            </div>
+            <button class="btn btn-green btn-sm" onclick="toggleEventForm()"><i class="fa fa-plus"></i> New</button>
+          </div>
+
+          <div class="event-form" id="eventForm">
+            <div class="form-row">
+              <div>
+                <div class="form-label">Activity Title</div>
+                <input class="input-field" id="evTitle" placeholder="e.g. Road Safety Workshop">
+              </div>
+              <div>
+                <div class="form-label">Date</div>
+                <input class="input-field" type="date" id="evDate">
+              </div>
+            </div>
+            <div class="form-row">
+              <div>
+                <div class="form-label">Time</div>
+                <input class="input-field" type="time" id="evTime">
+              </div>
+              <div>
+                <div class="form-label">Category</div>
+                <select class="input-field" id="evCat">
+                  <option value="Educational">Educational</option>
+                  <option value="Safety">Safety</option>
+                  <option value="Cultural">Cultural</option>
+                  <option value="Sports">Sports</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-label">Description</div>
+            <textarea class="comm-textarea" id="evDesc" placeholder="Brief description of the activity…" style="min-height:70px;margin-bottom:10px;"></textarea>
+            <button class="btn btn-gold btn-full" onclick="publishActivity()"><i class="fa fa-bullhorn"></i> Publish Activity</button>
+          </div>
+
+          <!-- published events list -->
+          <div id="eventsList"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL ══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="closeModal()"><i class="fa fa-times"></i></button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ═══ SCRIPTS ════════════════════════════════════════════ -->
+<script>
+/* ──────────────────────────────────────────────────────────
+   HELPERS
+────────────────────────────────────────────────────────── */
+function play(id){ try{ document.getElementById(id).currentTime=0; document.getElementById(id).play(); }catch(_){} }
+
+let _toastTimer;
+function toast(title,msg,type='success'){
+  const t=document.getElementById('toast');
+  const colors={success:'var(--mint)',error:'var(--rose)',info:'var(--sky)',warn:'var(--amber)'};
+  const icons={success:'✓',error:'✕',info:'ℹ',warn:'⚠'};
+  t.style.borderLeftColor=colors[type]||colors.success;
+  document.getElementById('toastIcon').textContent=icons[type]||'✓';
+  document.getElementById('toastTitle').textContent=title;
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+function fmtDate(ts){
+  if(!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtTime(ts){
+  if(!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+}
+function initials(name){ return (name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function stars(n){ return '★'.repeat(Math.round(n||0))+'☆'.repeat(5-Math.round(n||0)); }
+
+/* ──────────────────────────────────────────────────────────
+   CLOCK
+────────────────────────────────────────────────────────── */
+function updateClock(){
+  const d=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Muscat'}));
+  document.getElementById('clock').textContent=d.toLocaleTimeString('en-US',{hour12:false});
+}
+setInterval(updateClock,1000); updateClock();
+
+/* ──────────────────────────────────────────────────────────
+   STATE
+────────────────────────────────────────────────────────── */
+let allParents=[], allFeedback=[], allMeetings=[], fbFilter='all';
+let satChart=null, sysChart=null;
+
+/* ──────────────────────────────────────────────────────────
+   FIREBASE BOOT
+────────────────────────────────────────────────────────── */
+document.addEventListener('fbReady', ()=>{ loadAll(); });
+if(window._fbReady) loadAll();
+
+async function loadAll(){
+  await Promise.all([
+    loadParents(),
+    loadFeedback(),
+    loadMeetings(),
+    loadEvents()
+  ]);
+}
+
+/* ──────────────────────────────────────────────────────────
+   LOAD PARENTS
+────────────────────────────────────────────────────────── */
+async function loadParents(){
+  try{
+    const { collection, query, where, getDocs } = window._fb;
+    const db = window._db;
+
+    const q = query(collection(db,'users'), where('role','==','parent'));
+    const snap = await getDocs(q);
+
+    allParents = [];
+    snap.forEach(d => allParents.push({ id:d.id, ...d.data() }));
+
+    // enrich with profile data (children, etc.)
+    for(let p of allParents){
+      const profId = (p.email||'').replace(/[.#$[\]]/g,'_');
+      try{
+        const profSnap = await getDocs(query(collection(db,'parent_profile'), where('__name__','==',profId)));
+        if(!profSnap.empty){
+          const pData = profSnap.docs[0].data();
+          p._children = pData.children || [];
+        } else {
+          p._children = [];
+        }
+      } catch{ p._children=[]; }
+    }
+
+    renderParents(allParents);
+    document.getElementById('dirCount').textContent = allParents.length+' registered';
+    document.getElementById('st-total').outerHTML = '<span id="st-total" style="font-size:26px;font-weight:800;font-family:var(--mono);">'+allParents.length+'</span>';
+
+    computeBestParents();
+    updateSysChart();
+  } catch(e){
+    console.error(e);
+    document.getElementById('parentList').innerHTML='<div class="empty-state"><i class="fa fa-database"></i><p>Could not load parents from Firebase.</p></div>';
+  }
+}
+
+/* ──────────────────────────────────────────────────────────
+   RENDER PARENTS
+────────────────────────────────────────────────────────── */
+function renderParents(list){
+  const box = document.getElementById('parentList');
+  if(!list.length){
+    box.innerHTML='<div class="empty-state"><i class="fa fa-user-slash"></i><p>No parents found.</p></div>';
+    return;
+  }
+  box.innerHTML = list.map(p=>{
+    const child = p._children&&p._children.length ? p._children[0] : null;
+    const childName = child ? child.name : null;
+    const school = child ? (child.school||'—') : (p.schoolName||p.school||'—');
+    const phone = p.phoneNumber||p.phone||'—';
+    const isActive = p.status==='active'||!p.status;
+
+    return `
+    <div class="parent-item" id="pi-${p.id}">
+      <div class="p-avatar" onclick="openParentModal('${p.id}')">${initials(p.fullName||p.name)}</div>
+      <div class="p-info">
+        <div class="p-name">${p.fullName||p.name||'Unknown'}</div>
+        <div class="p-meta">
+          ${childName
+            ? `<span><i class="fa fa-graduation-cap"></i>${childName}</span>`
+            : `<span class="no-child-note"><i class="fa fa-circle-exclamation"></i> No child added</span>`}
+          <span><i class="fa fa-school"></i>${school}</span>
+          <span><i class="fa fa-phone"></i>${phone}</span>
+          <span><div class="status-dot ${isActive?'active':''}"></div>${isActive?'Active':'Inactive'}</span>
+        </div>
+      </div>
+      <div class="p-actions">
+        <button class="btn btn-blue btn-sm" onclick="openParentModal('${p.id}')"><i class="fa fa-eye"></i></button>
+        <button class="btn btn-green btn-sm" onclick="callParent('${phone}')"><i class="fa fa-phone"></i></button>
+        <button class="btn btn-gold btn-sm" onclick="openFeedbackModal('${p.id}','${(p.fullName||'').replace(/'/g,"\\'")}')"><i class="fa fa-comment"></i></button>
+        <button class="btn btn-red btn-sm" onclick="openMeetingView('${p.id}')"><i class="fa fa-calendar"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterParents(v){
+  v = v.toLowerCase();
+  const f = allParents.filter(p=>{
+    const child = p._children&&p._children.length ? p._children[0] : null;
+    return (p.fullName||'').toLowerCase().includes(v)
+      || (child&&child.name||'').toLowerCase().includes(v)
+      || (p.phoneNumber||p.phone||'').includes(v)
+      || (p.email||'').toLowerCase().includes(v);
+  });
+  renderParents(f);
+}
+
+function callParent(phone){
+  play('sndBubble');
+  if(phone==='—'){ toast('No phone','This parent has no phone number.','warn'); return; }
+  window.location.href='tel:'+phone;
+}
+
+/* ──────────────────────────────────────────────────────────
+   PARENT MODAL — FULL DETAILS
+────────────────────────────────────────────────────────── */
+async function openParentModal(uid){
+  play('sndBubble');
+  const p = allParents.find(x=>x.id===uid);
+  if(!p) return;
+
+  // attendance data
+  let attRate = '—', attPresent = 0, attTotal = 0;
+  try{
+    const { collection, getDocs } = window._fb;
+    const logsRef = collection(window._db,'Admin_Attendance_Hub',uid,'logs');
+    const logsSnap = await getDocs(logsRef);
+    attTotal = logsSnap.size;
+    logsSnap.forEach(d=>{ if(d.data().status==='present') attPresent++; });
+    if(attTotal>0) attRate = Math.round(attPresent/attTotal*100)+'%';
+  } catch{}
+
+  // last login
+  const lastLogin = p.lastLogin
+    ? (fmtDate(p.lastLogin)+' '+fmtTime(p.lastLogin))
+    : 'Not recorded';
+
+  // activity score
+  const fbDocs = allFeedback.filter(f=>f.parentId===uid||f.parentEmail===p.email);
+  const mtgDocs = allMeetings.filter(m=>m.parentId===uid);
+  const score = Math.min(100, attPresent*3 + fbDocs.length*10 + mtgDocs.length*8);
+  const actLabel = score>=70?'Very Active':score>=40?'Moderately Active':'Low Activity';
+  const actColor = score>=70?'var(--mint)':score>=40?'var(--amber)':'var(--rose)';
+
+  const children = p._children||[];
+  const child0 = children[0]||{};
+
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-title">${p.fullName||p.name||'Parent Details'}</div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-label">Full Name</div>
+        <div class="detail-val">${p.fullName||'—'}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Email</div>
+        <div class="detail-val" style="font-size:12px;">${p.email||'—'}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Phone</div>
+        <div class="detail-val">${p.phoneNumber||p.phone||'—'}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Children Registered</div>
+        <div class="detail-val">${children.length||0}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Student Name</div>
+        <div class="detail-val">${child0.name||'<span style="color:var(--amber);font-size:12px;">No child added</span>'}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">School</div>
+        <div class="detail-val">${child0.school||p.schoolName||'—'}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Governorate</div>
+        <div class="detail-val">${p.governorate||'—'}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Last Login</div>
+        <div class="detail-val" style="font-size:12px;">${lastLogin}</div>
+      </div>
+    </div>
+
+    <!-- Activity gauge -->
+    <div class="activity-gauge">
+      <div class="gauge-icon" style="color:${actColor}"><i class="fa fa-bolt"></i></div>
+      <div class="gauge-bar-wrap">
+        <div class="gauge-label"><span>Engagement Score</span><span style="color:${actColor};font-weight:700;">${score}/100 · ${actLabel}</span></div>
+        <div class="gauge-bar"><div class="gauge-fill" style="width:${score}%;background:${actColor};"></div></div>
+        <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:var(--muted);">🔵 Attendance days: <b style="color:#fff;">${attPresent}</b></span>
+          <span style="font-size:11px;color:var(--muted);">🟡 Feedback sent: <b style="color:#fff;">${fbDocs.length}</b></span>
+          <span style="font-size:11px;color:var(--muted);">🟢 Meetings booked: <b style="color:#fff;">${mtgDocs.length}</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance -->
+    <div class="detail-card span2" style="margin-bottom:14px;">
+      <div class="detail-label">Attendance Accuracy</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+        <div style="font-size:28px;font-weight:800;font-family:var(--mono);color:var(--sky);">${attRate}</div>
+        <div style="font-size:12px;color:var(--muted);">${attPresent} present out of ${attTotal} logged days</div>
+      </div>
+      <div class="gauge-bar" style="margin-top:10px;"><div class="gauge-fill" style="width:${attTotal>0?Math.round(attPresent/attTotal*100):0}%;background:var(--sky);"></div></div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-green btn-sm" onclick="callParent('${p.phoneNumber||p.phone||'—'}');closeModal()"><i class="fa fa-phone"></i> Call</button>
+      <button class="btn btn-gold btn-sm" onclick="closeModal();openFeedbackModal('${p.id}','${(p.fullName||'').replace(/'/g,"\\'")}')"><i class="fa fa-comment-dots"></i> View Feedback</button>
+      <button class="btn btn-blue btn-sm" onclick="closeModal();openMeetingView('${p.id}')"><i class="fa fa-calendar-check"></i> Meetings</button>
+    </div>`;
+
+  openModal();
+}
+
+/* ──────────────────────────────────────────────────────────
+   FEEDBACK — LOAD + RENDER
+────────────────────────────────────────────────────────── */
+async function loadFeedback(){
+  try{
+    const { collection, getDocs, orderBy, query } = window._fb;
+    const q = query(collection(window._db,'parent_feedback'), orderBy('timestamp','desc'));
+    const snap = await getDocs(q);
+    allFeedback = [];
+    snap.forEach(d => allFeedback.push({ id:d.id, ...d.data() }));
+
+    renderFeedback(allFeedback, fbFilter);
+
+    // stats
+    const replied = allFeedback.filter(f=>f.status==='replied').length;
+    const pending  = allFeedback.filter(f=>f.status==='new'||!f.status).length;
+    document.getElementById('st-replied').outerHTML='<span id="st-replied" style="font-size:26px;font-weight:800;font-family:var(--mono);">'+replied+'</span>';
+    document.getElementById('st-pending').outerHTML='<span id="st-pending" style="font-size:26px;font-weight:800;font-family:var(--mono);">'+pending+'</span>';
+
+    // satisfaction
+    computeSatisfaction();
+  } catch(e){
+    console.error(e);
+    document.getElementById('feedbackList').innerHTML='<div class="empty-state"><i class="fa fa-comment-slash"></i><p>Could not load feedback.</p></div>';
+    document.getElementById('st-replied').outerHTML='<span id="st-replied" style="font-size:26px;font-weight:800;font-family:var(--mono);">0</span>';
+    document.getElementById('st-pending').outerHTML='<span id="st-pending" style="font-size:26px;font-weight:800;font-family:var(--mono);">0</span>';
+  }
+}
+
+function fbTab(filter, el){
+  fbFilter=filter;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const filtered = filter==='all' ? allFeedback : allFeedback.filter(f=>f.feedbackType===filter);
+  renderFeedback(filtered, filter);
+}
+
+function renderFeedback(list){
+  const box = document.getElementById('feedbackList');
+  if(!list.length){
+    box.innerHTML='<div class="empty-state"><i class="fa fa-inbox"></i><p>No feedback yet.</p></div>';
+    return;
+  }
+  box.innerHTML = list.slice(0,30).map(f=>{
+    const isReplied = f.status==='replied';
+    const ratingHTML = f.rating && f.rating > 0
+      ? `<div class="fb-stars">${stars(f.rating)} <span style="font-size:11px;color:var(--muted);">${f.rating||0}/5</span></div>`
+      : '';
+    const bodyHTML = f.feedbackText
+      ? `<div class="fb-text">${f.feedbackText}</div>`
+      : f.feedbackType==='rating'
+      ? `<div class="fb-text">${f.activityTitle||'Activity'}</div>`
+      : f.feedbackType==='meeting'
+      ? `<div class="fb-text"><i class="fa fa-calendar" style="color:var(--sky);"></i> ${f.meetingDate||'—'} · ${f.meetingTime||'—'} · ${f.selectedStaff||'—'}</div>`
+      : '';
+
+    return `
+    <div class="fb-item" id="fbi-${f.id}">
+      <div class="fb-top">
+        <div>
+          <div class="fb-who">${f.parentName||'Parent'}</div>
+          <div class="fb-when">${fmtDate(f.createdAt||f.timestamp)}</div>
+        </div>
+        <span class="fb-type ${f.feedbackType||'feedback'}">${(f.feedbackType||'feedback').toUpperCase()}</span>
+      </div>
+      ${ratingHTML}${bodyHTML}
+      <div class="fb-footer">
+        <span class="replied-badge ${isReplied?'yes':'no'}">${isReplied?'✓ Replied':'Awaiting Reply'}</span>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-blue btn-sm" onclick="toggleReply('${f.id}')"><i class="fa fa-reply"></i> Reply</button>
+          ${!isReplied?`<button class="btn btn-green btn-sm" onclick="markReplied('${f.id}')"><i class="fa fa-check"></i></button>`:''}
+        </div>
+      </div>
+      <div class="reply-area" id="ra-${f.id}">
+        <textarea placeholder="Write your reply here…" id="rt-${f.id}"></textarea>
+        <div class="reply-actions">
+          <button class="btn btn-red btn-sm" onclick="toggleReply('${f.id}')">Cancel</button>
+          <button class="btn btn-gold btn-sm" onclick="sendReply('${f.id}')"><i class="fa fa-paper-plane"></i> Send</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleReply(id){
+  play('sndBubble');
+  const el = document.getElementById('ra-'+id);
+  el.classList.toggle('open');
+}
+
+async function sendReply(id){
+  const txt = document.getElementById('rt-'+id).value.trim();
+  if(!txt){ toast('Empty','Write a reply first.','warn'); return; }
+  try{
+    play('sndSend');
+    const { doc, updateDoc } = window._fb;
+    await updateDoc(doc(window._db,'parent_feedback',id),{
+      status:'replied',
+      adminReply:txt,
+      repliedAt: new Date().toISOString()
+    });
+    toast('Reply Sent ✓','Feedback marked as replied.','success');
+    await loadFeedback();
+  } catch(e){
+    toast('Error',e.message,'error');
+  }
+}
+
+async function markReplied(id){
+  play('sndSuccess');
+  try{
+    const { doc, updateDoc } = window._fb;
+    await updateDoc(doc(window._db,'parent_feedback',id),{ status:'replied' });
+    toast('Marked Replied','Feedback status updated.','success');
+    await loadFeedback();
+  } catch(e){ toast('Error',e.message,'error'); }
+}
+
+/* ──────────────────────────────────────────────────────────
+   OPEN FEEDBACK FOR SPECIFIC PARENT
+────────────────────────────────────────────────────────── */
+function openFeedbackModal(uid, name){
+  play('sndBubble');
+  const list = allFeedback.filter(f=>f.parentId===uid||f.parentName===name);
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-title">Feedback — ${name}</div>
+    ${list.length
+      ? list.map(f=>`
+        <div class="fb-item">
+          <div class="fb-top">
+            <div class="fb-when">${fmtDate(f.createdAt||f.timestamp)}</div>
+            <span class="fb-type ${f.feedbackType||'feedback'}">${(f.feedbackType||'').toUpperCase()}</span>
+          </div>
+          ${f.rating && f.rating>0 ?`<div class="fb-stars">${stars(f.rating)}</div>`:''}
+          <div class="fb-text">${f.feedbackText||f.activityTitle||'—'}</div>
+          <span class="replied-badge ${f.status==='replied'?'yes':'no'}">${f.status==='replied'?'Replied':'Pending'}</span>
+        </div>`).join('')
+      : '<div class="empty-state"><i class="fa fa-inbox"></i><p>No feedback from this parent yet.</p></div>'}`;
+  openModal();
+}
+
+/* ──────────────────────────────────────────────────────────
+   MEETINGS
+────────────────────────────────────────────────────────── */
+async function loadMeetings(){
+  try{
+    const { collection, getDocs } = window._fb;
+    const snap = await getDocs(collection(window._db,'meetings'));
+    allMeetings = [];
+    snap.forEach(d => allMeetings.push({ id:d.id, ...d.data() }));
+
+    document.getElementById('st-meetings').outerHTML=`<span id="st-meetings" style="font-size:26px;font-weight:800;font-family:var(--mono);">${allMeetings.length}</span>`;
+    document.getElementById('mtgBadge').textContent = allMeetings.filter(m=>m.status==='pending').length+' pending';
+
+    renderMeetings(allMeetings);
+  } catch(e){
+    console.error(e);
+    document.getElementById('st-meetings').outerHTML='<span id="st-meetings" style="font-size:26px;font-weight:800;font-family:var(--mono);">0</span>';
+  }
+}
+
+function renderMeetings(list){
+  const box = document.getElementById('meetingList');
+  if(!list.length){
+    box.innerHTML='<div class="empty-state"><i class="fa fa-calendar-xmark"></i><p>No meetings scheduled yet.</p></div>';
+    return;
+  }
+  box.innerHTML = list.slice(0,15).map(m=>`
+    <div class="mtg-item">
+      <div class="mtg-row">
+        <div>
+          <div class="mtg-who">${m.requestedBy||'Parent'}</div>
+          <div class="mtg-staff"><i class="fa fa-user-tie"></i> ${m.staff||'—'}</div>
+        </div>
+        <span class="mtg-status ${m.status==='confirmed'?'confirmed':'pending'}">${(m.status||'pending').toUpperCase()}</span>
+      </div>
+      <div class="mtg-time"><i class="fa fa-clock"></i> ${m.date||'—'} · ${m.time||'—'}</div>
+      ${m.notes?`<div class="mtg-comment">${m.notes}</div>`:''}
+      <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+        ${m.status!=='confirmed'?`<button class="btn btn-green btn-sm" onclick="confirmMeeting('${m.id}')"><i class="fa fa-check"></i> Confirm</button>`:''}
+        <button class="btn btn-red btn-sm" onclick="deleteMeeting('${m.id}')"><i class="fa fa-trash"></i></button>
+      </div>
+    </div>`).join('');
+}
+
+async function confirmMeeting(id){
+  play('sndSuccess');
+  try{
+    const { doc, updateDoc } = window._fb;
+    await updateDoc(doc(window._db,'meetings',id),{ status:'confirmed' });
+    toast('Meeting Confirmed','Status updated in Firebase.','success');
+    await loadMeetings();
+  } catch(e){ toast('Error',e.message,'error'); }
+}
+
+async function deleteMeeting(id){
+  play('sndError');
+  if(!confirm('Delete this meeting?')) return;
+  try{
+    const { doc: docRef } = window._fb;
+    const { deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    await deleteDoc(docRef(window._db,'meetings',id));
+    toast('Deleted','Meeting removed.','info');
+    await loadMeetings();
+  } catch(e){ toast('Error',e.message,'error'); }
+}
+
+function openMeetingView(uid){
+  play('sndBubble');
+  const p = allParents.find(x=>x.id===uid);
+  const name = p ? (p.fullName||p.name||uid) : uid;
+  const list = allMeetings.filter(m=>m.parentId===uid||m.requestedBy===name);
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-title">Meetings — ${name}</div>
+    ${list.length
+      ? list.map(m=>`<div class="mtg-item">
+          <div class="mtg-who">${m.staff||'—'}</div>
+          <div class="mtg-time">${m.date||'—'} · ${m.time||'—'}</div>
+          ${m.notes?`<div class="mtg-comment">${m.notes}</div>`:''}
+          <span class="mtg-status ${m.status==='confirmed'?'confirmed':'pending'}">${(m.status||'pending').toUpperCase()}</span>
+        </div>`).join('')
+      : '<div class="empty-state"><i class="fa fa-calendar-check"></i><p>No meetings for this parent.</p></div>'}`;
+  openModal();
+}
+
+/* ──────────────────────────────────────────────────────────
+   SATISFACTION
+   ✅ FIX: filter on rating > 0 regardless of feedbackType
+      so ratings from Parent Awareness (feedbackType='feedback')
+      are included alongside any feedbackType='rating' docs.
+────────────────────────────────────────────────────────── */
+function computeSatisfaction(){
+  const ratings = allFeedback.filter(f => f.rating && f.rating > 0);
+
+  const avg = ratings.length
+    ? ratings.reduce((s,f)=>s+(f.rating||0),0)/ratings.length
+    : 0;
+  const pct = Math.min(100, (avg * 1.5 * (100/7.5))).toFixed(1);
+
+  document.getElementById('satPct').textContent = avg>0 ? pct+'%' : '—';
+
+  const ctx = document.getElementById('satChart').getContext('2d');
+  if(satChart) satChart.destroy();
+  satChart = new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      datasets:[{
+        data:[parseFloat(pct)||0, 100-(parseFloat(pct)||0)],
+        backgroundColor:['#12d49a','rgba(255,255,255,.05)'],
+        borderWidth:0,
+        circumference:270,
+        rotation:225
+      }]
+    },
+    options:{cutout:'80%',plugins:{legend:{display:false}},animation:{animateRotate:true}}
+  });
+
+  // breakdown
+  const bd = document.getElementById('satBreakdown');
+  const counts={5:0,4:0,3:0,2:0,1:0};
+  ratings.forEach(f=>{ if(counts[Math.round(f.rating)]!==undefined) counts[Math.round(f.rating)]++; });
+  bd.innerHTML = [5,4,3,2,1].map(n=>{
+    const w = ratings.length ? Math.round(counts[n]/ratings.length*100) : 0;
+    return `<div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--muted);width:20px;">${n}★</span>
+      <div style="flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:10px;overflow:hidden;">
+        <div style="height:100%;width:${w}%;background:var(--gold);border-radius:10px;"></div>
+      </div>
+      <span style="font-size:11px;color:var(--muted);width:24px;">${counts[n]}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ──────────────────────────────────────────────────────────
+   BEST PARENTS
+────────────────────────────────────────────────────────── */
+function computeBestParents(){
+  const scored = allParents.map(p=>{
+    const fbCount  = allFeedback.filter(f=>f.parentId===p.id||f.parentEmail===p.email).length;
+    const mtgCount = allMeetings.filter(m=>m.parentId===p.id).length;
+    const childCount = (p._children||[]).length;
+    const score = fbCount*15 + mtgCount*12 + childCount*10;
+    return { name:(p.fullName||p.name||'—').split(' ')[0], score };
+  });
+  scored.sort((a,b)=>b.score-a.score);
+  const top4 = scored.slice(0,4);
+
+  // If we have fewer than 4, pad with "waiting"
+  while(top4.length<4) top4.push({ name:'—', score:0 });
+
+  renderPodium(top4);
+}
+
+function renderPodium(parents){
+  const maxScore = Math.max(...parents.map(p=>p.score), 1);
+  const box = document.getElementById('podiumBars');
+  box.innerHTML = parents.map((p,i)=>{
+    const h = Math.max(20, Math.round((p.score/maxScore)*120));
+    const isFirst = i===0 && p.score>0;
+    return `
+    <div class="pod-bar-wrap" title="${p.name}: ${p.score} pts">
+      <div class="pod-bar ${isFirst?'rank1':''}" style="height:${h}px;"
+           onclick="toast('${p.name}','Engagement score: ${p.score} pts','info')">
+        ${p.score>0?`<span class="score-tip">${p.score}</span>`:''}
+      </div>
+      <div class="pod-name">${p.name}</div>
+      <div class="pod-rank ${isFirst?'r1':''}">${i+1}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ──────────────────────────────────────────────────────────
+   SYSTEM CHART
+────────────────────────────────────────────────────────── */
+function updateSysChart(){
+  const ctx = document.getElementById('sysChart').getContext('2d');
+  if(sysChart) sysChart.destroy();
+
+  const replied = allFeedback.filter(f=>f.status==='replied').length;
+  const pending  = allFeedback.filter(f=>f.status!=='replied').length;
+
+  sysChart = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['Parents','Meetings','FB Replied','FB Pending'],
+      datasets:[{
+        data:[allParents.length, allMeetings.length, replied, pending],
+        backgroundColor:['rgba(212,168,50,.7)','rgba(56,197,245,.7)','rgba(18,212,154,.7)','rgba(255,95,109,.7)'],
+        borderRadius:8,
+        borderSkipped:false
+      }]
+    },
+    options:{
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{ticks:{color:'#6b7d9a'},grid:{color:'rgba(255,255,255,.04)'}},
+        x:{ticks:{color:'#6b7d9a'},grid:{display:false}}
+      },
+      animation:{duration:800}
+    }
+  });
+}
+
+/* ──────────────────────────────────────────────────────────
+   ACTIVITIES / EVENTS
+────────────────────────────────────────────────────────── */
+async function loadEvents(){
+  try{
+    const { collection, getDocs, orderBy, query } = window._fb;
+    const q = query(collection(window._db,'school_activities'), orderBy('publishedAt','desc'));
+    const snap = await getDocs(q);
+    const events=[];
+    snap.forEach(d=>events.push({id:d.id,...d.data()}));
+    renderEvents(events);
+  } catch{}
+}
+
+function renderEvents(list){
+  const box = document.getElementById('eventsList');
+  if(!list.length){ box.innerHTML=''; return; }
+  box.innerHTML = list.slice(0,5).map(e=>`
+    <div class="event-item">
+      <div class="event-name"><i class="fa fa-calendar-star" style="color:var(--gold);"></i> ${e.title||'—'}</div>
+      <div class="event-meta">
+        <span><i class="fa fa-clock"></i>${e.date||'—'} ${e.time||''}</span>
+        <span style="color:var(--sky);">${e.category||'—'}</span>
+      </div>
+    </div>`).join('');
+}
+
+function toggleEventForm(){
+  play('sndBubble');
+  document.getElementById('eventForm').classList.toggle('open');
+}
+
+async function publishActivity(){
+  const title = document.getElementById('evTitle').value.trim();
+  const date  = document.getElementById('evDate').value;
+  const time  = document.getElementById('evTime').value;
+  const cat   = document.getElementById('evCat').value;
+  const desc  = document.getElementById('evDesc').value.trim();
+
+  if(!title||!date){ toast('Missing Fields','Please fill in title and date.','warn'); return; }
+  play('sndSend');
+
+  try{
+    const { collection, addDoc, serverTimestamp } = window._fb;
+    await addDoc(collection(window._db,'school_activities'),{
+      title, date, time, category:cat, description:desc,
+      publishedBy:'admin', publishedAt:serverTimestamp()
+    });
+    toast('Activity Published ✓','Visible to all parents in Rahlat Aman.','success');
+    document.getElementById('evTitle').value='';
+    document.getElementById('evDate').value='';
+    document.getElementById('evTime').value='';
+    document.getElementById('evDesc').value='';
+    document.getElementById('eventForm').classList.remove('open');
+    await loadEvents();
+  } catch(e){ toast('Error',e.message,'error'); }
+}
+
+/* ──────────────────────────────────────────────────────────
+   NOTIFICATION SEND
+────────────────────────────────────────────────────────── */
+let selAlertType = 'vacation';
+function selAlert(el, type){
+  selAlertType = type;
+  document.querySelectorAll('.alert-type-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  play('sndBubble');
+}
+
+async function sendNotification(){
+  const msg = document.getElementById('commText').value.trim();
+  if(!msg){ toast('Empty','Write your notification first.','warn'); return; }
+  play('sndSend');
+  try{
+    const { collection, addDoc, serverTimestamp } = window._fb;
+    await addDoc(collection(window._db,'admin_notifications'),{
+      type: selAlertType,
+      message: msg,
+      sentAt: serverTimestamp(),
+      sentBy:'admin'
+    });
+    toast('Notification Sent ✓','Delivered to all parents in Firebase.','success');
+    document.getElementById('commText').value='';
+  } catch(e){ toast('Error',e.message,'error'); }
+}
+
+/* ──────────────────────────────────────────────────────────
+   MODAL
+────────────────────────────────────────────────────────── */
+function openModal(){ document.getElementById('modal').classList.add('open'); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click',function(e){ if(e.target===this) closeModal(); });
+</script>
+</body>
+</html>

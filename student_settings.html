@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman | Information for the Student Settings </title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--main:#0A6AA1;
+--main2:#48A5D9;
+--gold:#FFD54F;
+--danger:#ff5252;
+--success:#00c853;
+--bg:#EEF6FB;
+--dark:#183B56;
+--white:#ffffff;
+--shadow:0 12px 35px rgba(0,0,0,0.12);
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Plus Jakarta Sans',sans-serif;
+background:linear-gradient(to bottom,#EEF6FB,#D9EEF8);
+color:var(--dark);
+overflow-x:hidden;
+transition:0.4s;
+}
+
+/* DARK MODE */
+
+body.dark{
+background:linear-gradient(to bottom,#07131b,#102734);
+color:white;
+}
+
+body.dark .card,
+body.dark .setting-card,
+body.dark .top-profile{
+background:rgba(255,255,255,0.06);
+color:white;
+}
+
+body.dark input{
+background:rgba(255,255,255,0.08);
+color:white;
+}
+
+body.dark .input-label{
+color:#ddd;
+}
+
+/* HEADER */
+
+.header{
+position:relative;
+background:linear-gradient(135deg,var(--main2),var(--main));
+padding:25px 20px 110px;
+border-radius:0 0 40px 40px;
+overflow:hidden;
+box-shadow:var(--shadow);
+}
+
+.header::before{
+content:"";
+position:absolute;
+width:260px;
+height:260px;
+background:rgba(255,255,255,0.08);
+border-radius:50%;
+top:-120px;
+right:-80px;
+}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:relative;
+z-index:5;
+}
+
+.back-btn{
+width:48px;
+height:48px;
+border-radius:16px;
+background:rgba(255,255,255,0.18);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+color:white;
+cursor:pointer;
+backdrop-filter:blur(10px);
+transition:0.3s;
+}
+
+.back-btn:hover{
+transform:scale(1.08);
+}
+
+.header-title{
+font-size:22px;
+font-weight:800;
+color:white;
+}
+
+/* PROFILE */
+
+.top-profile{
+background:white;
+margin:-70px 15px 20px;
+border-radius:32px;
+padding:25px;
+box-shadow:var(--shadow);
+position:relative;
+z-index:10;
+text-align:center;
+transition:0.4s;
+}
+
+.avatar{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+border:5px solid white;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.name{
+font-size:28px;
+font-weight:800;
+margin-top:15px;
+}
+
+.email{
+margin-top:8px;
+font-size:14px;
+color:#777;
+}
+
+/* CARDS */
+
+.setting-card{
+background:white;
+margin:18px 15px;
+padding:22px;
+border-radius:28px;
+box-shadow:var(--shadow);
+transition:0.4s;
+}
+
+.card-title{
+font-size:20px;
+font-weight:800;
+margin-bottom:6px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.card-sub{
+font-size:13px;
+color:#777;
+margin-bottom:20px;
+line-height:1.7;
+}
+
+/* INPUTS */
+
+.input-group{
+margin-bottom:16px;
+}
+
+.input-label{
+display:block;
+font-size:13px;
+font-weight:700;
+margin-bottom:8px;
+color:#666;
+}
+
+input{
+width:100%;
+padding:16px;
+border:none;
+outline:none;
+border-radius:18px;
+background:#F4FAFD;
+font-size:15px;
+font-family:'Plus Jakarta Sans',sans-serif;
+transition:0.3s;
+}
+
+input:focus{
+transform:scale(1.01);
+box-shadow:0 0 0 3px rgba(72,165,217,0.15);
+}
+
+/* BUTTONS */
+
+.btn{
+width:100%;
+padding:16px;
+border:none;
+border-radius:18px;
+font-size:15px;
+font-weight:700;
+cursor:pointer;
+transition:0.3s;
+margin-top:8px;
+font-family:'Plus Jakarta Sans',sans-serif;
+}
+
+.btn:hover{
+transform:translateY(-3px);
+}
+
+.primary{
+background:linear-gradient(135deg,var(--main2),var(--main));
+color:white;
+}
+
+.success{
+background:linear-gradient(135deg,#00c853,#00e676);
+color:white;
+}
+
+.danger{
+background:linear-gradient(135deg,#ff5252,#ff1744);
+color:white;
+}
+
+/* TOGGLE */
+
+.toggle-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+padding:14px;
+background:#F7FBFE;
+border-radius:18px;
+}
+
+.toggle-left{
+display:flex;
+flex-direction:column;
+}
+
+.toggle-title{
+font-weight:700;
+font-size:15px;
+}
+
+.toggle-desc{
+font-size:12px;
+color:#777;
+margin-top:4px;
+}
+
+.switch{
+width:58px;
+height:30px;
+background:#d0d0d0;
+border-radius:30px;
+position:relative;
+cursor:pointer;
+transition:0.3s;
+}
+
+.switch::after{
+content:"";
+position:absolute;
+width:24px;
+height:24px;
+background:white;
+border-radius:50%;
+top:3px;
+left:4px;
+transition:0.3s;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+
+.switch.active{
+background:#00c853;
+}
+
+.switch.active::after{
+left:30px;
+}
+
+/* STATUS BOX */
+
+.status-box{
+margin-top:18px;
+padding:16px;
+border-radius:18px;
+background:linear-gradient(135deg,#e8fff0,#d8ffea);
+color:#007e33;
+font-weight:700;
+display:none;
+animation:pop 0.4s ease;
+}
+
+.error-box{
+background:#ffe5e5;
+color:#d60000;
+}
+
+@keyframes pop{
+0%{
+transform:scale(0.8);
+opacity:0;
+}
+100%{
+transform:scale(1);
+opacity:1;
+}
+}
+
+/* FLOAT NOTIFY */
+
+.notify{
+position:fixed;
+top:-100px;
+left:50%;
+transform:translateX(-50%);
+background:#00c853;
+color:white;
+padding:16px 28px;
+border-radius:40px;
+font-weight:700;
+z-index:99999;
+transition:0.5s;
+box-shadow:0 12px 30px rgba(0,0,0,0.15);
+}
+
+.notify.show{
+top:20px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:700px){
+
+.header-title{
+font-size:20px;
+}
+
+.name{
+font-size:24px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="notify" id="notify"></div>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="top-bar">
+
+<div class="back-btn" onclick="goBack()">←</div>
+
+<div class="header-title">
+Student Settings
+</div>
+
+<div style="width:48px;"></div>
+
+</div>
+
+</div>
+
+<!-- PROFILE -->
+
+<div class="top-profile">
+
+<img src="my.png" class="avatar" id="avatar">
+
+<div class="name" id="studentName">
+Student
+</div>
+
+<div class="email" id="studentEmail">
+student@email.com
+</div>
+
+</div>
+
+<!-- ACCOUNT -->
+
+<div class="setting-card">
+
+<div class="card-title">
+👤 Account Information
+</div>
+
+<div class="card-sub">
+Update your academic and personal information linked with Rahlat Aman.
+</div>
+
+<div class="input-group">
+<label class="input-label">Full Name</label>
+<input id="nameInput">
+</div>
+
+<div class="input-group">
+<label class="input-label">Email Address</label>
+<input id="emailInput">
+</div>
+
+<div class="input-group">
+<label class="input-label">Phone Number</label>
+<input id="phoneInput">
+</div>
+
+<div class="input-group">
+<label class="input-label">School Name</label>
+<input id="schoolInput">
+</div>
+
+<div class="input-group">
+<label class="input-label">Governorate</label>
+<input id="govInput">
+</div>
+
+<div class="input-group">
+<label class="input-label">Wilayat</label>
+<input id="wilayatInput">
+</div>
+
+<button class="btn primary" onclick="saveAccount()">
+Save Changes
+</button>
+
+<div class="status-box" id="saveStatus"></div>
+
+</div>
+
+<!-- NOTIFICATIONS -->
+
+<div class="setting-card">
+
+<div class="card-title">
+🔔 Smart Notifications
+</div>
+
+<div class="card-sub">
+Customize your notification experience inside Rahlat Aman.
+</div>
+
+<div class="toggle-row">
+
+<div class="toggle-left">
+<div class="toggle-title">Points Notifications</div>
+<div class="toggle-desc">Receive rewards and points updates.</div>
+</div>
+
+<div class="switch" onclick="toggleSetting(this,'pointsNotification')"></div>
+
+</div>
+
+<div class="toggle-row">
+
+<div class="toggle-left">
+<div class="toggle-title">Trip Alerts</div>
+<div class="toggle-desc">Receive bus and transportation alerts.</div>
+</div>
+
+<div class="switch" onclick="toggleSetting(this,'tripAlerts')"></div>
+
+</div>
+
+<div class="toggle-row">
+
+<div class="toggle-left">
+<div class="toggle-title">Reward Alerts</div>
+<div class="toggle-desc">Get notified when new rewards arrive.</div>
+</div>
+
+<div class="switch" onclick="toggleSetting(this,'rewardAlerts')"></div>
+
+</div>
+
+</div>
+
+<!-- APPEARANCE -->
+
+<div class="setting-card">
+
+<div class="card-title">
+🎨 Appearance
+</div>
+
+<div class="card-sub">
+Choose your preferred display mode.
+</div>
+
+<button class="btn primary" onclick="setTheme('light')">
+☀️ Light Mode
+</button>
+
+<button class="btn success" onclick="setTheme('dark')">
+🌙 Dark Mode
+</button>
+
+</div>
+
+<!-- SECURITY -->
+
+<div class="setting-card">
+
+<div class="card-title">
+🔐 Security & Password
+</div>
+
+<div class="card-sub">
+Protect your student account and information.
+</div>
+
+<div class="input-group">
+<label class="input-label">New Password</label>
+<input id="passwordInput" type="password">
+</div>
+
+<button class="btn primary" onclick="updatePassword()">
+Update Password
+</button>
+
+</div>
+
+<!-- DATA -->
+
+<div class="setting-card">
+
+<div class="card-title">
+🗂️ Data Management
+</div>
+
+<div class="card-sub">
+Manage your account data and application preferences.
+</div>
+
+<button class="btn danger" onclick="resetData()">
+Reset Application Data
+</button>
+
+</div>
+
+<!-- LOGOUT -->
+
+<div class="setting-card">
+
+<div class="card-title">
+🚪 Logout
+</div>
+
+<div class="card-sub">
+Securely sign out from your Rahlat Aman account.
+</div>
+
+<button class="btn danger" onclick="logout()">
+Logout
+</button>
+
+</div>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+getAuth,
+updatePassword
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+projectId: "rahlataman-bus-safety-app",
+storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+messagingSenderId: "1088859717905",
+appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+window.auth = auth;
+window.updatePasswordFirebase = updatePassword;
+
+window.db = db;
+window.doc = doc;
+window.getDoc = getDoc;
+window.setDoc = setDoc;
+window.updateDoc = updateDoc;
+
+</script>
+
+<script>
+
+  /* BACK */
+
+function goBack(){
+window.location.href="student_dashboard.html";}
+
+/* USER */
+
+let user = JSON.parse(localStorage.getItem("currentUser")) || {};
+
+if(!user.email){
+window.location.href = "login.html";
+}
+
+/* PROFILE KEY */
+
+let profileKey = "profile_" + user.email;
+
+let profile = JSON.parse(localStorage.getItem(profileKey)) || {};
+
+/* LOAD USER */
+
+function loadUser(){
+
+document.getElementById("studentName").innerText =
+profile.fullName || user.name || "Student";
+
+document.getElementById("studentEmail").innerText =
+profile.email || user.email || "student@email.com";
+
+document.getElementById("nameInput").value =
+profile.fullName || user.name || "";
+
+document.getElementById("emailInput").value =
+profile.email || user.email || "";
+
+document.getElementById("phoneInput").value =
+profile.phone || user.phone || "";
+
+document.getElementById("schoolInput").value =
+profile.school || "";
+
+document.getElementById("govInput").value =
+profile.location?.governorate || "";
+
+document.getElementById("wilayatInput").value =
+profile.location?.wilayat || "";
+
+}
+
+/* SAVE ACCOUNT */
+async function saveAccount(){
+
+let fullName =
+document.getElementById("nameInput")
+.value.trim();
+
+let email =
+document.getElementById("emailInput")
+.value.trim();
+
+let phone =
+document.getElementById("phoneInput")
+.value.trim();
+
+if(fullName.length < 3){
+
+showError(
+"❌ Full name must contain at least 3 characters."
+);
+
+return;
+}
+
+if(!email.includes("@")){
+
+showError(
+"❌ Please enter a valid email address."
+);
+
+return;
+}
+
+/* ======================
+LOCAL STORAGE (يبقى)
+====================== */
+
+profile.fullName = fullName;
+profile.email = email;
+profile.phone = phone;
+profile.school =
+document.getElementById("schoolInput").value;
+
+profile.location = {
+governorate:
+document.getElementById("govInput").value,
+
+wilayat:
+document.getElementById("wilayatInput").value
+};
+
+localStorage.setItem(
+profileKey,
+JSON.stringify(profile)
+);
+
+user.name = fullName;
+user.email = email;
+user.phone = phone;
+
+localStorage.setItem(
+"currentUser",
+JSON.stringify(user)
+);
+
+/* ======================
+FIREBASE (NEW)
+====================== */
+
+try{
+
+await window.setDoc(
+
+window.doc(
+window.db,
+"users",
+user.uid
+),
+
+{
+
+fullName: fullName,
+
+email: email.toLowerCase(),
+
+phoneNumber: phone,
+
+schoolName:
+document.getElementById(
+"schoolInput"
+).value,
+
+governorate:
+document.getElementById(
+"govInput"
+).value,
+
+wilayat:
+document.getElementById(
+"wilayatInput"
+).value,
+
+role:"student"
+
+},
+
+{ merge:true }
+
+);
+
+/* تحديث student_profile */
+
+await window.setDoc(
+
+window.doc(
+window.db,
+"student_profile",
+email.toLowerCase()
+.replace(/[.#$[\]]/g,"_")
+),
+
+{
+
+fullName: fullName,
+
+email: email.toLowerCase(),
+
+phoneNumber: phone,
+
+schoolName:
+document.getElementById(
+"schoolInput"
+).value,
+
+governorate:
+document.getElementById(
+"govInput"
+).value,
+
+wilayat:
+document.getElementById(
+"wilayatInput"
+).value
+
+},
+
+{ merge:true }
+
+);
+
+}catch(err){
+
+console.error(err);
+
+showError(
+"❌ Firebase save failed"
+);
+
+return;
+}
+
+/* ======================
+SUCCESS
+====================== */
+
+logStudentActivity(
+"Profile Updated",
+"Updated student account information"
+);
+
+showSuccess(
+"✅ Information updated successfully!"
+);
+
+showNotify(
+"⚙️ Student information updated"
+);
+
+loadUser();
+}
+
+/* PASSWORD */
+async function updatePassword(){
+let pass =
+document.getElementById(
+"passwordInput"
+).value.trim();
+if(pass.length < 6){
+showError(
+"❌ Password must contain at least 6 characters."
+);
+return;
+}
+try{
+const currentUser =
+window.auth.currentUser;
+await window.auth.authStateReady?.();
+if(!currentUser){
+showError(
+"❌ No logged in user found."
+);
+return;
+}
+await window.updatePasswordFirebase(
+currentUser,
+pass
+);
+/* يبقى localStorage إذا تحتاجه */
+user.password = pass;
+localStorage.setItem(
+"currentUser",
+JSON.stringify(user)
+);
+logStudentActivity(
+"Password Changed",
+"Student changed account password"
+);
+showSuccess(
+"🔐 Password updated successfully!"
+);
+showNotify(
+"🔐 Password changed"
+);
+document.getElementById(
+"passwordInput"
+).value = "";
+}catch(err){
+console.error(err);
+if(
+err.code ===
+"auth/requires-recent-login"
+){
+showError(
+"❌ Please login again before changing password."
+);
+}else{
+showError(
+"❌ Failed to update password."
+);
+}
+}
+}
+
+/* TOGGLE */
+function toggleSetting(el,key){
+el.classList.toggle("active");
+let state = el.classList.contains("active");
+localStorage.setItem(key,state);
+logStudentActivity("Setting Updated" , "Changed setting: " + key);
+showNotify("⚙️ Setting updated");
+}
+
+/* LOAD TOGGLE */
+function loadToggles(){
+document.querySelectorAll(".switch").forEach(sw=>{
+let key = sw.getAttribute("onclick")
+.match(/'(.*?)'/)[1];
+if(localStorage.getItem(key) === "true"){
+sw.classList.add("active");
+}
+});
+}
+
+/* THEME */
+function setTheme(mode){
+localStorage.setItem("studentTheme",mode)
+logStudentActivity("Theme Changed" , "Changed app theme to " + mode);
+if(mode === "dark"){
+document.body.classList.add("dark");
+showNotify("🌙 Dark mode enabled");
+}else{
+document.body.classList.remove("dark");
+showNotify("☀️ Light mode enabled");
+}
+}
+
+/* LOAD THEME */
+function loadTheme(){
+let mode = localStorage.getItem("studentTheme");
+if(mode === "dark"){
+document.body.classList.add("dark");
+}
+}
+
+/* RESET */
+function resetData(){
+if(confirm("Are you sure you want to clear application data?")){
+localStorage.clear();
+showNotify("🗑️ Application data cleared");
+setTimeout(()=>{
+window.location.href = "welcome.html";
+},1500);
+}
+}
+
+/* LOGOUT */
+function logout(){
+if(confirm("Logout from your account?")){
+localStorage.removeItem("currentUser");
+logStudentActivity("Logout" , "Student logged out from account");
+showNotify("👋 Logged out successfully");
+setTimeout(()=>{
+window.location.href = "welcome.html";
+},1200);
+}
+}
+
+/* SUCCESS */
+function showSuccess(text){
+let box = document.getElementById("saveStatus");
+box.classList.remove("error-box");
+box.innerText = text;
+box.style.display = "block";
+setTimeout(()=>{
+box.style.display = "none";
+},3000);
+}
+
+/* ERROR */
+function showError(text){
+let box = document.getElementById("saveStatus");
+box.classList.add("error-box");
+box.innerText = text;
+box.style.display = "block";
+setTimeout(()=>{
+box.style.display = "none";
+},3000);
+}
+
+/* FLOAT NOTIFY */
+function showNotify(text){
+let n = document.getElementById("notify");
+n.innerText = text;
+n.classList.add("show");
+if(navigator.vibrate){
+navigator.vibrate(100);
+}
+setTimeout(()=>{
+n.classList.remove("show");
+},2500);
+}
+
+/* LOAD */
+window.onload = ()=>{
+loadUser();
+loadTheme();
+loadToggles();
+};
+</script>
+<script>
+
+function logStudentActivity(type, description){
+let activities =
+JSON.parse(localStorage.getItem("studentActivities")) || [];
+activities.unshift({
+type:type,
+description:description,
+time:new Date().toLocaleTimeString(),
+date:new Date().toLocaleDateString()
+});
+
+localStorage.setItem(
+"studentActivities",
+JSON.stringify(activities)
+);
+}
+
+</script>
+</body>
+</html>

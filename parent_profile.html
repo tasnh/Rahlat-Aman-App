@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman | Parent Profile</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+    measurementId: "G-SRY2J762GZ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.doc = doc;
+window.getDoc = getDoc;
+window.setDoc = setDoc;
+window.updateDoc = updateDoc;
+window.collection = collection;
+window.query = query;
+window.where = where;
+window.getDocs = getDocs;
+</script>
+
+<style>
+:root{ --navy:#0f172a; --dark:#08111f; --blue:#38bdf8; --gold:#d4af37; --white:#f8fafc; --gray:#94a3b8; --green:#10b981; --red:#ef4444; --glass:rgba(255,255,255,.05); }
+*{ margin:0; padding:0; box-sizing:border-box; font-family:Segoe UI,sans-serif; }
+body{ background:linear-gradient(135deg,var(--dark),var(--navy)); color:var(--white); min-height:100vh; }
+.message-box{ position:fixed; top:25px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,.96); padding:16px 25px; border-radius:15px; border-left:5px solid var(--green); box-shadow:0 10px 30px rgba(0,0,0,.4); z-index:99999; font-weight:600; display:none; animation:fadeIn .4s ease; }
+.custom-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 100000; display: none; }
+.modal-content { background: #0f172a; border: 2px solid var(--blue); padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); animation: scaleUp 0.3s ease; }
+.modal-content h3 { margin-bottom: 15px; }
+.modal-content p { color: var(--gray); margin-bottom: 25px; font-size: 0.95rem; line-height: 1.5; }
+.modal-buttons { display: flex; gap: 12px; justify-content: center; }
+.modal-buttons .btn { margin-top: 0; width: 110px; }
+@keyframes scaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes fadeIn{ from{ opacity:0; transform:translateX(-50%) translateY(-15px); } to{ opacity:1; transform:translateX(-50%) translateY(0); } }
+header{ padding:18px 5%; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,.03); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,255,255,.08); position:sticky; top:0; z-index:999; }
+.back-btn{ color:white; text-decoration:none; padding:10px 18px; border-radius:12px; background:var(--glass); transition:.3s; }
+.back-btn:hover{ background:var(--gold); color:#000; }
+.container{ width:92%; max-width:1450px; margin:auto; padding:30px 0; }
+.hero{ background:linear-gradient(135deg,#132238,#1e3a8a); padding:35px; border-radius:28px; display:grid; grid-template-columns:140px 1fr; gap:30px; align-items:center; margin-bottom:25px; border-left:6px solid var(--gold); }
+.avatar{ width:130px; height:130px; border-radius:50%; overflow:hidden; background:rgba(255,255,255,.08); display:flex; justify-content:center; align-items:center; font-size:3rem; cursor:pointer; border:4px solid var(--gold); }
+.avatar img{ width:100%; height:100%; object-fit:cover; }
+.hero h2{ font-size:2rem; margin-bottom:8px; }
+.hero p{ margin-top:8px; color:#dbeafe; font-size:.96rem; }
+.badge{ display:inline-block; margin-top:14px; padding:7px 15px; background:var(--green); border-radius:20px; font-size:.8rem; font-weight:700; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:22px; }
+.card{ background:var(--glass); padding:24px; border-radius:22px; border:1px solid rgba(255,255,255,.07); backdrop-filter:blur(8px); }
+.card h3{ margin-bottom:20px; color:var(--gold); font-size:1.1rem; }
+.info-row{ display:flex; justify-content:space-between; gap:20px; padding:13px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:.95rem; }
+.info-row span:last-child{ color:#e2e8f0; font-weight:600; text-align:right; }
+.btn{ border:none; padding:11px 16px; border-radius:12px; cursor:pointer; font-weight:600; margin-top:15px; transition:.3s; }
+.btn:hover{ transform:translateY(-2px); }
+.blue{background:var(--blue);} .gold{background:var(--gold);} .green{background:var(--green);} .red{ background:var(--red); color:white; }
+input, textarea{ width:100%; padding:13px; margin-top:12px; border:none; border-radius:12px; background:#0f172a; color:white; font-size:.95rem; outline:none; }
+textarea{ resize:none; min-height:110px; }
+.child-box{ background:rgba(255,255,255,.05); padding:18px; border-radius:16px; margin-bottom:14px; border-left:4px solid var(--blue); }
+.child-box strong{ font-size:1.1rem; color: var(--white); }
+.child-meta { font-size: 0.9rem; color: var(--gray); margin-top: 8px; line-height: 1.6; }
+.child-meta i { color: var(--blue); width: 20px; }
+.child-box-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
+.mini-btn { padding: 8px 14px; font-size: 0.85rem; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; transition: 0.2s; }
+.note-item{ background:rgba(255,255,255,.05); padding:14px; border-radius:14px; margin-top:14px; line-height:1.7; }
+.toggle{ display:flex; justify-content:space-between; padding:12px 0; }
+.switch{ width:45px; height:24px; background:#334155; border-radius:30px; position:relative; cursor:pointer; }
+.switch::after{ content:''; position:absolute; width:18px; height:18px; background:white; border-radius:50%; top:3px; left:3px; transition:.3s; }
+.switch.active{ background:var(--green); }
+.switch.active::after{ left:24px; }
+@media(max-width:850px){ .hero{ grid-template-columns:1fr; text-align:center; } .avatar{ margin:auto; } .info-row{ flex-direction:column; } }
+</style>
+</head>
+
+<body>
+<audio id="bubblesSound" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" preload="auto"></audio>
+<audio id="deleteSound" src="https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3" preload="auto"></audio>
+<audio id="updateSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3" preload="auto"></audio>
+<audio id="errorSound" src="https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3" preload="auto"></audio>
+
+<div class="message-box" id="messageBox"></div>
+
+<div class="custom-modal" id="interactiveModal">
+    <div class="modal-content" id="modalBox">
+        <h3 id="modalTitle">Confirmation Required</h3>
+        <p id="modalMessage">Are you sure about this action?</p>
+        <div class="modal-buttons">
+            <button class="btn green" id="modalYesBtn">Yes, Sure</button>
+            <button class="btn red" id="modalNoBtn">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <a href="parent_dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    <h2>Parent Profile</h2>
+    <div id="clock"></div>
+</header>
+
+<div class="container">
+    <section class="hero">
+        <div class="avatar" onclick="document.getElementById('imgInput').click()">
+            <img id="avatarImg" style="display:none">
+            <i class="fas fa-user" id="avatarIcon"></i>
+            <input type="file" id="imgInput" hidden accept="image/*">
+        </div>
+        <div>
+            <h2 id="parentName">Parent Name</h2>
+            <p id="schoolName">School Name</p>
+            <p id="studentName">Student Name</p>
+            <p id="locationHero">Location</p>
+            <span class="badge">Verified Parent Account</span>
+            <br>
+            <button class="btn gold" onclick="enableEdit()"><i class="fas fa-pen"></i> Update Profile</button>
+        </div>
+    </section>
+
+    <section class="grid">
+        <div class="card">
+            <h3><i class="fas fa-id-card"></i> Personal Information</h3>
+            <div class="info-row"><span>Full Name</span><span id="fullName">---</span></div>
+            <div class="info-row"><span>Age</span><span id="ageText">---</span></div>
+            <div class="info-row"><span>Phone Number</span><span id="phoneNumber">---</span></div>
+            <div class="info-row"><span>Email Address</span><span id="emailAddress">---</span></div>
+            <div class="info-row"><span>Governorate</span><span id="governorateText">---</span></div>
+            <div class="info-row"><span>Wilaya</span><span id="stateText">---</span></div>
+            <div class="info-row"><span>Address</span><span id="addressText">---</span></div>
+            <div class="info-row"><span>School Name</span><span id="schoolInfo">---</span></div>
+            <input type="text" id="editPhone" placeholder="Update Phone Number">
+            <input type="text" id="editAddress" placeholder="Update Address">
+            <button class="btn blue" onclick="saveProfileUpdate()">Save Updates</button>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-children"></i> Children Management</h3>
+            <div id="childrenList"></div>
+            <input type="text" id="childIdentifierInput" placeholder="Enter Student Email or Rahlat Aman ID">
+            <input type="hidden" id="editingChildIndex" value="-1">
+            <div style="display:flex; gap:10px;">
+                <button class="btn green" id="addChildBtn" style="flex:1;" onclick="validateAndProcessChild()"><i class="fas fa-link"></i> Connect Student Node</button>
+                <button class="btn red" id="cancelChildEditBtn" style="display:none;" onclick="resetChildForm()">Cancel</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-note-sticky"></i> Smart Notes</h3>
+            <textarea id="noteBox" placeholder="Write notes about your child, attendance, transport, or safety..."></textarea>
+            <input type="hidden" id="editingNoteIndex" value="-1">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn blue" id="saveNoteBtn" style="flex: 1;" onclick="saveOrUpdateNote()">Save Note</button>
+                <button class="btn red" onclick="clearNotes()">Delete Notes</button>
+            </div>
+            <div id="notesContainer"></div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-shield-halved"></i> Safety Preferences</h3>
+            <div class="toggle"><span>Bus Arrival Alerts</span><div class="switch active" onclick="toggle(this)"></div></div>
+            <div class="toggle"><span>Emergency Notifications</span><div class="switch active" onclick="toggle(this)"></div></div>
+            <div class="toggle"><span>Late Arrival Alerts</span><div class="switch active" onclick="toggle(this)"></div></div>
+            <div class="toggle"><span>Driver Communication</span><div class="switch active" onclick="toggle(this)"></div></div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-chart-line"></i> Family Statistics</h3>
+            <div class="info-row"><span>Total Trips</span><span>128</span></div>
+            <div class="info-row"><span>Attendance Rate</span><span>98%</span></div>
+            <div class="info-row"><span>Notifications</span><span>56</span></div>
+            <div class="info-row"><span>Safety Status</span><span style="color:#10b981;">Excellent</span></div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-headset"></i> Support Center</h3>
+            <div class="info-row"><span>School Support</span><span>24420000</span></div>
+            <div class="info-row"><span>Transport Support</span><span>24685555</span></div>
+            <div class="info-row"><span>Emergency</span><span>9999</span></div>
+            <button class="btn gold">Live Support</button>
+        </div>
+    </section>
+</div>
+
+<script>
+function safePlay(id) { 
+    const el = document.getElementById(id); if (el) el.play().catch(() => {});
+ }
+
+let resolveFirebase;
+const firebaseReady = new Promise((resolve) => { resolveFirebase = resolve; });
+const checkInterval = setInterval(() => {
+    if (window.db && 
+    window.doc && 
+    window.getDoc && 
+    window.setDoc && 
+    window.collection && 
+    window.query && 
+    window.where && 
+    window.getDocs) {
+        clearInterval(checkInterval);
+        resolveFirebase();
+    }
+}, 50);
+
+function updateClock(){
+    const d = new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Muscat"}));
+    document.getElementById("clock").innerText = d.toLocaleTimeString();
+}
+setInterval(updateClock,1000);
+updateClock();
+
+function showMessage(message,color="#10b981"){
+    const box = document.getElementById("messageBox");
+    box.innerText = message;
+    box.style.borderLeft = "5px solid " + color;
+    box.style.display = "block";
+    setTimeout(()=>{ box.style.display="none"; },3500);
+}
+
+function triggerModal(title, msg, type, onConfirm) {
+    const modal = document.getElementById("interactiveModal");
+    const mBox = document.getElementById("modalBox");
+    document.getElementById("modalTitle").innerText = title;
+    document.getElementById("modalMessage").innerText = msg;
+    if(type === 'danger') { mBox.style.borderColor = "var(--red)"; safePlay("errorSound"); } 
+    else { mBox.style.borderColor = "var(--green)"; safePlay("updateSound"); }
+    modal.style.display = "flex";
+    document.getElementById("modalYesBtn").onclick = function() { onConfirm(); modal.style.display = "none"; };
+    document.getElementById("modalNoBtn").onclick = function() { modal.style.display = "none"; };
+}
+
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+if(!currentUser){ window.location.href="login.html"; }
+
+let profile = currentUser;
+const parentDocId = currentUser?.email?.replace(/[.#$[\]]/g, "_");
+let childrenKey = "childrenData_" + (currentUser ? currentUser.email : "default");
+let children = JSON.parse(localStorage.getItem(childrenKey)) || [];
+let notesKey = "parentNotes_" + (currentUser ? currentUser.email : "default");
+let notes = JSON.parse(localStorage.getItem(notesKey)) || [];
+
+(async () => {
+    await firebaseReady;
+    if(profile){
+        document.getElementById("parentName").innerText = profile.fullName || "Parent User";
+        document.getElementById("schoolName").innerText = "School: " + (profile.school || "Not Specified");
+        document.getElementById("studentName").innerText = "Student: " + (profile.studentName || "Not Linked");
+        document.getElementById("locationHero").innerText = (profile.location?.wilayat || profile.wilayat || "") + " - " + (profile.location?.governorate || profile.governorate || "Oman");
+        document.getElementById("fullName").innerText = profile.fullName || "---";
+        document.getElementById("phoneNumber").innerText = profile.phone || "---";
+        document.getElementById("emailAddress").innerText = profile.email || "---";
+        document.getElementById("ageText").innerText = profile.age ? profile.age + " Years" : "---";
+        document.getElementById("governorateText").innerText = profile.location?.governorate || profile.governorate || "---";
+        document.getElementById("stateText").innerText = profile.location?.wilaya ||profile.location?.wilayat ||profile.wilaya ||profile.wilayat ||"---";
+        document.getElementById("addressText").innerText = profile.address || "---";
+        document.getElementById("schoolInfo").innerText = profile.school || "---";
+        document.getElementById("editPhone").value = profile.phone || "";
+        document.getElementById("editAddress").value = profile.address || "";
+    }
+    await loadParentProfile();
+})();
+
+async function loadParentProfile(){
+    try{
+        const profileRef = window.doc(window.db, "parent_profile", parentDocId);
+        const snapshot = await window.getDoc(profileRef);
+
+        if(snapshot.exists()){
+            const data = snapshot.data();
+
+            // تحميل بيانات البروفايل من Firebase
+            if(data.profile){
+                profile = { ...profile, ...data.profile };
+
+                document.getElementById("parentName").innerText = profile.fullName || "Parent User";
+                document.getElementById("fullName").innerText = profile.fullName || "---";
+                document.getElementById("phoneNumber").innerText = profile.phone || "---";
+                document.getElementById("emailAddress").innerText = profile.email || "---";
+                document.getElementById("addressText").innerText = profile.address || "---";
+
+                document.getElementById("editPhone").value = profile.phone || "";
+                document.getElementById("editAddress").value = profile.address || "";
+            }
+
+            // تحميل الصورة
+            if(data.profileImage){
+                document.getElementById("avatarImg").src = data.profileImage;
+                document.getElementById("avatarImg").style.display = "block";
+                document.getElementById("avatarIcon").style.display = "none";
+            }
+
+            children = data.children || [];
+            notes = data.notes || [];
+
+            renderChildren();
+            renderNotes();
+        }
+    }catch(error){
+        console.error(error);
+    }
+}
+
+async function findStudentInFirebase(identifier){
+    const collections = ["users", "students"];
+    for(const colName of collections) {
+        const colRef = window.collection(window.db, colName);
+        let q = window.query(colRef, window.where("email", "==", identifier.trim().toLowerCase()));
+        let snapshot = await window.getDocs(q);
+        if(snapshot.empty) {
+            q = window.query(colRef, window.where("id", "==", identifier.trim()));
+            snapshot = await window.getDocs(q);
+        }
+        if(!snapshot.empty){
+            const data = snapshot.docs[0].data();
+            return { id: data.id || snapshot.docs[0].id, email: data.email || "", name: data.fullName || "Student", grade: data.grade || "---", school: data.school || "---" };
+        }
+    }
+    return null;
+}
+
+function renderChildren(){
+    const box = document.getElementById("childrenList");
+    box.innerHTML = "";
+    children.forEach((child, index)=>{
+        box.innerHTML += `<div class="child-box"><strong><i class="fas fa-user-graduate"></i> ${child.name}</strong><div class="child-meta"><div><i class="fas fa-fingerprint"></i> Student ID: ${child.id}</div><div><i class="fas fa-envelope"></i> Email: ${child.email}</div><div><i class="fas fa-layer-group"></i> Class: ${child.grade}</div><div><i class="fas fa-school"></i> School: ${child.school}</div></div><div class="child-box-actions"><button class="mini-btn blue" onclick="setupEditChild(${index})"><i class="fas fa-pen"></i> Edit</button><button class="mini-btn red" onclick="confirmRemoveChild(${index})"><i class="fas fa-trash"></i> Remove</button></div></div>`;
+    });
+    localStorage.setItem(childrenKey, JSON.stringify(children));
+    if(window.db) window.setDoc(window.doc(window.db,"parent_profile", parentDocId),{children:children},{merge:true});
+    document.getElementById("studentName").innerHTML = children.length > 0 ? `Children (${children.length})<br><span style="font-size:.9rem; color:#dbeafe; line-height:1.8;">${children.map(c => c.name).join("<br>")}</span>` : "No Children Connected";
+}
+
+async function validateAndProcessChild() {
+    const identifier = document.getElementById("childIdentifierInput").value.trim();
+    const editIndex = parseInt(document.getElementById("editingChildIndex").value);
+    if(!identifier){ showMessage("Please enter ID", "#ef4444"); return; }
+    let discovered = await findStudentInFirebase(identifier);
+    if(!discovered) { safePlay("errorSound"); showMessage("Student not found", "#ef4444"); return; }
+    const childPayload = { ...discovered, identifier };
+    if(editIndex > -1) {
+        triggerModal("Confirm Update", "Update this node?", "success", () => { children[editIndex] = childPayload; safePlay("bubblesSound"); resetChildForm(); renderChildren(); });
+    } else {
+        children.push(childPayload); safePlay("bubblesSound"); renderChildren(); document.getElementById("childIdentifierInput").value = "";
+    }
+}
+
+function renderNotes(){
+    const container = document.getElementById("notesContainer");
+    container.innerHTML = "";
+    notes.forEach((note, index)=>{
+        container.innerHTML += `<div class="note-item"><p style="white-space: pre-wrap;">${note}</p><div class="note-item-actions"><button class="mini-btn blue" onclick="setupEditNote(${index})">Edit</button><button class="mini-btn red" onclick="removeIndividualNote(${index})">Delete</button></div></div>`;
+    });
+    if(window.db) window.setDoc(window.doc(window.db,"parent_profile", parentDocId),{notes:notes},{merge:true});
+}
+
+async function saveProfileUpdate(){
+
+    profile.phone = document.getElementById("editPhone").value;
+    profile.address = document.getElementById("editAddress").value;
+
+    localStorage.setItem("currentUser", JSON.stringify(profile));
+
+    try{
+        await window.setDoc(
+            window.doc(window.db, "parent_profile", parentDocId),
+            {
+                profile: profile
+            },
+            { merge:true }
+        );
+
+        document.getElementById("phoneNumber").innerText = profile.phone;
+        document.getElementById("addressText").innerText = profile.address;
+
+        safePlay("updateSound");
+        showMessage("Profile Updated Successfully");
+
+    }catch(error){
+        console.error(error);
+        showMessage("Update Failed", "#ef4444");
+    }
+}
+
+function setupEditChild(index) { document.getElementById("childIdentifierInput").value = children[index].identifier; document.getElementById("editingChildIndex").value = index; document.getElementById("addChildBtn").innerHTML = "<i class='fas fa-check'></i> Update"; }
+function resetChildForm() { document.getElementById("childIdentifierInput").value = ""; document.getElementById("editingChildIndex").value = "-1"; document.getElementById("addChildBtn").innerHTML = "<i class='fas fa-link'></i> Connect"; }
+function confirmRemoveChild(index) { triggerModal("Remove", "Delete this connection?", "danger", () => { children.splice(index, 1); renderChildren(); safePlay("deleteSound"); }); }
+function removeIndividualNote(index) { notes.splice(index, 1); localStorage.setItem(notesKey, JSON.stringify(notes)); renderNotes(); safePlay("deleteSound"); }
+function clearNoteInputContext() { document.getElementById("noteBox").value = ""; document.getElementById("editingNoteIndex").value = "-1"; }
+function clearNotes(){ localStorage.removeItem(notesKey); notes = []; renderNotes(); safePlay("deleteSound"); }
+function saveProfileUpdate(){
+    profile.phone = document.getElementById("editPhone").value;
+    profile.address = document.getElementById("editAddress").value;
+    localStorage.setItem("currentUser", JSON.stringify(profile));
+    if(window.db) window.setDoc(window.doc(window.db, "parent_profile", parentDocId), {profile}, {merge:true});
+    document.getElementById("phoneNumber").innerText = profile.phone;
+    document.getElementById("addressText").innerText = profile.address;
+    safePlay("updateSound");
+    showMessage("Updated");
+}
+function enableEdit(){ document.getElementById("editPhone").focus(); }
+function toggle(el)
+{ safePlay("bubblesSound"); 
+el.classList.toggle("active"); 
+showMessage("Preferences updated"); }
+
+document.getElementById("imgInput").addEventListener("change", function(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+        document.getElementById("avatarImg").src = ev.target.result;
+        document.getElementById("avatarImg").style.display = "block";
+        document.getElementById("avatarIcon").style.display = "none";
+        profile.profileImage = ev.target.result;
+        if(window.db) window.setDoc(window.doc(window.db, "parent_profile",
+         parentDocId), 
+         {profileImage: ev.target.result}, 
+         {merge:true});
+        localStorage.setItem(
+            "currentUser", JSON.stringify(profile));
+    };
+    reader.readAsDataURL(file);
+});
+</script>
+</body>
+</html>

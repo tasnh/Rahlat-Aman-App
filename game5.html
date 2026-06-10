@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahlat Aman - Rescue Mission</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
+
+        body { margin: 0; 
+            overflow: hidden; 
+            background: #000; 
+            font-family: 'Arial', sans-serif; }
+        #gameContainer { width: 100vw; 
+            height: 100vh; 
+            position: relative; }
+
+        .layer { position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            background-size: cover; 
+            background-position: center; 
+            display: none; }
+        #aisleLayer { display: block; 
+            background-image: url('assets3/images/bus_aisle.png'); 
+            transition: background-position 0.1s linear; }
+        #steeringLayer { background-color: #000; }
+
+        /* Characters */
+        #hero { position: absolute; 
+            bottom: 5%; 
+            right: 0; 
+            width: 450px; 
+            z-index: 10; 
+            display: none; 
+            transition: right 0.1s linear; }
+        #sleepingHero { position: absolute; 
+            bottom: 0; 
+            right: 0; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            z-index: 20; }
+
+        /* UI Box */
+        #msgBox { 
+            position: absolute; 
+            top: 40px; 
+            width: 100%; 
+            text-align: center; 
+            color: #FFD700; 
+            font-size: 55px; 
+            font-weight: bold; 
+            text-shadow: 4px 4px 10px #000; 
+            z-index: 100; 
+            font-family: 'Bangers', cursive;
+        }
+
+        /* 3D Buttons Style */
+        .btn-3d {
+            position: absolute; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            padding: 20px 45px; 
+            font-size: 30px; 
+            color: white;
+            background: linear-gradient(145deg, #f1c40f, #f39c12);
+            border: none; 
+            border-radius: 50px; 
+            cursor: pointer;
+            box-shadow: 0 8px #d35400, 0 15px 25px rgba(0,0,0,0.4);
+            z-index: 150; 
+            text-transform: uppercase; 
+            font-weight: bold;
+        }
+        .btn-3d:active { box-shadow: 0 4px #d35400; transform: translate(-50%, -45%); }
+
+        #wakeBtn { top: 75%; 
+            display: block; }
+        #finishBtn { top: 85%; 
+            background: linear-gradient(145deg, #2ecc71, #27ae60); box-shadow: 0 8px #1e8449; 
+            display: none; }
+
+        /* Transparent Golden Horn Button */
+        #hornHotspot {
+            position: absolute; 
+            top: 45%; 
+            left: 45%; 
+            width: 180px; 
+            height: 180px;
+            background: rgba(255, 215, 0, 0.2); 
+            border: 4px dashed #FFD700;
+            border-radius: 50%; 
+            display: none; z-index: 120; 
+            cursor: pointer;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse { 0% { transform: scale(1); 
+            opacity: 0.5; } 50% { transform: scale(1.1); 
+                opacity: 0.8; 
+            } 
+            100% { transform: scale(1); 
+                opacity: 0.5; } }
+
+        #rescueProgress { position: absolute; 
+            bottom: 120px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 600px; 
+            height: 40px; 
+            background: rgba(0,0,0,0.6); 
+            border: 4px solid #fff; 
+            border-radius: 30px; 
+            display: none; 
+            overflow: hidden; }
+        #progressBar { width: 0%; 
+            height: 100%; 
+            background: linear-gradient(90deg, #FFD700, #FF4500); }
+    </style>
+</head>
+<body>
+
+<div id="gameContainer">
+    <div id="msgBox">...</div>
+    
+    <div id="aisleLayer" class="layer"></div>
+    <div id="steeringLayer" class="layer"></div>
+
+    <img src="assets3/images/hero_sleep.png" id="sleepingHero">
+    <img src="assets3/images/hero_boy_1.png" id="hero">
+    
+    <button id="wakeBtn" class="btn-3d" onclick="startWakingUp()">WAKE UP NOW!</button>
+    <div id="hornHotspot" onclick="handleRescuePush()"></div>
+    <button id="finishBtn" class="btn-3d" onclick="goToMenu()">FINISH THE GAME</button>
+
+    <div id="rescueProgress"><div id="progressBar"></div></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+window.db     = db;
+window.doc    = doc;
+window.setDoc = setDoc;
+window.getDoc = getDoc;
+</script>
+
+<script>
+
+/* ═══════════════════════════════════════════════
+   saveGameProgress — موحّد مع بقية الألعاب
+   المسار: StudentActivities/{userId}/games/game5
+   ═══════════════════════════════════════════════ */
+async function saveGameProgress() {
+    // ① نأخذ userId من email دائماً (مفتاح موحد)
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+    const userId = currentUser.email || currentUser.studentId || currentUser.id || "guest";
+    console.log("GAME5 — USER ID:", userId);
+
+    const gameId       = "game5";
+    const earnedPoints = hornClicks * 200;
+
+    try {
+        // ② تحديث Student-Dashboard (النقاط الكلية)
+        const dashboardRef  = window.doc(window.db, "Student-Dashboard", userId);
+        const dashboardSnap = await window.getDoc(dashboardRef);
+        const currentPoints = dashboardSnap.exists() ? (dashboardSnap.data().points || 0) : 0;
+        const totalPoints   = currentPoints + earnedPoints;
+
+        await window.setDoc(dashboardRef, {
+            points:       totalPoints,
+            level:        getLevel(totalPoints),
+            badge:        getBadge(totalPoints),
+            lastGame:     "game5",
+            lastScore:    earnedPoints,
+            lastActivity: "Completed Game 5",
+            updatedAt:    new Date()
+        }, { merge: true });
+
+        // ③ حفظ بيانات اللعبة في المسار الموحد
+        //    StudentActivities/{userId}/games/game5
+        await window.setDoc(
+            window.doc(window.db, "StudentActivities", userId, "games", gameId),
+            {
+                gameId:      gameId,
+                gameName:    "Safety Assistant",
+                earnedPoints: earnedPoints,
+                completed:   true,
+                liked:       false,
+                totalClicks: hornClicks,
+                playedAt:    new Date()
+            },
+            { merge: true }
+        );
+
+        console.log("✅ Game 5 synced successfully");
+
+    } catch (error) {
+        console.error("❌ Save Game Error:", error);
+    }
+}
+
+    const config = {
+        images: {
+            aisle:   'assets3/images/bus_aisle.png',
+            normal:  'assets3/images/steering_normal.png',
+            hint:    'assets3/images/image_35.png',
+            hot:     'assets3/images/image_39.png',
+            rescuer: 'assets3/images/rescuer.png'
+        },
+        audio: {
+            snore:        new Audio('assets3/audio/sleeep.mp3'),
+            wake:         new Audio('assets3/audio/wake_up.mp3'),
+            steps:        new Audio('assets3/audio/footsteps.mp3'),
+            horn:         new Audio('assets3/audio/horn_signal.mp3'),
+            alertVoice:   new Audio('assets3/audio/alert_voice.mp3'),
+            rescuerVoice: new Audio('assets3/audio/rescuer_voice.mp3'),
+            win:          new Audio('assets3/audio/success_fanfare.mp3'),
+            heat:         new Audio('assets3/audio/ambient_heat.mp3')
+        }
+    };
+
+    let heroPos     = 0;
+    let isGameActive = false;
+    let currentStep = 1;
+    let hornClicks  = 0;
+
+    window.onload = () => {
+        config.audio.snore.loop = true;
+        config.audio.snore.play();
+        document.getElementById('msgBox').innerText = "THE BOY IS FAST ASLEEP...";
+    };
+
+    function startWakingUp() {
+        config.audio.snore.pause();
+        config.audio.wake.play();
+        document.getElementById('wakeBtn').style.display = 'none';
+        document.getElementById('msgBox').innerText = "WAKING UP...";
+        setTimeout(() => {
+            document.getElementById('sleepingHero').style.display = 'none';
+            document.getElementById('hero').style.display = 'block';
+            document.getElementById('msgBox').innerText = "GO TO THE DRIVER SEAT!";
+            isGameActive = true;
+        }, 3000);
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (!isGameActive) return;
+        if (e.key === 'ArrowLeft') {
+            heroPos += 15;
+            document.getElementById('hero').style.right = heroPos + "px";
+            currentStep = currentStep === 1 ? 2 : 1;
+            document.getElementById('hero').src = `assets3/images/hero_boy_${currentStep}.png`;
+            if (config.audio.steps.paused) config.audio.steps.play();
+            if (heroPos > (window.innerWidth - 500)) {
+                isGameActive = false;
+                config.audio.steps.pause();
+                initSteeringMission();
+            }
+        }
+    });
+
+    window.addEventListener('keyup', () => { config.audio.steps.pause(); });
+
+    function initSteeringMission() {
+        document.getElementById('aisleLayer').style.display = 'none';
+        document.getElementById('hero').style.display      = 'none';
+        const steerLayer = document.getElementById('steeringLayer');
+        steerLayer.style.display         = 'block';
+        steerLayer.style.backgroundImage = `url(${config.images.normal})`;
+        config.audio.alertVoice.play();
+        document.getElementById('msgBox').innerText = "I MUST USE THE HORN!";
+        setTimeout(() => {
+            steerLayer.style.backgroundImage = `url(${config.images.hint})`;
+            document.getElementById('hornHotspot').style.display   = 'block';
+            document.getElementById('rescueProgress').style.display = 'block';
+            document.getElementById('msgBox').innerText = "CLICK THE GOLDEN CIRCLE!";
+        }, 6000);
+    }
+
+    function handleRescuePush() {
+        hornClicks++;
+        let progress = (hornClicks / 10) * 100;
+        document.getElementById('progressBar').style.width = progress + "%";
+        if (hornClicks === 1) {
+            config.audio.horn.play();
+            setTimeout(() => {
+                config.audio.heat.play();
+                document.getElementById('steeringLayer').style.backgroundImage = `url(${config.images.hot})`;
+                document.getElementById('msgBox').innerText = "HEAT IS RISING! HELP IS COMING!";
+            }, 5000);
+        }
+        if (hornClicks >= 10) {
+            document.getElementById('hornHotspot').style.display = 'none';
+            setTimeout(finishRescue, 3000);
+        }
+    }
+
+    function finishRescue() {
+        config.audio.horn.pause();
+        config.audio.heat.pause();
+        const steerLayer = document.getElementById('steeringLayer');
+        document.getElementById('rescueProgress').style.display = 'none';
+        steerLayer.style.backgroundImage = `url(${config.images.rescuer})`;
+        config.audio.rescuerVoice.play();
+        document.getElementById('msgBox').innerText = "WELL DONE HERO!";
+        setTimeout(() => {
+            document.getElementById('finishBtn').style.display = 'block';
+        }, 4000);
+    }
+
+    function goToMenu() {
+        saveGameProgress();
+        config.audio.win.play();
+        setTimeout(() => {
+            window.location.href = "student_Activities.html";
+        }, 5000);
+    }
+
+function getLevel(points){
+    if(points >= 1000) return "Legend 🔥";
+    if(points >= 500)  return "Master 🔴";
+    if(points >= 250)  return "Pro 🟡";
+    if(points >= 100)  return "Explorer 🔵";
+    return "Beginner 🟢";
+}
+
+function getBadge(points){
+    if(points >= 1000) return "👑";
+    if(points >= 500)  return "🏆";
+    if(points >= 250)  return "🥇";
+    if(points >= 100)  return "🥈";
+    return "🥉";
+}
+
+</script>
+</body>
+</html>

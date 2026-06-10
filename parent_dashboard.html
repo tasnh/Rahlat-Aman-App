@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman | Parent Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+:root{
+--main:#64B5F6;
+--main2:#1976D2;
+--bg:#EEF7FF;
+--white:#ffffff;
+--dark:#16344D;
+--shadow:0 12px 35px rgba(0,0,0,0.08);
+--success:#00c853;
+--danger:#ff5252;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Segoe UI',sans-serif;
+background:linear-gradient(to bottom,#EEF7FF,#DCEFFF);
+overflow-x:hidden;
+color:var(--dark);
+}
+
+/* HEADER */
+
+.header{
+background:linear-gradient(135deg,var(--main),var(--main2));
+padding:28px 22px 95px;
+border-radius:0 0 38px 38px;
+position:relative;
+overflow:hidden;
+box-shadow:var(--shadow);
+}
+
+.header::before{
+content:"";
+position:absolute;
+width:260px;
+height:260px;
+background:rgba(255,255,255,0.08);
+border-radius:50%;
+top:-120px;
+right:-70px;
+}
+
+.header::after{
+content:"";
+position:absolute;
+width:180px;
+height:180px;
+background:rgba(255,255,255,0.06);
+border-radius:50%;
+bottom:-70px;
+left:-60px;
+}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:relative;
+z-index:2;
+}
+
+.profile{
+display:flex;
+align-items:center;
+gap:16px;
+}
+
+.avatar{
+width:78px;
+height:78px;
+border-radius:50%;
+border:3px solid rgba(255,255,255,0.9);
+object-fit:cover;
+background:white;
+box-shadow:0 8px 18px rgba(0,0,0,0.15);
+}
+
+.welcome{
+color:white;
+}
+
+#greeting{
+font-size:25px;
+font-weight:700;
+}
+
+#parentName{
+font-size:16px;
+margin-top:5px;
+opacity:0.95;
+}
+
+.menu-btn{
+width:56px;
+height:56px;
+border-radius:18px;
+background:rgba(255,255,255,0.18);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+color:white;
+cursor:pointer;
+backdrop-filter:blur(10px);
+transition:0.3s;
+}
+
+.menu-btn:hover{
+transform:scale(1.08);
+}
+
+/* STATUS */
+
+.status-wrapper{
+margin-top:-60px;
+position:relative;
+z-index:10;
+padding:0 15px;
+}
+
+.status-card{
+background:white;
+border-radius:30px;
+padding:22px;
+box-shadow:var(--shadow);
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+}
+
+.status-box{
+background:#F7FBFF;
+padding:18px;
+border-radius:22px;
+text-align:center;
+transition:0.3s;
+}
+
+.status-box:hover{
+transform:translateY(-6px);
+}
+
+.status-icon{
+width:58px;
+height:58px;
+border-radius:18px;
+margin:auto;
+margin-bottom:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,var(--main),var(--main2));
+color:white;
+font-size:24px;
+box-shadow:0 10px 20px rgba(25,118,210,0.2);
+}
+
+.status-title{
+font-size:13px;
+color:#777;
+margin-bottom:6px;
+}
+
+.status-value{
+font-size:16px;
+font-weight:700;
+}
+
+/* SMART ALERT */
+
+.alert{
+margin:18px 15px;
+background:white;
+border-radius:24px;
+padding:18px;
+box-shadow:var(--shadow);
+display:flex;
+align-items:center;
+gap:14px;
+}
+
+.alert i{
+font-size:28px;
+color:#f4b400;
+}
+
+.alert-text{
+font-size:14px;
+line-height:1.6;
+}
+
+/* PROGRESS */
+
+.progress-box{
+background:white;
+margin:18px 15px;
+padding:22px;
+border-radius:26px;
+box-shadow:var(--shadow);
+}
+
+.progress-top{
+display:flex;
+justify-content:space-between;
+margin-bottom:12px;
+font-weight:700;
+}
+
+.progress-bg{
+width:100%;
+height:15px;
+background:#E0E0E0;
+border-radius:20px;
+overflow:hidden;
+}
+
+.progress-fill{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00c853,#69f0ae);
+border-radius:20px;
+transition:1s;
+position:relative;
+}
+
+.progress-fill::after{
+content:"";
+position:absolute;
+top:0;
+left:-40px;
+width:40px;
+height:100%;
+background:rgba(255,255,255,0.5);
+transform:skewX(-20deg);
+animation:shine 2s infinite;
+}
+
+@keyframes shine{
+0%{left:-40px;}
+100%{left:100%;}
+}
+
+/* ART DESIGN */
+
+.design-box{
+margin:18px 15px;
+height:200px;
+border-radius:30px;
+overflow:hidden;
+position:relative;
+box-shadow:var(--shadow);
+}
+
+.design-box img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.design-overlay{
+position:absolute;
+inset:0;
+background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);
+display:flex;
+align-items:flex-end;
+padding:20px;
+color:white;
+}
+
+.design-overlay h2{
+font-size:26px;
+margin-bottom:8px;
+}
+
+.design-overlay p{
+font-size:14px;
+opacity:0.95;
+}
+
+/* SERVICES */
+
+.section-title{
+margin:22px 18px 15px;
+font-size:23px;
+font-weight:700;
+}
+
+.grid{
+padding:0 15px 35px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:16px;
+}
+
+.card{
+background:white;
+border-radius:28px;
+padding:24px;
+text-align:center;
+text-decoration:none;
+color:var(--dark);
+box-shadow:var(--shadow);
+transition:0.35s;
+position:relative;
+overflow:hidden;
+}
+
+.card::before{
+content:"";
+position:absolute;
+width:120px;
+height:120px;
+background:rgba(100,181,246,0.08);
+border-radius:50%;
+top:-40px;
+right:-40px;
+}
+
+.card:hover{
+transform:translateY(-6px);
+}
+
+.card i{
+font-size:38px;
+margin-bottom:14px;
+background:linear-gradient(135deg,var(--main),var(--main2));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.card span{
+font-weight:700;
+font-size:16px;
+}
+
+/* MENU */
+
+.overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.45);
+backdrop-filter:blur(4px);
+opacity:0;
+pointer-events:none;
+transition:0.3s;
+z-index:999;
+}
+
+.overlay.active{
+opacity:1;
+pointer-events:auto;
+}
+
+.sidebar{
+position:fixed;
+top:0;
+right:-100%;
+width:88%;
+max-width:380px;
+height:100%;
+background:white;
+z-index:1000;
+transition:0.45s;
+overflow-y:auto;
+box-shadow:-10px 0 30px rgba(0,0,0,0.18);
+}
+
+.sidebar.active{
+right:0;
+}
+
+.side-top{
+background:linear-gradient(135deg,var(--main),var(--main2));
+padding:35px 22px;
+color:white;
+border-radius:0 0 35px 35px;
+text-align:center;
+}
+
+.side-top img{
+width:90px;
+margin-bottom:12px;
+}
+
+.side-top h2{
+font-size:28px;
+}
+
+.side-top p{
+margin-top:8px;
+opacity:0.95;
+font-size:15px;
+}
+
+.side-links{
+padding:20px;
+}
+
+.side-item{
+display:flex;
+align-items:center;
+gap:16px;
+padding:18px;
+margin-bottom:16px;
+background:#F5FAFF;
+border-radius:22px;
+cursor:pointer;
+transition:0.3s;
+font-size:17px;
+font-weight:700;
+}
+
+.side-item:hover{
+background:#E7F4FF;
+transform:translateX(-4px);
+}
+
+.side-item i{
+width:48px;
+height:48px;
+border-radius:16px;
+background:linear-gradient(135deg,var(--main),var(--main2));
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:20px;
+}
+
+.logout{
+background:#FFF1F1 !important;
+color:#d32f2f;
+}
+
+.logout i{
+background:#ff5252;
+}
+
+/* LOGOUT BOX */
+
+.logout-box{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) scale(0.8);
+background:white;
+padding:28px;
+border-radius:30px;
+width:90%;
+max-width:360px;
+z-index:99999;
+box-shadow:0 20px 50px rgba(0,0,0,0.25);
+opacity:0;
+pointer-events:none;
+transition:0.35s;
+}
+
+.logout-box.active{
+opacity:1;
+pointer-events:auto;
+transform:translate(-50%,-50%) scale(1);
+}
+
+.logout-title{
+font-size:25px;
+font-weight:700;
+text-align:center;
+margin-bottom:12px;
+}
+
+.logout-sub{
+text-align:center;
+color:#666;
+line-height:1.6;
+margin-bottom:24px;
+}
+
+.logout-actions{
+display:flex;
+gap:12px;
+}
+
+.logout-btn{
+flex:1;
+padding:14px;
+border:none;
+border-radius:16px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.yes{
+background:var(--danger);
+color:white;
+}
+
+.no{
+background:#EEF7FF;
+}
+
+/* NOTIFY */
+
+.notify{
+position:fixed;
+top:-100px;
+left:50%;
+transform:translateX(-50%);
+background:var(--success);
+color:white;
+padding:14px 28px;
+border-radius:40px;
+font-weight:bold;
+z-index:99999;
+transition:0.4s;
+box-shadow:0 10px 25px rgba(0,0,0,0.18);
+}
+
+.notify.show{
+top:20px;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+.status-card{
+grid-template-columns:1fr;
+}
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.design-box{
+height:180px;
+}
+
+}
+
+</style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+doc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+projectId: "rahlataman-bus-safety-app",
+storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+messagingSenderId: "1088859717905",
+appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+measurementId: "G-SRY2J762GZ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.doc = doc;
+window.getDoc = getDoc;
+</script>
+</head>
+
+<body>
+
+<div class="notify" id="notify"></div>
+
+<!-- HEADER -->
+
+<div class="header">
+
+<div class="top-bar">
+
+<div class="profile">
+
+<img src="my.png" class="avatar" id="avatar">
+
+<div class="welcome">
+
+<div id="greeting">Good Morning ☀️</div>
+
+<div id="parentName">
+Parent Name
+</div>
+
+</div>
+
+</div>
+
+<div class="menu-btn" onclick="openMenu()">
+<i class="fas fa-bars"></i>
+</div>
+
+</div>
+
+</div>
+
+<!-- STATUS -->
+
+<div class="status-wrapper">
+
+<div class="status-card">
+
+<div class="status-box">
+
+<div class="status-icon">
+<i class="fas fa-bus"></i>
+</div>
+
+<div class="status-title">
+Bus Status
+</div>
+
+<div class="status-value" id="busStatus">
+Heading to School 🏫
+</div>
+
+</div>
+
+<div class="status-box">
+
+<div class="status-icon">
+<i class="fas fa-user-graduate"></i>
+</div>
+
+<div class="status-title">
+Student Name
+</div>
+
+<div class="status-value" id="studentName">
+Student
+</div>
+
+</div>
+
+<div class="status-box">
+
+<div class="status-icon">
+<i class="fas fa-clock"></i>
+</div>
+
+<div class="status-title">
+Arrival Time
+</div>
+
+<div class="status-value" id="arrivalTime">
+07:15 AM
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ALERT -->
+
+<div class="alert">
+
+<i class="fas fa-bullhorn"></i>
+
+<div class="alert-text">
+<b>Smart Notice:</b>
+Please ensure the student is ready before the bus arrives safely.
+</div>
+
+</div>
+
+<!-- PROGRESS -->
+
+<div class="progress-box">
+
+<div class="progress-top">
+<span>Trip Progress</span>
+<span id="progressText">0%</span>
+</div>
+
+<div class="progress-bg">
+<div class="progress-fill" id="progressFill"></div>
+</div>
+
+</div>
+
+<!-- ART DESIGN -->
+
+<div class="design-box">
+
+<img id="designImage" src="student.png">
+
+<div class="design-overlay">
+
+<div>
+
+<h2>Rahlat Aman</h2>
+
+<p>
+Smart safe transportation with advanced student protection and real-time tracking system.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- SERVICES -->
+
+<div class="section-title">
+Parent Services
+</div>
+
+<div class="grid">
+
+<a href="parent_tracking.html" class="card">
+<i class="fas fa-map-location-dot"></i>
+<span>Live Tracking</span>
+</a>
+
+<a href="parent_attendance.html" class="card">
+<i class="fas fa-file-lines"></i>
+<span>  Attendance Student</span>
+</a>
+
+<a href="parent_children.html" class="card">
+<i class="fas fa-file-lines"></i>
+<span>  Children Active</span>
+</a>
+
+<a href="parent_chat.html" class="card">
+<i class="fas fa-comments"></i>
+<span>Driver Chat</span>
+</a>
+
+<a href="parent_health_support.html" class="card">
+<i class="fas fa-heart-pulse"></i>
+<span>Health Support</span>
+</a>
+
+<a href="parent_reports.html" class="card">
+<i class="fas fa-file-lines"></i>
+<span>Monthly Reports</span>
+</a>
+
+
+
+
+</div>
+
+<!-- OVERLAY -->
+
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar" id="sidebar">
+
+<div class="side-top">
+
+<img src="logo.png">
+
+<h2>Rahlat Aman</h2>
+
+<p>
+Smart Parent System
+</p>
+
+</div>
+
+<div class="side-links">
+
+<div class="side-item" onclick="goPage('parent_profile.html')">
+<i class="fas fa-user"></i>
+<span>Profile</span>
+</div>
+
+
+<div class="side-item" onclick="goPage('parent_instructions.html')">
+<i class="fas fa-heart-pulse"></i>
+<span>Guidelines</span>
+</div>
+
+<div class="side-item" onclick="goPage('parent_awareness.html')">
+<i class="fas fa-chart-line"></i>
+<span>Awareness</span>
+</div>
+
+
+<div class="side-item" onclick="goPage('parent_settings.html')">
+<i class="fas fa-gear"></i>
+<span>Settings</span>
+</div>
+
+
+
+
+
+<div class="side-item logout" onclick="openLogoutBox()">
+<i class="fas fa-right-from-bracket"></i>
+<span>Logout</span>
+</div>
+
+</div>
+
+</div>
+
+<!-- LOGOUT BOX -->
+
+<div class="logout-box" id="logoutBox">
+
+<div class="logout-title">
+🚪 Logout
+</div>
+
+<div class="logout-sub">
+Are you sure you want to logout from this account?
+</div>
+
+<div class="logout-actions">
+
+<button class="logout-btn no" onclick="closeLogoutBox()">
+No
+</button>
+
+<button class="logout-btn yes" onclick="logout()">
+Yes
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+/* USER */
+let user = JSON.parse(localStorage.getItem("currentUser")) || {};
+const safeUserKey = user.email ? user.email.replace(/[.$\[\]]/g, "_"): null;
+/* PARENT NAME */
+const parentRealName = 
+user.name ||
+user.fullName ||
+user.parentName ||
+"Parent";
+document.getElementById("parentName").innerText = parentRealName;
+
+/* LOAD CHILDREN FROM FIRESTORE */
+
+async function loadChildrenData(){
+
+if(!safeUserKey) return;
+
+try{
+
+const parentRef = window.doc(
+window.db,
+"parent_profile",
+safeUserKey
+);
+
+const snapshot = await window.getDoc(parentRef);
+
+if(!snapshot.exists()){
+
+document.getElementById("studentName")
+.innerText = "No Students";
+
+return;
+}
+
+const data = snapshot.data();
+
+const children = data.children || [];
+
+if(children.length === 0){
+
+document.getElementById("studentName")
+.innerText = "No Students";
+
+return;
+}
+
+/* طالب واحد */
+
+if(children.length === 1){
+
+document.getElementById("studentName")
+.innerText =
+children[0]?.name || "Student";
+
+}
+
+/* أكثر من طالب */
+
+else{
+
+const names = children.map(child =>
+(child.name || "Student").split(" ")[0]
+);
+
+document.getElementById("studentName")
+.innerHTML = `
+${children.length} Students<br>
+<span style="font-size:12px;font-weight:500;">
+${names.join(" • ")}
+</span>
+`;
+
+}
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById("studentName")
+.innerText = "Student Error";
+
+}
+
+}
+
+
+/* GREETING */
+
+function loadGreeting(){
+
+let hour = new Date().getHours();
+
+let text = "Good Morning ☀️";
+
+if(hour >= 12){
+text = "Good Afternoon 🌤";
+}
+
+if(hour >= 18){
+text = "Good Evening 🌙";
+}
+
+if(hour >= 22 || hour < 5){
+text = "Good Night 🌌";
+}
+
+document.getElementById("greeting").innerText = text;
+
+}
+
+/* BUS SYSTEM */
+
+function loadTrip() {
+
+let now = new Date();
+
+let currentDay = now.getDay();
+/*
+0 = Sunday
+1 = Monday
+2 = Tuesday
+3 = Wednesday
+4 = Thursday
+5 = Friday
+6 = Saturday
+*/
+
+let currentMinutes =
+(now.getHours() * 60) + now.getMinutes();
+
+/*
+Weekend = Friday + Saturday
+*/
+const isWeekend =
+(currentDay === 5 || currentDay === 6);
+
+/*
+Trip schedule
+*/
+const trips = [
+
+{
+start: 375, // 06:15 AM
+end: 435,   // 07:15 AM
+status: "Heading to School 🏫",
+arrival: "07:15 AM",
+progress: 70
+},
+
+{
+start: 810, // 01:30 PM
+end: 855,   // 02:15 PM
+status: "Returning Home 🏠",
+arrival: "02:15 PM",
+progress: 92
+}
+
+];
+
+let status = "";
+let arrival = "";
+let progress = 5;
+
+/*
+WEEKEND SYSTEM
+*/
+if(isWeekend){
+
+status = "Weekend • No Trips 🏖";
+
+/*
+احسب كم باقي للأحد
+*/
+let daysUntilSunday =
+currentDay === 5 ? 2 : 1;
+
+arrival =
+`Next Trip • Sunday 06:15 AM`;
+
+document.getElementById("busStatus")
+.innerText = status;
+
+document.getElementById("arrivalTime")
+.innerText = arrival;
+
+animateProgress(progress);
+
+return;
+}
+
+/*
+CHECK ACTIVE TRIP
+*/
+let activeTrip = null;
+
+for(let trip of trips){
+
+if(
+currentMinutes >= trip.start &&
+currentMinutes <= trip.end
+){
+
+activeTrip = trip;
+break;
+
+}
+
+}
+
+/*
+TRIP ACTIVE NOW
+*/
+if(activeTrip){
+
+status = activeTrip.status;
+arrival = activeTrip.arrival;
+progress = activeTrip.progress;
+
+}
+
+/*
+NO ACTIVE TRIP
+FIND NEXT ONE
+*/
+else{
+
+let nextTrip = null;
+
+for(let trip of trips){
+
+if(currentMinutes < trip.start){
+
+nextTrip = trip;
+break;
+
+}
+
+}
+
+/*
+ALL TRIPS FINISHED TODAY
+*/
+if(!nextTrip){
+
+status =
+"Next Trip: Heading to School 🏫";
+
+arrival =
+"Tomorrow • 06:15 AM";
+
+progress = 5;
+
+}
+
+/*
+UPCOMING TRIP TODAY
+*/
+else{
+
+status =
+"Next Trip: " + nextTrip.status;
+
+arrival =
+nextTrip.arrival;
+
+progress = 5;
+
+}
+
+}
+
+/*
+UPDATE UI
+*/
+document.getElementById("busStatus")
+.innerText = status;
+
+document.getElementById("arrivalTime")
+.innerText = arrival;
+
+animateProgress(progress);
+
+}
+
+/* PROGRESS */
+
+function animateProgress(target){
+
+let fill = document.getElementById("progressFill");
+let text = document.getElementById("progressText");
+
+let current = 0;
+
+let interval = setInterval(()=>{
+
+if(current >= target){
+
+clearInterval(interval);
+
+}else{
+
+current++;
+
+fill.style.width = current + "%";
+text.innerText = current + "%";
+
+}
+
+},20);
+
+}
+
+/* MENU */
+
+function openMenu(){
+
+document.getElementById("sidebar").classList.add("active");
+document.getElementById("overlay").classList.add("active");
+
+}
+
+function closeMenu(){
+
+document.getElementById("sidebar").classList.remove("active");
+document.getElementById("overlay").classList.remove("active");
+
+}
+
+/* PAGE */
+
+function goPage(page){
+
+window.location.href = page;
+
+}
+
+/* LOGOUT */
+
+function openLogoutBox(){
+
+document.getElementById("logoutBox").classList.add("active");
+
+}
+
+function closeLogoutBox(){
+
+document.getElementById("logoutBox").classList.remove("active");
+
+}
+
+function logout(){
+
+showNotify("👋 Logged out successfully");
+
+localStorage.removeItem("currentUser");
+
+setTimeout(()=>{
+
+window.location.href = "welcome.html";
+
+},1200);
+
+}
+
+/* NOTIFY */
+
+function showNotify(text){
+
+let n = document.getElementById("notify");
+
+n.innerText = text;
+
+n.classList.add("show");
+
+setTimeout(()=>{
+
+n.classList.remove("show");
+
+},3000);
+
+}
+
+/* CLOSE OUTSIDE */
+
+document.addEventListener("click",function(e){
+
+let side = document.getElementById("sidebar");
+
+if(
+side.classList.contains("active") &&
+!side.contains(e.target) &&
+!e.target.closest(".menu-btn")
+){
+closeMenu();
+}
+
+});
+
+/* LOAD */
+
+window.onload = ()=>{
+loadGreeting();
+loadTrip();
+loadChildrenData();
+};
+
+</script>
+
+</body>
+</html>

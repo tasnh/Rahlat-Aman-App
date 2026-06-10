@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Rahlat Aman</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --glass-green: rgba(216,243,220,0.15);
+            --accent-gold: #F4BC5A;
+            --text-white: #ffffff;
+            --error-red: #ff4d4d;
+        }
+
+        body{
+            margin:0;
+            padding:0;
+            height:100vh;
+            font-family:'Plus Jakarta Sans',sans-serif;
+            /* المحافظة على خلفيتك المعتمدة */
+            background:url("login.png") no-repeat center center;
+            background-size:cover;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            overflow:hidden;
+        }
+
+        .login-card{
+            background:var(--glass-green);
+            backdrop-filter:blur(25px);
+            -webkit-backdrop-filter:blur(25px);
+            border:1px solid rgba(255,255,255,0.2);
+            border-radius:40px;
+            padding:50px 40px;
+            width:100%;
+            max-width:440px;
+            text-align:center;
+            box-shadow:0 40px 80px rgba(0,0,0,0.3);
+            position:relative;
+            animation:slideUp 0.8s cubic-bezier(0.2,0.8,0.2,1);
+        }
+
+        .back-nav{
+            position:absolute;
+            top:-70px;
+            left:0;
+            background:white;
+            width:45px;
+            height:45px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            box-shadow:0 10px 20px rgba(0,0,0,0.1);
+            transition:0.3s;
+        }
+
+        .back-nav:hover{
+            transform:scale(1.1);
+        }
+
+        .welcome-header h2{
+            font-size:32px;
+            font-weight:800;
+            margin:0;
+            color:var(--text-white);
+        }
+
+        .welcome-header span{
+            color:var(--accent-gold);
+            font-size:18px;
+            display:block;
+            margin-bottom:25px;
+            font-weight:600;
+        }
+
+        .input-label{
+            display:block;
+            text-align:left;
+            font-size:13px;
+            color:rgba(255,255,255,0.7);
+            margin:0 0 8px 15px;
+        }
+
+        .input-field{
+            width:100%;
+            padding:16px 20px;
+            background:rgba(255,255,255,0.1);
+            border:1px solid rgba(255,255,255,0.2);
+            border-radius:20px;
+            color:white;
+            font-size:16px;
+            margin-bottom:20px;
+            box-sizing:border-box;
+            transition:0.3s;
+        }
+
+        .input-field:focus{
+            background:rgba(255,255,255,0.15);
+            border-color:var(--accent-gold);
+            outline:none;
+        }
+
+        .pass-wrapper{
+            position:relative;
+        }
+
+        .eye-toggle{
+            position:absolute;
+            right:20px;
+            top:18px;
+            cursor:pointer;
+            font-size:18px;
+        }
+
+        .utility-row{
+            display:flex;
+            justify-content:space-between;
+            font-size:13px;
+            margin-bottom:30px;
+            padding:0 5px;
+        }
+
+        .btn-submit{
+            width:100%;
+            padding:18px;
+            background:var(--accent-gold);
+            border:none;
+            border-radius:20px;
+            color:#4a3300;
+            font-size:18px;
+            font-weight:800;
+            cursor:pointer;
+            box-shadow:0 15px 30px rgba(244,188,90,0.3);
+            transition:0.3s;
+        }
+
+        .btn-submit:hover{
+            transform:translateY(-4px);
+            box-shadow:0 20px 40px rgba(244,188,90,0.4);
+        }
+
+        .error-box{
+            background:rgba(255,77,77,0.15);
+            color:var(--error-red);
+            padding:10px;
+            border-radius:12px;
+            font-size:13px;
+            margin-top:20px;
+            display:none;
+        }
+
+        @keyframes slideUp{
+            from{
+                opacity:0;
+                transform:translateY(40px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+
+    <div class="back-nav" onclick="window.location.href='welcome.html'">
+         ←
+    </div>
+
+    <div class="welcome-header">
+        <h2>Welcome</h2>
+        <span id="roleDisplay">Identifying Account...</span>
+    </div>
+
+    <label class="input-label">Enter Email</label>
+    <input type="text" id="userIdentifier" class="input-field" placeholder="example@aman.com">
+
+    <label class="input-label">Enter Password</label>
+    <div class="pass-wrapper">
+        <input type="password" id="userPass" class="input-field" placeholder="••••••••">
+        <span class="eye-toggle" onclick="toggleVisibility()">👁️</span>
+    </div>
+
+    <div class="utility-row">
+        <label style="color:white;cursor:pointer;">
+            <input type="checkbox" id="showPassCheckbox" onclick="toggleVisibility()"> Check Password
+        </label>
+        <a href="forgot_password.html" style="color:var(--accent-gold); text-decoration:none; font-weight:600;">Forgot Password?</a>
+    </div>
+
+    <button class="btn-submit" onclick="attemptLogin()">Login Securely →</button>
+
+    <div id="errorMessage" class="error-box"></div>
+
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // تم تحديث مفاتيح الفايربيس الحية والخاصة بنظام رحلات أمان بنجاح هنا
+    const firebaseConfig = {
+        apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+        authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+        projectId: "rahlataman-bus-safety-app",
+        storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+        messagingSenderId: "1088859717905",
+        appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+        measurementId: "G-SRY2J762GZ"
+    };
+
+    // تهيئة الخدمات السحابية لجوجل
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // التعرف على الدور المختار وعرضه بجمالية
+    const currentRole = localStorage.getItem("userRole") || "student";
+    const formattedRole = currentRole.charAt(0).toUpperCase() + currentRole.slice(1);
+    document.getElementById("roleDisplay").innerText = "Login as " + (formattedRole === "Admin" ? "School Admin" : formattedRole);
+
+    // تفعيل دالة الرؤية عالمياً للـ HTML
+    window.toggleVisibility = function() {
+        const passInput = document.getElementById("userPass");
+        const checkbox = document.getElementById("showPassCheckbox");
+        
+        passInput.type = (passInput.type === "password") ? "text" : "password";
+        checkbox.checked = (passInput.type === "text");
+    }
+
+    // تفعيل محرك الدخول السحابي
+    window.attemptLogin = async function() {
+        const email = document.getElementById("userIdentifier").value.trim();
+        const pass = document.getElementById("userPass").value.trim();
+        const errorDiv = document.getElementById("errorMessage");
+        
+        errorDiv.style.display = "none";
+
+        if(!email || !pass){
+            showError("Please fill in all fields.");
+            return;
+        }
+
+        try {
+            // 1. إجراء عملية التحقق والمطابقة عبر السحابة الآمنة لجوجل
+            const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+            const user = userCredential.user;
+
+            // 2. سحب البروفايل العميق والموثق من جدول المستخدمين السحابي Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                userData.uid = user.uid;
+
+                // 3. التحقق الأمني من تطابق رتبة الدخول الحالية مع المخزن سحابياً
+                if (userData.role !== currentRole) {
+                    showError(`This account doesn't match a ${formattedRole} profile.`);
+                    return;
+                }
+
+                // 4. تحديث ميتاداتا وقت الدخول الفعلي على الخادم السحابي
+                const nowIso = new Date().toISOString();
+                await updateDoc(userDocRef, {
+                    "meta.lastLogin": nowIso
+                });
+                
+                if(!userData.meta) userData.meta = {};
+                userData.meta.lastLogin = nowIso;
+
+                // 5. حفظ الجلسة والمزامنة المحلية لسرعة استجابة التطبيق
+                userData.uid = user.uid;
+                userData.email = user.email;
+                localStorage.setItem("currentUser", JSON.stringify(userData));
+                localStorage.setItem("currentUserEmail", email);
+                localStorage.setItem("currentUserId", userData.id || user.uid);
+                localStorage.setItem("isLoggedIn", "true");
+
+                // 6. خريطة التوجيه الذكية للـ Dashboards المعتمدة بمشروعكِ
+                const dashboardMap = {
+                    "student": "student_dashboard.html",
+                    "parent": "parent_dashboard.html",
+                    "driver": "driver_dashboard.html",
+                    "admin": "admin_dashboard.html",
+                    "ministry": "ministry_dashboard.html"
+                };
+
+                // الانتقال الفوري للوحة التحكم المناسبة
+                window.location.href = dashboardMap[currentRole] || "index.html";
+
+            } else {
+                showError("Profile data not found on server.");
+            }
+
+        } catch (error) {
+            console.error("Login Error: ", error);
+            // ترجمة الأخطاء الشائعة للجنة التحكيم بشكل احترافي
+            if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
+                showError("Invalid email or password. Please try again.");
+            } else {
+                showError("Connection error or setup pending. Please verify your Cloud Environment.");
+            }
+        }
+    }
+
+    function showError(msg){
+        const errorDiv = document.getElementById("errorMessage");
+        errorDiv.innerText = msg;
+        errorDiv.style.display = "block";
+    }
+</script>
+
+</body>
+</html>

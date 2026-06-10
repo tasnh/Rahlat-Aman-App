@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome | Rahlat Aman</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+/* تعاريف الألوان الثابتة المتناسقة مع هوية التطبيق الجديدة - محافظ عليها بالكامل */
+:root {
+    --primary-dark: #0f172a; /* الكحلي العميق */
+    --accent-blue: #38bdf8;   /* السماوي */
+    --gold: #E59E47;          /* الذهبي */
+    --white: #ffffff;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow: hidden; /* لمنع ظهور سكرول بار عند تحريك البطاقة */
+}
+
+.container {
+    height: 100vh;
+    /* دمج صورة الطفل مع طبقة لونية داكنة (الكحلي) ليظهر النص بوضوح - المحافظ عليها */
+    background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.1), rgba(15, 23, 42, 0.8)), url("welco.png");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* توزيع المحتوى بين الأعلى والأسفل */
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+/* زر الرجوع العائم الأنيق */
+.back-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+}
+
+.back-btn:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.back-btn svg {
+    fill: none;
+    stroke: var(--primary-dark);
+    stroke-width: 2.5;
+}
+
+/* البطاقة الترحيبية السفلية (Style: Glassmorphism) */
+.welcome-card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 45px;
+    padding: 40px 30px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+    transform: translateY(100px);
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.welcome-title {
+    color: var(--white);
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.welcome-title span {
+    color: var(--accent-blue);
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 15px;
+    margin-bottom: 35px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* أزرار العمليات */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn {
+    width: 100%;
+    padding: 18px;
+    border-radius: 22px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-login {
+    background: linear-gradient(135deg, var(--gold) 0%, #d97706 100%);
+    color: white;
+    box-shadow: 0 12px 24px rgba(229, 158, 71, 0.3);
+}
+
+.btn-login:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(229, 158, 71, 0.4);
+}
+
+.btn-signup {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-signup:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* الأيقونة الصغيرة داخل الزر */
+.btn-circle {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+}
+
+@keyframes fadeInUp {
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="back-btn" onclick="goBack()">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+
+    <div class="welcome-card">
+        <h1 class="welcome-title">Welcome to <br><span>Rahlat Aman</span></h1>
+        <p class="subtitle" id="userGreeting">Safe School Transportation System</p>
+
+        <div class="action-buttons">
+            <button class="btn btn-login" onclick="goLogin()">
+                <div class="btn-circle"></div>
+                Log in to your account
+            </button>
+            
+            <button class="btn btn-signup" onclick="goSignup()">
+                <div class="btn-circle" style="background: rgba(255,255,255,0.4)"></div>
+                Create a new account
+            </button>
+        </div>
+
+        <p style="margin-top: 25px; font-size: 11px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px;">
+            Driven by AI • Secured by Rahlat Aman
+        </p>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    // إعدادات الفايربيس لمشروعكِ
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "rahlat-aman.firebaseapp.com",
+        projectId: "rahlat-aman",
+        storageBucket: "rahlat-aman.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // تهيئة الفايربيس والأمان
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // التحقق من الرتبة المخرنة وتعديل النص بصرياً عند تحميل الصفحة
+    window.onload = function() {
+        const rawRole = localStorage.getItem("userRole");
+        
+        // حماية برمجية: إذا لم يتم اختيار رتبة، يتم التوجيه لصفحة البداية تلافياً للأخطاء
+        if (!rawRole) {
+            window.location.href = "type.html";
+            return;
+        }
+
+        // جعل الحرف الأول كبيراً للعرض الجمالي فقط (مثال: parent تصبح Parent)
+        const formattedRole = rawRole.charAt(0).toUpperCase() + rawRole.slice(1);
+        document.getElementById("userGreeting").innerHTML = `Hello, <b>${formattedRole}</b>! Ready for a safe trip?`;
+    }
+
+    // دوال التنقل الذكية المتاحة عالمياً للـ HTML
+    window.goBack = function() {
+        window.location.href = "type.html";
+    }
+
+    window.goLogin = function() {
+        window.location.href = "login.html";
+    }
+
+    window.goSignup = function() {
+        window.location.href = "signup.html";
+    }
+</script>
+
+</body>
+</html>

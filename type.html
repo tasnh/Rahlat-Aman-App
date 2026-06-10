@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who Are You? | Rahlat Aman</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary-dark: #0f172a;
+    --accent-blue: #38bdf8;
+    --gold: #E59E47;
+    --white: #ffffff;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--primary-dark);
+}
+
+.container {
+    height: 100vh;
+    /* استخدام صورتك الجديدة كخلفية المحافظ عليها */
+    background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.9)), url("typr user.png");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.type-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 40px 40px 0 0;
+    padding: 35px 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transform: translateY(100px);
+    animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* النقطة الثالثة هي النشطة الآن */
+.dot-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+
+.dot.active {
+    width: 24px;
+    background: var(--accent-blue);
+    border-radius: 10px;
+}
+
+h2 {
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+p.subtitle {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* تصميم الأزرار */
+.option-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* تخصيص السكرول بار ليناسب التصميم */
+.option-grid::-webkit-scrollbar { width: 4px; }
+.option-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+.option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+}
+
+.option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.option.selected {
+    background: var(--accent-blue);
+    color: var(--primary-dark);
+    border-color: var(--accent-blue);
+    box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
+}
+
+.option i {
+    font-size: 1.2rem;
+    margin-right: 12px;
+}
+
+.tick {
+    font-size: 18px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: 0.3s;
+}
+
+.selected .tick {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@keyframes slideUp {
+    to { transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="type-card">
+        <div class="dot-container">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot active"></div>
+        </div>
+
+        <h2>I am a...</h2>
+        <p class="subtitle">Please select your role to continue</p>
+
+        <div class="option-grid">
+            <div class="option" onclick="selectRole(this, 'student')">
+                <span>🎓 Student</span>
+                <span class="tick">✔</span>
+            </div>
+            
+            <div class="option" onclick="selectRole(this, 'parent')">
+                <span>👨‍👩‍👧 Parent</span>
+                <span class="tick">✔</span>
+            </div>
+            
+            <div class="option" onclick="selectRole(this, 'driver')">
+                <span>🚌 Driver</span>
+                <span class="tick">✔</span>
+            </div>
+            
+            <div class="option" onclick="selectRole(this, 'admin')">
+                <span>🏫 School Admin</span>
+                <span class="tick">✔</span>
+            </div>
+            
+            <div class="option" onclick="selectRole(this, 'ministry')">
+                <span>🏛️ Ministry</span>
+                <span class="tick">✔</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    // استدعاء مكتبات جوجل فايربيس الرسمية والآمنة
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // إعدادات الفايربيس الخاصة بمشروعك (يرجى وضع بيانات مشروعك هنا)
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "rahlat-aman.firebaseapp.com",
+        projectId: "rahlat-aman",
+        storageBucket: "rahlat-aman.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // تهيئة الفايربيس
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // جعل دالة الاختيار متاحة عالمياً للـ HTML دون التأثير على حركة الأنيميشن
+    window.selectRole = function(element, role) {
+        // إزالة الاختيار السابق بصرياً
+        document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+        
+        // إضافة الاختيار الجديد بصرياً
+        element.classList.add("selected");
+
+        // تخزين الدور المختار في ذاكرة النظام المؤقتة لاستخدامه في التسجيل والدخول والتحقق
+        localStorage.setItem("userRole", role);
+
+        // تشغيل تأثير الأنيميشن الانسيابي المعتمد لديكِ قبل الانتقال
+        setTimeout(() => {
+            const card = document.querySelector('.type-card');
+            card.style.transition = '0.5s ease-in';
+            card.style.transform = 'translateY(100%)';
+            
+            setTimeout(() => {
+                // التوجيه إلى صفحة الترحيب التفاعلية المعتمدة في مشروعكِ
+                window.location.href = "welcome.html";
+            }, 450);
+        }, 600);
+    }
+</script>
+
+</body>
+</html>

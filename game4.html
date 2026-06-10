@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Game 4 - Safety Quiz</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: url("assets4/images/background.png") no-repeat center/cover;
+  overflow: hidden;
+  color: white;
+}
+
+/* الفيديو */
+video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* PLAY */
+#playBtn {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+}
+
+/* اللعبة */
+#game {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* السؤال */
+#question {
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #112125;
+  text-shadow: 2px 2px 5px rgb(135, 197, 233);
+}
+
+/* الصور */
+.choices {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 60px;
+}
+
+.choice {
+  width: 35%;
+  border-radius: 20px;
+  cursor: pointer;
+  border: 5px solid transparent;
+  transition: 0.3s;
+}
+
+.choice:hover {
+  transform: scale(1.05);
+}
+
+/* صح */
+.correct {
+  border: 5px solid #70ebb1;
+  box-shadow: 0 0 25px #00ff88;
+  animation: shake 0.3s;
+}
+
+/* خطأ */
+.wrong {
+  border: 5px solid rgb(248, 2, 2);
+  box-shadow: 0 0 25px rgb(119, 30, 30);
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0% {transform: translateX(0);}
+  25% {transform: translateX(-5px);}
+  50% {transform: translateX(5px);}
+  75% {transform: translateX(-5px);}
+  100% {transform: translateX(0);}
+}
+
+/* الأزرار */
+.btn {
+  padding: 30px 60px;
+  border-radius: 25px;
+  border: none;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px #000;
+}
+
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px #000;
+}
+
+.green { background: #28a745; color: white; }
+.red { background: #dc3545; color: white; }
+
+/* overlay */
+#overlay {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.75);
+  text-align: center;
+  padding-top: 200px;
+}
+
+#overlay p {
+  font-size: 26px;
+}
+
+/* النجوم */
+#stars {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  font-size: 28px;
+}
+
+/* رجوع */
+#backBtn {
+  position: absolute;
+  top: 25px;
+  left: 30px;
+  font-size: 28px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- فيديو -->
+<video id="introVideo" autoplay>
+  <source src="assets4/video/intro_video.mp4">
+</video>
+
+<video id="startVideo" style="display:none;">
+  <source src="assets4/video/start_level_video.mp4">
+</video>
+
+<button id="playBtn" class="btn green">▶ PLAY</button>
+
+<!-- اللعبة -->
+<div id="game">
+  <div id="backBtn">⬅ BACK</div>
+  <div id="stars"></div>
+  <div id="question"></div>
+
+  <div class="choices">
+    <img id="leftImg" class="choice">
+    <img id="rightImg" class="choice">
+  </div>
+</div>
+
+<!-- overlay -->
+<div id="overlay">
+  <p id="overlayText"></p>
+  <button id="repeatBtn" class="btn red">Repeat</button>
+  <button id="finishBtn" class="btn green" style="display:none;">Finish</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+    authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+    projectId: "rahlataman-bus-safety-app",
+    storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+    messagingSenderId: "1088859717905",
+    appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+window.db     = db;
+window.doc    = doc;
+window.setDoc = setDoc;
+window.getDoc = getDoc;
+</script>
+
+<script>
+
+/* ═══════════════════════════════════════════════
+   saveGameProgress — موحّد مع بقية الألعاب
+   المسار: StudentActivities/{userId}/games/game4
+   ═══════════════════════════════════════════════ */
+async function saveGameProgress() {
+    // ① نأخذ userId من email دائماً (مفتاح موحد)
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+    const userId = currentUser.email || currentUser.studentId || currentUser.id || "guest";
+    console.log("GAME4 — USER ID:", userId);
+
+    const gameId       = "game4";
+    const earnedPoints = score * 300;
+
+    try {
+        // ② تحديث Student-Dashboard (النقاط الكلية)
+        const dashboardRef  = window.doc(window.db, "Student-Dashboard", userId);
+        const dashboardSnap = await window.getDoc(dashboardRef);
+        const currentPoints = dashboardSnap.exists() ? (dashboardSnap.data().points || 0) : 0;
+        const totalPoints   = currentPoints + earnedPoints;
+
+        await window.setDoc(dashboardRef, {
+            points:       totalPoints,
+            level:        getLevel(totalPoints),
+            badge:        getBadge(totalPoints),
+            lastGame:     "game4",
+            lastScore:    earnedPoints,
+            lastActivity: "Completed Game 4",
+            updatedAt:    new Date()
+        }, { merge: true });
+
+        // ③ حفظ بيانات اللعبة في المسار الموحد
+        //    StudentActivities/{userId}/games/game4
+        await window.setDoc(
+            window.doc(window.db, "StudentActivities", userId, "games", gameId),
+            {
+                gameId:         gameId,
+                gameName:       "Rahlat Aman Leader",
+                earnedPoints:   earnedPoints,
+                completed:      true,
+                liked:          false,
+                totalQuestions: questions.length,
+                correctAnswers: score,
+                levelReached:   index,
+                playedAt:       new Date()
+            },
+            { merge: true }
+        );
+
+        console.log("✅ Game 4 synced successfully");
+
+    } catch (error) {
+        console.error("❌ Save Game Error:", error);
+    }
+}
+
+/* ===== الأصوات ===== */
+const click = new Audio("assets4/audio/click.mp3");
+const correctSound = new Audio("assets4/audio/correct.mp3");
+const wrongSound = new Audio("assets4/audio/wrong.mp3");
+const applause = new Audio("assets4/audio/applause.mp3");
+const starSound = new Audio("assets4/audio/star_sound.mp3");
+
+const bgMusic = new Audio("assets4/audio/background_music.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.05;
+bgMusic.play();
+
+/* ===== الأسئلة ===== */
+const questions = [
+{
+q:"If you are left alone on the school bus, what should you do?",
+left:"assets4/images/q1_wrong_sad_alone.png",
+right:"assets4/images/q1_correct_horn_hero.png",
+correct:"right",
+audioQ:"assets4/audio/q1_question.mp3",
+audioC:"assets4/audio/q1_correct.mp3",
+audioW:"assets4/audio/q1_wrong.mp3"
+},
+{
+q:"What should you do before leaving the bus?",
+left:"assets4/images/q4_correct_help_friend_kind.png",
+right:"assets4/images/q4_wrong_ignore_friend.png",
+correct:"left",
+audioQ:"assets4/audio/q2_question.mp3",
+audioC:"assets4/audio/q2_correct.mp3",
+audioW:"assets4/audio/q2_wrong.mp3"
+},
+{
+q:"How should you walk near the bus?",
+left:"assets4/images/q3_wrong_rush_exit.png",
+right:"assets4/images/q3_correct_check_responsible.png",
+correct:"right",
+audioQ:"assets4/audio/q3_question.mp3",
+audioC:"assets4/audio/q3_correct.mp3",
+audioW:"assets4/audio/q3_wrong.mp3"
+},
+{
+q:"What should you do if you see a bag?",
+left:"assets4/images/q2_correct_thinking_detective.png",
+right:"assets4/images/q2_wrong_ignore_walk.png",
+correct:"left",
+audioQ:"assets4/audio/q4_question.mp3",
+audioC:"assets4/audio/q4_correct.mp3",
+audioW:"assets4/audio/q4_wrong.mp3"
+},
+{
+q:"How should you behave inside the bus?",
+left:"assets4/images/q5_wrong_wait_passive.png",
+right:"assets4/images/q5_correct_horn_final.png",
+correct:"right",
+audioQ:"assets4/audio/q5_question.mp3",
+audioC:"assets4/audio/q5_correct.mp3",
+audioW:"assets4/audio/q5_wrong_wait_passive.mp3"
+}
+];
+
+let index = 0;
+let score = 0;
+
+/* ===== فيديو ===== */
+introVideo.onended = ()=>{
+  introVideo.style.display="none";
+  startVideo.style.display="block";
+  startVideo.play();
+};
+
+startVideo.onplay = ()=>{
+  setTimeout(()=>{
+    playBtn.style.display="block";
+  },3000);
+};
+
+playBtn.onclick = ()=>{
+  click.play();
+  startVideo.style.display="none";
+  playBtn.style.display="none";
+  game.style.display="block";
+  loadQuestion();
+};
+
+/* ===== تحميل السؤال ===== */
+function loadQuestion(){
+  let q = questions[index];
+  question.innerText = q.q;
+  leftImg.src = q.left;
+  rightImg.src = q.right;
+  setTimeout(()=>{
+    new Audio(q.audioQ).play();
+  },600);
+}
+
+/* ===== اختيار ===== */
+function choose(side){
+  let q = questions[index];
+  if(side === q.correct){
+    correctSound.play();
+    starSound.play();
+    score++;
+    updateStars();
+    document.getElementById(side+"Img").classList.add("correct");
+    setTimeout(()=>{
+      new Audio(q.audioC).play();
+    },800);
+    let delay = [7000,4000,5000,6000,6000];
+    setTimeout(()=>{
+      nextQuestion();
+    }, delay[index]);
+  } else {
+    wrongSound.play();
+    document.getElementById(side+"Img").classList.add("wrong");
+    setTimeout(()=>{
+      new Audio(q.audioW).play();
+    },900);
+    let delayWrong = [7000,4000,7000,6000,8000];
+    setTimeout(()=>{
+      showOverlay("Tap Repeat to choose the correct answer");
+    }, delayWrong[index]);
+  }
+}
+
+/* ===== التالي ===== */
+function nextQuestion(){
+  index++;
+  if(index < questions.length){
+    clearEffects();
+    loadQuestion();
+  } else {
+    endGame();
+  }
+}
+
+/* ===== نجوم ===== */
+function updateStars(){
+  stars.innerText = "⭐ ".repeat(score);
+}
+
+/* ===== overlay ===== */
+function showOverlay(text){
+  overlay.style.display="block";
+  overlayText.innerText = text;
+}
+
+/* ===== إعادة ===== */
+repeatBtn.onclick = ()=>{
+  click.play();
+  overlay.style.display="none";
+  clearEffects();
+};
+
+/* ===== نهاية ===== */
+function endGame(){
+  saveGameProgress();
+  overlay.style.display="block";
+  overlayText.innerText = "Amazing! You are a Safety Hero 🏆";
+  finishBtn.style.display="inline-block";
+  applause.play();
+}
+
+/* ===== finish ===== */
+finishBtn.onclick = ()=>{
+  window.location.href = "student_Activities.html";
+};
+
+/* ===== تنظيف ===== */
+function clearEffects(){
+  leftImg.classList.remove("correct","wrong");
+  rightImg.classList.remove("correct","wrong");
+}
+
+/* ===== أحداث ===== */
+leftImg.onclick = ()=>choose("left");
+rightImg.onclick = ()=>choose("right");
+
+backBtn.onclick = ()=>{
+  window.location.href = "student_Activities.html";
+};
+
+function getLevel(points){
+    if(points >= 1000) return "Legend 🔥";
+    if(points >= 500)  return "Master 🔴";
+    if(points >= 250)  return "Pro 🟡";
+    if(points >= 100)  return "Explorer 🔵";
+    return "Beginner 🟢";
+}
+
+function getBadge(points){
+    if(points >= 1000) return "👑";
+    if(points >= 500)  return "🏆";
+    if(points >= 250)  return "🥇";
+    if(points >= 100)  return "🥈";
+    return "🥉";
+}
+
+</script>
+
+</body>
+</html>

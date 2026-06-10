@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI';
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  font-size:20px;
+}
+.back{ cursor:pointer; }
+.clear{
+  cursor:pointer;
+  color:#ff7675;
+}
+.filters{
+  display:flex;
+  overflow:auto;
+  gap:10px;
+  padding:10px;
+}
+.filter{
+  padding:8px 15px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.2);
+  cursor:pointer;
+  white-space:nowrap;
+}
+.filter.active{ background:#00c853; }
+.list{ padding:15px; }
+.card{
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(10px);
+  padding:15px;
+  margin-bottom:12px;
+  border-radius:15px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  animation:slide 0.3s ease;
+  position:relative;
+}
+@keyframes slide{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1;}
+}
+.card.unread{
+  border-left:5px solid #00e676;
+}
+.icon{ font-size:22px; }
+.text{ flex:1; }
+.time{
+  font-size:12px;
+  opacity:0.7;
+}
+.delete{
+  cursor:pointer;
+  color:#ff5252;
+}
+.safety{border-left:5px solid #00e676;}
+.reward{border-left:5px solid gold;}
+.learning{border-left:5px solid #40c4ff;}
+.system{border-left:5px solid #ff5252;}
+</style>
+</head>
+
+<body>
+<div class="header">
+  <div class="back" onclick="goBack()">⬅ Back</div>
+  <div>🔔 Notifications</div>
+  <div>
+    <span class="clear" onclick="clearAll()">Clear</span> |
+    <span class="clear" onclick="markAllRead()">Mark Read</span>
+  </div>
+</div>
+<div class="filters">
+  <div class="filter active" onclick="filterType('all',this)">All</div>
+  <div class="filter" onclick="filterType('safety',this)">🚌 Safety</div>
+  <div class="filter" onclick="filterType('reward',this)">🏆 Rewards</div>
+  <div class="filter" onclick="filterType('learning',this)">📘 Learning</div>
+  <div class="filter" onclick="filterType('system',this)">⚙️ System</div>
+</div>
+<div class="list" id="list"></div>
+<script src="js/userSystem.js"></script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+  
+  const firebaseConfig = { /* بيانات مشروعك هنا */ };
+  const app = initializeApp(firebaseConfig);
+  window.db = getFirestore(app);
+  window.collection = collection;
+  window.getDocs = getDocs;
+  window.query = query;
+  window.orderBy = orderBy;
+  window.doc = doc;
+  window.deleteDoc = deleteDoc;
+  window.updateDoc = updateDoc;
+</script>
+
+<script>
+/* BACK */
+function goBack(){
+  window.location.href="student_dashboard.html";
+}
+
+/* SOUND */
+function playSound(type){
+  let audio = new Audio();
+  if(type=="reward") audio.src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg";
+  else if(type=="safety") audio.src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg";
+  else audio.src="https://actions.google.com/sounds/v1/cartoon/pop.ogg";
+  audio.play();
+}
+
+/* VIBRATE */
+function vibrate(){
+  if(navigator.vibrate){
+    navigator.vibrate(200);
+  }
+}
+
+/* LOAD */
+async function loadNotifications() {
+  const q = window.query(window.collection(window.db, "notifications"), window.orderBy("timestamp", "desc"));
+  const querySnapshot = await window.getDocs(q);
+  
+  let firebaseData = [];
+  querySnapshot.forEach((doc) => {
+    firebaseData.push({ id: doc.id, ...doc.data() });
+  });
+  
+  render(firebaseData);
+}
+
+/* RENDER */
+function render(data){
+  let list = document.getElementById("list");
+  list.innerHTML="";
+  data.forEach((n,i)=>{
+    let div = document.createElement("div");
+    div.className="card "+(n.type || "system")+(n.read ? "" : " unread");
+    div.innerHTML=`
+      <div class="icon">${n.icon || "🔔"}</div>
+      <div class="text">
+        ${n.text}
+        <div class="time">${n.time}</div>
+      </div>
+      <div class="delete" onclick="deleteOne(${i})">🗑</div>
+    `;
+    div.onclick=()=>{
+      n.read = true;
+      saveNotifications(data);
+      render(data);
+    }
+    list.appendChild(div);
+  });
+}
+
+/* DELETE */
+async function deleteOne(id) {
+  await window.deleteDoc(window.doc(window.db, "notifications", id));
+  loadNotifications(); // إعادة تحميل القائمة
+}
+
+/* CLEAR */
+function clearAll(){
+  saveNotifications([]);
+  render([]);
+}
+
+/* FILTER */
+function filterType(type,el){
+  document.querySelectorAll(".filter").forEach(f=>f.classList.remove("active"));
+  el.classList.add("active");
+  let data = getNotifications();
+  if(type=="all"){
+    render(data);
+  }else{
+    render(data.filter(n=>n.type==type));
+  }
+}
+
+/* AUTO RECEIVE */
+setInterval(()=>{
+  let msg = localStorage.getItem("notifyNow");
+  if(msg){
+    let data = getNotifications();
+    data.unshift({
+      text:msg,
+      type:"System",
+      icon:"🔔",
+      time:new Date().toLocaleTimeString(),
+      read:false
+    });
+    saveNotifications(data);
+    playSound("system");
+    vibrate();
+    localStorage.removeItem("notifyNow");
+    loadNotifications();
+  }
+},1000);
+
+/* MARK READ */
+function markAllRead(){
+  let data = getNotifications();
+  data.forEach(n=>n.read=true);
+  saveNotifications(data);
+  render(data);
+}
+
+/* INIT */
+loadNotifications();
+
+</script>
+<script>
+
+function logStudentActivity(type, description){
+
+let activities =
+JSON.parse(localStorage.getItem("studentActivities")) || [];
+
+activities.unshift({
+
+type:type,
+description:description,
+time:new Date().toLocaleTimeString(),
+date:new Date().toLocaleDateString()
+
+});
+
+localStorage.setItem(
+"studentActivities",
+JSON.stringify(activities)
+);
+
+}
+
+</script>
+</body>
+</html>

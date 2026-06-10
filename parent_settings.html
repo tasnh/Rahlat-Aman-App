@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Parent Settings | Rahlat Aman</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+:root{
+--dark-navy:#09123d;
+--cyber-blue:#38bdf8;
+--accent-gold:#fbbf24;
+--pure-white:#f8fafc;
+--glass:rgba(255,255,255,.04);
+--border-glass:rgba(255,255,255,.1);
+--success:#10b981;
+--danger:#ef4444;
+--light-bg:#f1f5f9;
+--light-card:#ffffff;
+--light-text:#0f172a;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',system-ui,sans-serif;
+}
+
+body{
+background:var(--dark-navy);
+color:var(--pure-white);
+padding:20px;
+background-image:
+radial-gradient(circle at bottom left,#2e3d57,transparent);
+min-height:100vh;
+transition:.3s;
+}
+
+/* LIGHT MODE */
+
+body.light-mode{
+background:var(--light-bg);
+color:var(--light-text);
+background-image:none;
+}
+
+body.light-mode .settings-card{
+background:var(--light-card);
+border:1px solid rgba(0,0,0,.08);
+}
+
+body.light-mode .settings-header h1,
+body.light-mode .info-label span,
+body.light-mode .card-title{
+color:#1d2a4d;
+}
+
+body.light-mode textarea,
+body.light-mode select{
+background:#e2e8f0;
+color:#242323;
+}
+
+body.light-mode .slider{
+background:#94a3b8;
+}
+
+body.light-mode .action-btn{
+background:#e2e8f0;
+color:#000;
+}
+
+body.light-mode .display-option{
+background:#f8fafc;
+}
+
+body.light-mode .message-box{
+background:white;
+color:black;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:900px;
+margin:auto;
+padding-top:30px;
+}
+
+/* MESSAGE BOX */
+
+.message-box{
+position:fixed;
+top:30px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(15,23,42,.97);
+padding:18px 28px;
+border-radius:18px;
+font-weight:600;
+z-index:99999;
+display:none;
+box-shadow:0 10px 30px rgba(0,0,0,.4);
+border-left:5px solid var(--success);
+animation:fadeIn .4s ease;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateX(-50%) translateY(-10px);
+}
+to{
+opacity:1;
+transform:translateX(-50%) translateY(0);
+}
+}
+
+/* HEADER */
+
+.settings-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:40px;
+}
+
+.back-btn{
+text-decoration:none;
+color:var(--cyber-blue);
+font-weight:bold;
+display:flex;
+align-items:center;
+gap:8px;
+transition:.3s;
+font-size:1rem;
+}
+
+.back-btn:hover{
+transform:translateX(-5px);
+color:var(--accent-gold);
+}
+
+h1{
+font-size:2rem;
+font-weight:300;
+}
+
+.top-actions{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+/* THEME BUTTON */
+
+.theme-btn{
+width:45px;
+height:45px;
+border:none;
+border-radius:14px;
+cursor:pointer;
+background:rgba(255,255,255,.08);
+color:white;
+font-size:1rem;
+transition:.3s;
+}
+
+.theme-btn:hover{
+background:var(--accent-gold);
+color:black;
+transform:translateY(-3px);
+}
+
+body.light-mode .theme-btn{
+background:#e2e8f0;
+color:black;
+}
+
+/* SETTINGS CARD */
+
+.settings-card{
+background:var(--glass);
+border:1px solid var(--border-glass);
+border-radius:25px;
+padding:25px;
+margin-bottom:25px;
+backdrop-filter:blur(10px);
+transition:.3s;
+}
+
+.settings-card:hover{
+border-color:var(--cyber-blue);
+}
+
+.card-title{
+display:flex;
+align-items:center;
+gap:15px;
+color:var(--accent-gold);
+font-size:1.1rem;
+font-weight:bold;
+margin-bottom:20px;
+text-transform:uppercase;
+letter-spacing:1px;
+}
+
+/* ROW */
+
+.setting-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 0;
+border-bottom:1px solid rgba(255,255,255,.05);
+gap:15px;
+}
+
+.setting-row:last-child{
+border:none;
+}
+
+.info-label{
+display:flex;
+flex-direction:column;
+}
+
+.info-label span{
+font-size:1rem;
+}
+
+.info-label small{
+color:rgba(255,255,255,.55);
+font-size:.8rem;
+margin-top:4px;
+}
+
+/* SWITCH */
+
+.switch{
+position:relative;
+display:inline-block;
+width:45px;
+height:24px;
+}
+
+.switch input{
+opacity:0;
+width:0;
+height:0;
+}
+
+.slider{
+position:absolute;
+cursor:pointer;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background-color:#334155;
+transition:.4s;
+border-radius:34px;
+}
+
+.slider:before{
+position:absolute;
+content:"";
+height:18px;
+width:18px;
+left:3px;
+bottom:3px;
+background-color:white;
+transition:.4s;
+border-radius:50%;
+}
+
+input:checked + .slider{
+background-color:var(--cyber-blue);
+}
+
+input:checked + .slider:before{
+transform:translateX(21px);
+}
+
+/* BUTTONS */
+
+.action-btn{
+background:rgba(255,255,255,.1);
+color:white;
+border:1px solid var(--border-glass);
+padding:10px 16px;
+border-radius:12px;
+cursor:pointer;
+font-size:.85rem;
+transition:.3s;
+}
+
+.action-btn:hover{
+background:var(--cyber-blue);
+color:var(--dark-navy);
+}
+
+/* FEEDBACK */
+
+.feedback-area{
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+textarea{
+background:rgba(0,0,0,.3);
+border:1px solid var(--border-glass);
+border-radius:15px;
+padding:15px;
+color:white;
+resize:none;
+font-family:inherit;
+font-size:.95rem;
+outline:none;
+}
+
+.stars{
+display:flex;
+gap:10px;
+color:#334155;
+font-size:1.5rem;
+cursor:pointer;
+}
+
+.stars i.active{
+color:var(--accent-gold);
+}
+
+.save-btn{
+background:var(--accent-gold);
+color:var(--dark-navy);
+border:none;
+padding:15px;
+border-radius:15px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+font-size:.95rem;
+}
+
+.save-btn:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 20px rgba(251,191,36,.3);
+}
+
+/* STATUS */
+
+.status-badge{
+padding:6px 12px;
+border-radius:30px;
+font-size:.75rem;
+font-weight:bold;
+background:#10b981;
+color:white;
+}
+
+/* DISPLAY MODE */
+
+.display-box{
+display:flex;
+gap:12px;
+margin-top:15px;
+}
+
+.display-option{
+flex:1;
+padding:14px;
+border-radius:16px;
+border:1px solid rgba(255,255,255,.08);
+cursor:pointer;
+text-align:center;
+transition:.3s;
+background:rgba(255,255,255,.03);
+}
+
+.display-option.active{
+border-color:var(--cyber-blue);
+background:rgba(56,189,248,.15);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:700px){
+
+.settings-header{
+flex-direction:column;
+gap:18px;
+align-items:flex-start;
+}
+
+.setting-row{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.display-box{
+flex-direction:column;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- MESSAGE -->
+
+<div class="message-box" id="messageBox"></div>
+<div class="container">
+<!-- HEADER -->
+<div class="settings-header">
+<a href="parent_dashboard.html" class="back-btn">
+<i class="fas fa-arrow-left"></i>
+Back
+</a>
+<h1>System Settings</h1>
+<div class="top-actions">
+
+<button class="theme-btn" onclick="toggleTheme()">
+<i class="fas fa-moon"></i>
+</button>
+</div>
+</div>
+<!-- PROFILE & SECURITY -->
+<div class="settings-card">
+<div class="card-title">
+<i class="fas fa-user-shield"></i>
+Profile & Security
+</div>
+<div class="setting-row">
+<div class="info-label">
+<span>Account Data</span>
+<small>Email, Phone Number & Personal Information</small>
+</div>
+<button class="action-btn"
+onclick="location.href='edit_profile.html'">
+Edit
+</button>
+</div>
+<div class="setting-row">
+<div class="info-label">
+<span>Two-Factor Authentication (2FA)</span>
+<small>Extra security protection for your account</small>
+</div>
+<label class="switch">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+</div>
+</div>
+<!-- NOTIFICATIONS -->
+<div class="settings-card">
+<div class="card-title">
+<i class="fas fa-bell"></i>
+Notifications
+</div>
+
+<div class="setting-row">
+
+<div class="info-label">
+<span>Bus Boarding / Arrival</span>
+<small>Receive real-time transport alerts</small>
+</div>
+
+<label class="switch">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+
+</div>
+
+<div class="setting-row">
+
+<div class="info-label">
+<span>Speed & Route Alerts</span>
+<small>Get notified if the bus changes route</small>
+</div>
+
+<label class="switch">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+
+</div>
+
+<div class="setting-row">
+
+<div class="info-label">
+<span>Emergency Notifications</span>
+<small>Critical alerts from the school system</small>
+</div>
+
+<label class="switch">
+<input type="checkbox" checked>
+<span class="slider"></span>
+</label>
+
+</div>
+
+</div>
+
+<!-- EXPERIENCE -->
+
+<div class="settings-card">
+
+<div class="card-title">
+<i class="fas fa-paint-brush"></i>
+Experience
+</div>
+
+<div class="setting-row">
+
+<div class="info-label">
+<span>System Language</span>
+<small>English Only</small>
+</div>
+
+<div class="status-badge">
+English
+</div>
+
+</div>
+
+<div class="setting-row">
+
+<div class="info-label">
+<span>Dark Mode</span>
+<small>Professional night interface</small>
+</div>
+
+<label class="switch">
+
+<input type="checkbox" id="themeToggle">
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+<div class="setting-row">
+
+<div class="info-label">
+<span>Display Mode</span>
+<small>Choose your preferred viewing mode</small>
+</div>
+
+</div>
+
+<div class="display-box">
+
+<div class="display-option active"
+id="displayNormal">
+
+<i class="fas fa-display"></i>
+
+<br><br>
+
+Display
+
+</div>
+
+<div class="display-option"
+id="displaySleep">
+
+<i class="fas fa-moon"></i>
+
+<br><br>
+
+Sleep
+
+</div>
+
+</div>
+
+<div class="setting-row">
+
+<div class="info-label">
+<span>Share Information</span>
+<small>Allow secure sharing with school system</small>
+</div>
+
+<label class="switch">
+
+<input type="checkbox"
+id="shareToggle"
+checked>
+
+<span class="slider"></span>
+
+</label>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+<!-- LOGOUT -->
+
+<div style="
+text-align:center;
+margin-bottom:50px;
+">
+
+<button class="action-btn"
+style="
+color:#ef4444;
+border-color:#ef4444;
+"
+onclick="logout()">
+
+Logout From System
+
+</button>
+
+</div>
+
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc,
+updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+projectId: "rahlataman-bus-safety-app",
+storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+messagingSenderId: "1088859717905",
+appId: "1:1088859717905:web:e65d7054db709e274dccb0",
+measurementId: "G-SRY2J762GZ"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.db = db;
+window.doc = doc;
+window.getDoc = getDoc;
+window.setDoc = setDoc;
+window.updateDoc = updateDoc;
+</script>
+<script>
+const currentUser =
+JSON.parse(localStorage.getItem("currentUser"));
+
+if(!currentUser){
+window.location.href="login.html";
+}
+
+const parentDocId =
+currentUser.email.replace(/[.#$[\]]/g,"_");    
+
+/* ========================= */
+/* MESSAGE BOX */
+/* ========================= */
+
+function showMessage(message,color="#10b981"){
+
+const box =
+document.getElementById("messageBox");
+
+box.innerHTML = message;
+
+box.style.borderLeft =
+"5px solid " + color;
+
+box.style.display = "block";
+
+setTimeout(()=>{
+
+box.style.display = "none";
+
+},3500);
+
+}
+
+/* ========================= */
+/* DARK MODE */
+/* ========================= */
+
+const themeToggle =
+document.getElementById("themeToggle");
+
+if(localStorage.getItem("themeMode") === "light"){
+
+document.body.classList.add("light-mode");
+
+themeToggle.checked = false;
+
+}else{
+
+themeToggle.checked = true;
+
+}
+
+themeToggle.addEventListener("change",()=>{
+
+if(themeToggle.checked){
+
+document.body.classList.remove("light-mode");
+
+localStorage.setItem(
+"themeMode",
+"dark"
+);
+
+showMessage(
+"Dark Mode Enabled Successfully"
+);
+
+}else{
+
+document.body.classList.add("light-mode");
+
+localStorage.setItem(
+"themeMode",
+"light"
+);
+
+showMessage(
+"Light Mode Enabled Successfully"
+);
+
+}
+window.setDoc(
+window.doc(
+window.db,
+"parent_profile",
+parentDocId
+),
+{
+settings:{
+darkMode:themeToggle.checked
+}
+},
+{
+merge:true
+}
+);
+});
+
+function toggleTheme(){
+
+themeToggle.checked = !themeToggle.checked;
+
+themeToggle.dispatchEvent(
+new Event("change")
+);
+
+}
+
+/* ========================= */
+/* DISPLAY MODES */
+/* ========================= */
+
+const displayNormal =
+document.getElementById("displayNormal");
+
+const displaySleep =
+document.getElementById("displaySleep");
+
+displayNormal.onclick = ()=>{
+
+displayNormal.classList.add("active");
+
+displaySleep.classList.remove("active");
+
+showMessage(
+"Display Mode Activated"
+);
+
+localStorage.setItem(
+"displayMode",
+"display"
+);
+
+window.setDoc(
+window.doc(
+window.db,
+"parent_profile",
+parentDocId
+),
+{
+settings:{
+displayMode:"display"
+}
+},
+{
+merge:true
+}
+);
+
+};
+
+displaySleep.onclick = ()=>{
+
+displaySleep.classList.add("active");
+
+displayNormal.classList.remove("active");
+
+showMessage(
+"Sleep Mode Activated"
+);
+
+localStorage.setItem(
+"displayMode",
+"sleep"
+);
+
+window.setDoc(
+window.doc(
+window.db,
+"parent_profile",
+parentDocId
+),
+{
+settings:{
+displayMode:"sleep"
+}
+},
+{
+merge:true
+}
+);
+
+};
+
+/* LOAD DISPLAY MODE */
+
+if(localStorage.getItem("displayMode") === "sleep"){
+
+displaySleep.classList.add("active");
+
+displayNormal.classList.remove("active");
+
+}
+
+/* ========================= */
+/* STAR RATING */
+/* ========================= */
+
+const stars =
+document.querySelectorAll('.stars i');
+
+stars.forEach(star=>{
+
+star.addEventListener('click',function(){
+
+const val =
+this.getAttribute('data-v');
+
+stars.forEach(s=>{
+
+if(s.getAttribute('data-v') <= val){
+
+s.classList.add('active');
+
+}else{
+
+s.classList.remove('active');
+
+}
+
+});
+
+});
+
+});
+
+/* ========================= */
+/* FEEDBACK */
+/* ========================= */
+
+
+/* ========================= */
+/* SHARE INFO */
+/* ========================= */
+
+const shareToggle =
+document.getElementById("shareToggle");
+
+if(localStorage.getItem("shareInformation") === "false"){
+
+shareToggle.checked = false;
+
+}
+
+shareToggle.addEventListener("change",()=>{
+    window.setDoc(
+window.doc(
+window.db,
+"parent_profile",
+parentDocId
+),
+{
+settings:{
+shareInformation:
+shareToggle.checked
+}
+},
+{
+merge:true
+}
+);
+
+localStorage.setItem(
+"shareInformation",
+shareToggle.checked
+);
+
+if(shareToggle.checked){
+
+showMessage(
+"Information Sharing Enabled"
+);
+
+}else{
+
+showMessage(
+"Information Sharing Disabled",
+"#ef4444"
+);
+
+}
+
+});
+
+/* ========================= */
+/* LOGOUT */
+/* ========================= */
+function logout(){
+if(confirm(
+"Are you sure you want to logout?"
+)){
+localStorage.removeItem(
+"currentUser"
+);
+window.location.href =
+"login.html";
+}
+}
+async function loadSettingsFromFirebase(){
+
+try{
+
+const ref =
+window.doc(
+window.db,
+"parent_profile",
+parentDocId
+);
+
+const snap =
+await window.getDoc(ref);
+
+if(!snap.exists()) return;
+
+const data = snap.data();
+
+if(data.settings){
+
+const settings = data.settings;
+
+themeToggle.checked =
+settings.darkMode ?? true;
+
+shareToggle.checked =
+settings.shareInformation ?? true;
+
+if(settings.displayMode === "sleep"){
+
+displaySleep.classList.add("active");
+displayNormal.classList.remove("active");
+
+}else{
+
+displayNormal.classList.add("active");
+displaySleep.classList.remove("active");
+
+}
+
+}
+
+}catch(err){
+
+console.error(err);
+
+}
+
+}
+
+window.addEventListener("load", async ()=>{
+
+while(!window.db){
+
+await new Promise(r=>setTimeout(r,100));
+
+}
+
+await loadSettingsFromFirebase();
+
+});
+</script>
+</body>
+</html>

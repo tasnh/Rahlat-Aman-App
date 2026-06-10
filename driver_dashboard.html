@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlat Aman | Driver Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary:  #3a8fd1;
+  --primary-light: #02417c;
+  --primary-glow: rgba(55, 156, 233, 0.4);
+  --accent: #00d4ff;
+  --accent-glow: rgba(54, 255, 4, 0.3);
+  --success: #00e67a;
+  --success-glow: rgba(0,212,255,0.3);
+  --warning: #f3b71f;
+  --warning-glow: rgba(255,183,0,0.35);
+  --danger: #ff3b3b;
+  --danger-glow: rgba(255,59,59,0.4);
+  --dark: #043872;
+  --dark2: #3e6a99;
+  --dark3: #5199d8;
+  --glass-bg: rgba(255,255,255,0.06);
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-shine: rgba(255,255,255,0.18);
+  --text-primary: #e8f4ff;
+  --text-secondary: rgba(200,230,255,0.7);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Exo 2', sans-serif;
+  background: var(--dark);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+  user-select: none;
+}
+
+/* ─── ANIMATED BG ─── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(10, 122, 207, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(112, 189, 204, 0.1) 0%, transparent 60%),
+    linear-gradient(170deg, #407ea1 0%, #2f3f52 50%, #508ecc 100%);
+  z-index:-1;
+}
+
+/* ─── HEADER ─── */
+.header {
+  position: relative;
+  padding: 28px 20px 50px;
+  background: linear-gradient(145deg, rgba(73, 135, 182, 0.25), rgba(0,212,255,0.08));
+  border-bottom: 1px solid var(--glass-border);
+  overflow: hidden;
+}
+.header::after {
+  content:'';
+  position:absolute; bottom:-1px; left:0; right:0; height:35px;
+  background: var(--dark);
+  border-radius: 35px 35px 0 0;
+}
+.header::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; bottom:0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 50%, transparent 100%);
+  animation: headerShine 4s ease-in-out infinite;
+}
+@keyframes headerShine {
+  0%,100%{opacity:0} 50%{opacity:1}
+}
+
+.header-inner {
+  position:relative; z-index:1;
+  display:flex; justify-content:space-between; align-items:center;
+}
+
+.driver-card { display:flex; align-items:center; gap:14px; }
+
+.driver-avatar-wrap {
+  position:relative; width:58px; height:58px;
+}
+.driver-avatar-wrap::before {
+  content:'';
+  position:absolute; inset:-3px;
+  border-radius:50%;
+  background: conic-gradient(var(--accent), var(--primary), var(--accent));
+  animation: spinRing 3s linear infinite;
+}
+@keyframes spinRing { to{transform:rotate(360deg)} }
+.driver-img {
+  position:relative; z-index:1;
+  width:58px; height:58px; border-radius:50%;
+  border:2px solid var(--dark2);
+  object-fit:cover;
+}
+
+.driver-greeting { font-size:12px; color:var(--text-secondary); letter-spacing:1px; text-transform:uppercase; }
+.driver-name { font-size:18px; font-weight:700; color:white; margin-top:2px; }
+
+.menu-btn {
+  width:44px; height:44px;
+  background: var(--glass-bg);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  display:flex; flex-direction:column;
+  justify-content:center; align-items:center;
+  gap:5px; cursor:pointer;
+  transition:0.3s;
+  backdrop-filter:blur(10px);
+}
+.menu-btn span {
+  display:block; width:20px; height:2px;
+  background: var(--accent);
+  border-radius:2px;
+  transition:0.3s;
+}
+.menu-btn:active { transform:scale(0.93); background:rgba(0,212,255,0.15); }
+
+/* ─── MAIN CONTENT ─── */
+.main-content {
+  padding: 0 16px 30px;
+  margin-top: -22px;
+  position:relative; z-index:2;
+}
+
+/* ─── GLASS CARD ─── */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 16px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--glass-shine), transparent);
+}
+
+/* ─── WORK STATUS BANNER ─── */
+.status-banner {
+  border-radius:16px;
+  padding:11px 16px;
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+  letter-spacing:0.5px;
+  margin-bottom:16px;
+  position:relative;
+  overflow:hidden;
+  backdrop-filter:blur(10px);
+  transition: all 0.5s ease;
+}
+.status-banner::before {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+  animation: shimmer 2.5s ease infinite;
+}
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+.status-banner.workday {
+  background: linear-gradient(135deg, rgba(0,230,122,0.12), rgba(0,230,122,0.05));
+  border:1px solid rgba(0,230,122,0.35);
+  color: #00e67a;
+  box-shadow: 0 0 20px rgba(0,230,122,0.15), inset 0 1px 0 rgba(0,230,122,0.2);
+}
+.status-banner.weekend {
+  background: linear-gradient(135deg, rgba(255,59,59,0.15), rgba(255,59,59,0.05));
+  border:1px solid rgba(255,59,59,0.4);
+  color: #ff6b6b;
+  box-shadow: 0 0 20px rgba(255,59,59,0.15), inset 0 1px 0 rgba(255,59,59,0.2);
+}
+
+/* ─── TRIP ENGINE ─── */
+.trip-engine { text-align:center; }
+
+.status-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,0.05);
+  border:1px solid var(--glass-border);
+  border-radius:30px;
+  padding:7px 16px;
+  font-size:13px;
+  margin-bottom:20px;
+  font-family:'Rajdhani', sans-serif;
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+.live-dot {
+  width:9px; height:9px; border-radius:50%;
+  display:inline-block; flex-shrink:0;
+}
+.dot-red { background:var(--danger); box-shadow:0 0 8px var(--danger); animation:pulseDot 1.5s infinite; }
+.dot-green { background:var(--success); box-shadow:0 0 8px var(--success); animation:pulseDot 1.5s infinite; }
+@keyframes pulseDot {
+  0%,100%{transform:scale(0.9); opacity:0.8}
+  50%{transform:scale(1.2); opacity:1}
+}
+
+/* ─── 3D GLASS BUTTONS ─── */
+.btn-group { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+
+.btn-3d {
+  position:relative;
+  border:none; border-radius:18px;
+  font-family:'Exo 2', sans-serif;
+  font-weight:700; font-size:15px;
+  cursor:pointer;
+  padding:18px 12px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  overflow:hidden;
+  outline:none;
+  letter-spacing:0.3px;
+}
+.btn-3d::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:50%;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent);
+  border-radius:18px 18px 0 0;
+  pointer-events:none;
+}
+.btn-3d::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  border-radius:18px;
+  pointer-events:none;
+}
+.btn-3d:active {
+  transform: translateY(3px) scale(0.98);
+}
+
+.btn-start {
+  background: linear-gradient(145deg, #00cc6a, #009950);
+  box-shadow:
+    0 7px 0 #006635,
+    0 9px 15px rgba(0,153,80,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.3);
+  color:white;
+  border:1px solid rgba(0,255,120,0.25);
+}
+.btn-start:active {
+  box-shadow: 0 2px 0 #006635, 0 3px 8px rgba(0,153,80,0.4);
+}
+
+.btn-end {
+  background: linear-gradient(145deg, #ffb700, #e09400);
+  box-shadow:
+    0 7px 0 #9a6600,
+    0 9px 15px rgba(224,148,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+  color:white;
+  border:1px solid rgba(255,200,0,0.25);
+}
+.btn-end:active {
+  box-shadow: 0 2px 0 #c98705, 0 3px 8px rgba(175, 118, 2, 0.4);
+}
+
+.btn-sos {
+  width:100%;
+  background: linear-gradient(145deg, #1a0505, #300000);
+  box-shadow:
+    0 7px 0 #1a0000,
+    0 9px 20px rgba(255,0,0,0.3),
+    inset 0 1px 0 rgba(255,100,100,0.2),
+    0 0 30px rgba(255,0,0,0.1);
+  color:#ff4040;
+  border:1px solid rgba(255,60,60,0.3);
+  text-shadow: 0 0 12px rgba(255,60,60,0.8);
+  font-size:15px;
+  animation: sosPulse 3s ease-in-out infinite;
+}
+@keyframes sosPulse {
+  0%,100%{box-shadow:0 7px 0 #1a0000, 0 9px 20px rgba(255,0,0,0.25), inset 0 1px 0 rgba(255,100,100,0.15), 0 0 20px rgba(255,0,0,0.08)}
+  50%{box-shadow:0 7px 0 #1a0000, 0 9px 30px rgba(255,0,0,0.5), inset 0 1px 0 rgba(255,100,100,0.25), 0 0 40px rgba(255,0,0,0.2)}
+}
+.btn-sos:active {
+  box-shadow: 0 2px 0 #1a0000, 0 3px 10px rgba(255,0,0,0.3);
+}
+
+.btn-3d:disabled {
+  opacity:0.45;
+  filter:grayscale(0.5);
+  cursor:not-allowed;
+}
+
+/* ─── CHART ─── */
+.chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.chart-title {
+  font-family:'Rajdhani', sans-serif;
+  font-weight:700; font-size:15px;
+  color:var(--text-secondary);
+  text-transform:uppercase; letter-spacing:1px;
+}
+.chart-badge {
+  font-size:11px; font-weight:600;
+  background:#301c1c;
+  border:1px solid #9ddbbe;
+  color:var(--accent);
+  padding:4px 10px;
+  border-radius:20px;
+  letter-spacing:0.5px;
+}
+.chart-period-tabs {
+  display:flex; gap:8px; margin-bottom:14px;
+}
+.period-tab {
+  flex:1; padding:8px;
+  border-radius:12px;
+  border:1px solid var(--glass-border);
+  background:var(--glass-bg);
+  color:var(--text-secondary);
+  font-family:'Exo 2', sans-serif;
+  font-size:12px; font-weight:600;
+  cursor:pointer; transition:0.2s;
+  letter-spacing:0.3px;
+}
+.period-tab.active {
+  background:#1b4a74;
+  border-color:#1b4a74;
+  color:var(--accent);
+  box-shadow:0 0 12px #00cc6a;
+}
+
+/* ─── STATS ROW ─── */
+.stats-row {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.stat-card {
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  padding:16px;
+  position:relative; overflow:hidden;
+}
+.stat-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, var(--glass-shine), transparent);
+}
+.stat-label {
+  font-size:11px;
+  color:var(--text-secondary);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:6px;
+}
+.stat-value {
+  font-size:24px; font-weight:900;
+  color:var(--primary-light);
+  font-family:'Rajdhani', sans-serif;
+  line-height:1;
+}
+.stat-sub { font-size:11px; color:var(--text-secondary); margin-top:4px; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(12px);
+  display:none; justify-content:center; align-items:center;
+  z-index:5000;
+}
+.modal-overlay.active { display:flex; }
+
+.app-modal {
+  background: linear-gradient(145deg, #0f2540, #081828);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:28px;
+  padding:28px 24px;
+  width:88%; max-width:380px;
+  text-align:center;
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modalIn {
+  from{opacity:0; transform:scale(0.85) translateY(20px)}
+  to{opacity:1; transform:scale(1) translateY(0)}
+}
+.modal-icon { font-size:40px; margin-bottom:12px; }
+.m-title {
+  font-family:'Rajdhani', sans-serif;
+  font-size:22px; font-weight:700;
+  color:var(--accent); display:block;
+  margin-bottom:8px;
+}
+.m-text {
+  font-size:14px; color:var(--text-secondary);
+  display:block; margin-bottom:22px;
+  line-height:1.6;
+}
+.m-btns { display:flex; gap:10px; }
+.m-btn {
+  flex:1; padding:13px;
+  border:none; border-radius:14px;
+  font-family:'Exo 2', sans-serif;
+  font-weight:700; font-size:14px;
+  cursor:pointer; transition:0.2s;
+}
+.m-btn-confirm {
+  background:linear-gradient(135deg, var(--primary), #3789d6);
+  color:white;
+  box-shadow:0 4px 15px rgba(58,143,209,0.4);
+  border:1px solid rgba(100,180,255,0.2);
+}
+.m-btn-cancel {
+  background:rgba(255,255,255,0.05);
+  color:var(--text-secondary);
+  border:1px solid var(--glass-border);
+}
+.m-btn:active { transform:scale(0.97); }
+
+/* ─── SIDE MENU ─── */
+#sideMenu {
+  position:fixed; top:0; left:-100%;
+  width:78%; max-width:300px;
+  height:100%;
+  background:linear-gradient(160deg, #1b4169 0%, #123358 100%);
+  border-right:1px solid var(--glass-border);
+  z-index:3000;
+  transition:left 0.45s cubic-bezier(0.77,0,0.18,1);
+  padding:30px 18px;
+  overflow-y:auto;
+}
+#sideMenu.active { left:0; }
+
+.overlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.6);
+  display:none; z-index:2500;
+  backdrop-filter:blur(4px);
+}
+.overlay.active { display:block; }
+
+.menu-logo-area { text-align:center; padding-bottom:24px; margin-bottom:8px; border-bottom:1px solid var(--glass-border); }
+.menu-logo-area img { width:80px; }
+.menu-app-name {
+  font-family:'Rajdhani', sans-serif;
+  font-size:20px; font-weight:700;
+  color:var(--accent); margin-top:8px;
+  letter-spacing:2px;
+}
+
+.menu-item {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 16px;
+  margin:6px 0;
+  border-radius:16px;
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  cursor:pointer;
+  transition:0.25s;
+  color:var(--text-primary);
+  font-weight:600; font-size:14px;
+}
+.menu-item:hover, .menu-item:active {
+  background:rgba(0,212,255,0.08);
+  border-color:rgba(0,212,255,0.2);
+  transform:translateX(4px);
+}
+.menu-item .menu-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+
+.mi-profile .menu-icon { background:rgba(58,143,209,0.2); }
+.mi-analytics .menu-icon { background:rgba(0,212,255,0.15); }
+.mi-bus .menu-icon { background:rgba(255,183,0,0.15); }
+.mi-rewards .menu-icon { background:rgba(255,215,0,0.15); }
+.mi-messages .menu-icon { background:rgba(0,230,122,0.15); }
+.mi-logout .menu-icon { background:rgba(255,59,59,0.15); }
+.mi-logout { border-color:rgba(255,59,59,0.2); }
+.mi-logout:hover, .mi-logout:active { background:rgba(255,59,59,0.1); border-color:rgba(255,59,59,0.3); }
+
+.menu-slider-wrap {
+  border-radius:16px; overflow:hidden;
+  margin:16px 0;
+  border:1px solid var(--glass-border);
+}
+.menu-slider-wrap img {
+  width:100%; height:130px; object-fit:cover;
+  display:block;
+  transition: opacity 0.5s;
+}
+</style>
+</head>
+<body>
+
+<!-- SOUNDS (Web Audio API) -->
+<script>
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function getAudioCtx(){
+  if(!audioCtx) audioCtx = new AudioCtx();
+  return audioCtx;
+}
+
+function playBubbles(){
+  const ctx = getAudioCtx();
+  for(let i=0;i<5;i++){
+    setTimeout(()=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type='sine';
+      osc.frequency.setValueAtTime(600+Math.random()*400, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(200+Math.random()*200, ctx.currentTime+0.2);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.25);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.25);
+    }, i*80);
+  }
+}
+
+function playSuccess(){
+  const ctx = getAudioCtx();
+  [523,659,784].forEach((freq,i)=>{
+    setTimeout(()=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type='triangle';
+      osc.frequency.value=freq;
+      gain.gain.setValueAtTime(0.12,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.3);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.3);
+    },i*120);
+  });
+}
+
+function playWarning(){
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type='sawtooth';
+  osc.frequency.setValueAtTime(440, ctx.currentTime);
+  osc.frequency.setValueAtTime(220, ctx.currentTime+0.15);
+  gain.gain.setValueAtTime(0.1, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.4);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.4);
+}
+
+function playSOS(){
+  const ctx = getAudioCtx();
+  const pattern = [1,0,1,0,1,0,0,0,1,1,1,0,1,1,1,0,1,1,1,0,0,0,1,0,1,0,1];
+  pattern.forEach((on,i)=>{
+    if(!on) return;
+    const t = ctx.currentTime + i*0.1;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type='square';
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.08, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t+0.09);
+    osc.start(t); osc.stop(t+0.09);
+  });
+}
+
+function playMessage(){
+  const ctx = getAudioCtx();
+  [880,1100].forEach((f,i)=>{
+    const t = ctx.currentTime + i*0.15;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type='sine';
+    osc.frequency.value=f;
+    gain.gain.setValueAtTime(0.1,t);
+    gain.gain.exponentialRampToValueAtTime(0.001,t+0.18);
+    osc.start(t); osc.stop(t+0.2);
+  });
+}
+
+function playClick(){
+  const ctx = getAudioCtx();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type='sine';
+  osc.frequency.value=1000;
+  gain.gain.setValueAtTime(0.07,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+  osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.1);
+}
+</script>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="app-modal">
+    <div class="modal-icon" id="mIcon">ℹ️</div>
+    <b class="m-title" id="mTitle">Notification</b>
+    <span class="m-text" id="mText">...</span>
+    <div class="m-btns">
+      <button class="m-btn m-btn-confirm" id="mOkBtn">OK</button>
+      <button class="m-btn m-btn-cancel" id="mCancelBtn" style="display:none;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<!-- SIDE MENU -->
+<div id="sideMenu">
+  <div class="menu-logo-area">
+    <img src="logo.png" onerror="this.style.display='none'">
+    <div class="menu-app-name">RAHLAT AMAN</div>
+  </div>
+  
+  <div class="menu-slider-wrap">
+    <img id="menuSlider" src="driver1.png" onerror="this.src='https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80'">
+  </div>
+
+  <div class="menu-item mi-profile" onclick="playClick(); window.location.href='driver_profile.html'">
+    <span class="menu-icon">👤</span> Driver Profile
+  </div>
+  <div class="menu-item mi-analytics" onclick="playClick(); window.location.href='driver_check_driver.html'">
+    <span class="menu-icon">📊</span> Check Driver
+  </div>
+  <div class="menu-item mi-bus" onclick="playClick(); window.location.href='driver_admin.html'">
+    <span class="menu-icon">🚌</span> Bus Management
+  </div>
+  <div class="menu-item mi-rewards" onclick="playClick(); window.location.href='driver_rewards.html'">
+    <span class="menu-icon">🏆</span> Rewards History
+  </div>
+  <div class="menu-item mi-messages" onclick="playClick(); playMessage(); window.location.href='driver_messages.html'">
+    <span class="menu-icon">📨</span> Messages
+  </div>
+  <div class="menu-item mi-logout" onclick="playClick(); logout()">
+    <span class="menu-icon">🚪</span> Logout
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="driver-card">
+      <div class="driver-avatar-wrap">
+        <img src="my.png" class="driver-img" id="displayImg" onerror="this.src='https://ui-avatars.com/api/?name=Driver&background=3a8fd1&color=fff&size=60'">
+      </div>
+      <div>
+        <div class="driver-greeting">Welcome Driver</div>
+        <div class="driver-name" id="driverNameDisplay">Driver</div>
+      </div>
+    </div>
+    <div class="menu-btn" onclick="toggleMenu(); playClick()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- Work Status Banner -->
+  <div id="workStatusBanner" class="status-banner"></div>
+
+  <!-- Trip Engine Card -->
+  <div class="card trip-engine">
+    <div id="statusText" class="status-badge">
+      <span class="live-dot dot-red"></span>
+      <span>Trip Status: Stopped</span>
+    </div>
+
+    <div class="btn-group">
+      <button id="startBtn" class="btn-3d btn-start" onclick="handleStart()">🟢 Start Trip</button>
+      <button id="endBtn" class="btn-3d btn-end" onclick="handleEnd()">🏁 End Trip</button>
+    </div>
+    <button class="btn-3d btn-sos" onclick="handleSOS()">🆘 Emergency SOS</button>
+  </div>
+
+  <!-- Chart Card -->
+  <div class="card">
+    <div class="chart-header">
+      <div class="chart-title">Weekly Trips</div>
+      <div class="chart-badge" id="currentPeriodBadge">● Live</div>
+    </div>
+    <div class="chart-period-tabs">
+      <button class="period-tab active" id="tabMorning" onclick="switchPeriod('morning')">🌅 Morning</button>
+      <button class="period-tab" id="tabEvening" onclick="switchPeriod('evening')">🌆 Evening</button>
+    </div>
+    <canvas id="safetyChart" height="160"></canvas>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Rewards</div>
+      <div class="stat-value" id="pointsDisplay">0 <span style="font-size:18px">⭐</span></div>
+      <div class="stat-sub">Total Points</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">School</div>
+      <div class="stat-value" id="schoolDisplay" style="font-size:15px; padding-top:4px;">...</div>
+      <div class="stat-sub">Assigned School</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FIREBASE MODULE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+  authDomain: "rahlataman-bus-safety-app.firebaseapp.com",
+  projectId: "rahlataman-bus-safety-app",
+  storageBucket: "rahlataman-bus-safety-app.firebasestorage.app",
+  messagingSenderId: "1088859717905",
+  appId: "1:1088859717905:web:e65d7054db709e274dccb0"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+async function loadDriverData() {
+  const localUser = JSON.parse(localStorage.getItem("currentUser"));
+  if (localUser) {
+    document.getElementById('driverNameDisplay').innerText = localUser.fullName || "Driver";
+    document.getElementById('schoolDisplay').innerText = localUser.school || "Not Assigned";
+  }
+  const user = auth.currentUser;
+  if (!user) return;
+  const docRef = doc(db, "users", user.uid);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    document.getElementById('driverNameDisplay').innerText = data.fullName || "Driver";
+    document.getElementById('schoolDisplay').innerText = data.school || "Not Assigned";
+  }
+}
+window.addEventListener("load", () => { loadDriverData(); });
+</script>
+
+<!-- MAIN SCRIPT -->
+<script>
+async function requestNotificationPermission(){
+  if ("Notification" in window) await Notification.requestPermission();
+}
+requestNotificationPermission();
+
+// ─── TIME PERIODS ───
+const MORNING_START = { h:6,  m:0  };
+const MORNING_END   = { h:8,  m:0  };
+const EVENING_START = { h:11, m:0  };
+const EVENING_END   = { h:15, m:0  };
+
+function getMinutes(h, m){ return h*60+m; }
+
+function getCurrentPeriod(){
+  const now = new Date();
+  const cur = getMinutes(now.getHours(), now.getMinutes());
+  const ms = getMinutes(MORNING_START.h, MORNING_START.m);
+  const me = getMinutes(MORNING_END.h, MORNING_END.m);
+  const es = getMinutes(EVENING_START.h, EVENING_START.m);
+  const ee = getMinutes(EVENING_END.h, EVENING_END.m);
+  if(cur >= ms && cur < me) return 'morning';
+  if(cur >= es && cur < ee) return 'evening';
+  return null;
+}
+
+function isWeekend(){
+  const d = new Date().getDay();
+  return d === 5 || d === 6;
+}
+
+// ─── userId ───
+let userId = JSON.parse(localStorage.getItem("currentUser"))?.email || "guest";
+let tripStarted = false;
+let safetyChart;
+let currentPeriodView = 'morning';
+
+// ─── WEEKLY CHART KEY ───
+function getCurrentWeekKey(){
+  const now = new Date();
+  const sunday = new Date(now);
+  sunday.setDate(now.getDate() - now.getDay());
+  sunday.setHours(0,0,0,0);
+  return "week_" + sunday.toISOString();
+}
+
+function initWeeklyData(){
+  const weekKey = getCurrentWeekKey();
+  const savedWeek = localStorage.getItem("chartWeek_"+userId);
+  if(savedWeek !== weekKey){
+    localStorage.setItem("driverMorning_"+userId, JSON.stringify([0,0,0,0,0]));
+    localStorage.setItem("driverEvening_"+userId, JSON.stringify([0,0,0,0,0]));
+    localStorage.setItem("chartWeek_"+userId, weekKey);
+  }
+  return {
+    morning: JSON.parse(localStorage.getItem("driverMorning_"+userId)) || [0,0,0,0,0],
+    evening: JSON.parse(localStorage.getItem("driverEvening_"+userId)) || [0,0,0,0,0]
+  };
+}
+
+// ─── BUILD CHART ───
+function buildChart(){
+  const data = initWeeklyData();
+  const ctx = document.getElementById('safetyChart').getContext('2d');
+  safetyChart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:['Sun','Mon','Tue','Wed','Thu'],
+      datasets:[{
+        label:'Morning Trips',
+        data: data.morning,
+        backgroundColor: (ctx2)=>{
+          const gradient = ctx2.chart.ctx.createLinearGradient(0,0,0,200);
+          gradient.addColorStop(0,'rgba(0,212,255,0.8)');
+          gradient.addColorStop(1,'rgba(0,212,255,0.15)');
+          return gradient;
+        },
+        borderRadius:10,
+        borderSkipped:false,
+        borderWidth:0,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(7,21,37,0.9)',
+          borderColor:'rgba(0,212,255,0.3)',
+          borderWidth:1,
+          titleColor:'#00d4ff',
+          bodyColor:'rgba(200,230,255,0.8)',
+          padding:12,
+          cornerRadius:12
+        }
+      },
+      scales:{
+        x:{
+          grid:{color:'rgba(255,255,255,0.04)'},
+          ticks:{color:'rgba(200,230,255,0.6)', font:{family:'Exo 2', size:12}}
+        },
+        y:{
+          beginAtZero:true,
+          grid:{color:'rgba(255,255,255,0.04)'},
+          ticks:{color:'rgba(200,230,255,0.6)', font:{family:'Exo 2', size:12}, stepSize:1}
+        }
+      }
+    }
+  });
+}
+
+function switchPeriod(period){
+  currentPeriodView = period;
+  document.getElementById('tabMorning').classList.toggle('active', period==='morning');
+  document.getElementById('tabEvening').classList.toggle('active', period==='evening');
+  playClick();
+  const data = initWeeklyData();
+  if(period==='morning'){
+    safetyChart.data.datasets[0].label = 'Morning Trips';
+  } else {
+    safetyChart.data.datasets[0].label = 'Evening Trips';
+  }
+  safetyChart.data.datasets[0].data = data[period];
+  safetyChart.update();
+}
+
+// ─── STATUS BANNER ───
+function updateWorkBanner(){
+  const banner = document.getElementById("workStatusBanner");
+  const day = new Date().getDay();
+  if(isWeekend()){
+    banner.className = "status-banner weekend";
+    banner.innerHTML = "🔴 &nbsp;Weekend Mode — No scheduled trips today";
+    document.getElementById("startBtn").disabled = false;
+    document.getElementById("endBtn").disabled = false;
+    document.getElementById("startBtn").style.opacity="0.5";
+    document.getElementById("endBtn").style.opacity="0.5";
+    document.getElementById("currentPeriodBadge").textContent = "● Weekend";
+  } else {
+    banner.className = "status-banner workday";
+    banner.innerHTML = "🟢 &nbsp;Official Working Day — Safe travels, Captain!";
+    document.getElementById("startBtn").disabled=false;
+    document.getElementById("endBtn").disabled=false;
+    document.getElementById("startBtn").style.opacity="1";
+    document.getElementById("endBtn").style.opacity="1";
+    const period = getCurrentPeriod();
+    if(period==='morning') document.getElementById("currentPeriodBadge").textContent="🌅 Morning Period";
+    else if(period==='evening') document.getElementById("currentPeriodBadge").textContent="🌆 Evening Period";
+    else document.getElementById("currentPeriodBadge").textContent="● Off Hours";
+  }
+}
+
+// ─── TOGGLE MENU ───
+function toggleMenu(){
+  document.getElementById('sideMenu').classList.toggle('active');
+  document.getElementById('overlay').classList.toggle('active');
+}
+
+// ─── MODAL ───
+function showModal(title, text, showCancel, onConfirm, icon){
+  document.getElementById('mTitle').innerText = title;
+  document.getElementById('mText').innerText = text;
+  document.getElementById('mIcon').innerText = icon || 'ℹ️';
+  document.getElementById('mCancelBtn').style.display = showCancel?'block':'none';
+  document.getElementById('mOkBtn').onclick = ()=>{
+    document.getElementById('modalOverlay').classList.remove('active');
+    if(onConfirm) onConfirm();
+  };
+  document.getElementById('mCancelBtn').onclick = ()=>{
+    document.getElementById('modalOverlay').classList.remove('active');
+  };
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+// ─── NOTIFICATIONS ───
+function sendNotification(msg, type){
+  let list = JSON.parse(localStorage.getItem("notifications"))||[];
+  list.push({msg, type, time:new Date().toLocaleTimeString()});
+  localStorage.setItem("notifications", JSON.stringify(list));
+  let parentNotifs = JSON.parse(localStorage.getItem("parentNotifications"))||[];
+  parentNotifs.push(msg);
+  localStorage.setItem("parentNotifications", JSON.stringify(parentNotifs));
+  if("Notification" in window && Notification.permission==="granted"){
+    navigator.serviceWorker?.getRegistration().then(reg=>{
+      if(reg) reg.showNotification("Rahlat Aman",{body:msg,icon:"logo.png",vibrate:[200,100,200],tag:type});
+    });
+  }
+  fetch("https://your-server.com/api/notify",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:msg,type,driver:document.getElementById('driverNameDisplay').innerText,time:new Date()})
+  }).catch(()=>{});
+}
+
+function logEvent(type, extra={}){
+  const user = JSON.parse(localStorage.getItem("currentUser"));
+  if(!user) return;
+  let logs = JSON.parse(localStorage.getItem("logs_"+userId))||[];
+  logs.push({type, time:new Date().toISOString(), ...extra});
+  localStorage.setItem("logs_"+userId, JSON.stringify(logs));
+}
+
+// ─── HANDLE START ───
+function handleStart(){
+  playBubbles();
+  if(isWeekend()){
+    playWarning();
+    showModal("Weekend Mode","🚫 We are currently on the weekend. Trips start on Sunday.",false,null,'🚫');
+    return;
+  }
+  const period = getCurrentPeriod();
+  if(!period){
+    playWarning();
+    const now = new Date();
+    showModal(
+      "Outside Trip Hours",
+      `⏰ No active trip period right now.\n\nMorning trips: 6:00 AM – 8:00 AM\nEvening trips: 11:00 AM – 3:00 PM\n\nCurrent time: ${now.toLocaleTimeString()}`,
+      false, null, '⏰'
+    );
+    return;
+  }
+  if(tripStarted){
+    showModal("Notice","Trip is already in progress!",false,null,'⚠️');
+    return;
+  }
+  showModal(
+    "Start Trip",
+    `Confirm starting the ${period} route? Notifications will be sent to Parents, School Admin, and Students.`,
+    true, ()=>{
+      playSuccess();
+      tripStarted = true;
+      logEvent("trip_start", {period});
+      localStorage.setItem("tripStartTime_"+userId, new Date().toISOString());
+      localStorage.setItem("tripStatus","started");
+      localStorage.setItem("tripPeriod_"+userId, period);
+      sendNotification("🚍 Trip Started by Captain "+document.getElementById('driverNameDisplay').innerText,"system");
+      document.getElementById('statusText').innerHTML='<span class="live-dot dot-green"></span><span>Trip Status: In Progress</span>';
+      showModal("Route Active","🚀 Route started. Real-time data is now being shared with all linked accounts.",false,null,'🚀');
+    }, '🚌'
+  );
+}
+
+// ─── HANDLE END ───
+function handleEnd(){
+  playBubbles();
+  if(isWeekend()){
+    playWarning();
+    showModal("Weekend Mode","🚫 Trips cannot be registered on weekends.",false,null,'🚫');
+    return;
+  }
+  if(!tripStarted){
+    showModal("Notice","You cannot end a trip that hasn't started!",false,null,'⚠️');
+    return;
+  }
+  showModal("QR Inspection","⚠️ Protocol: Did you scan the safety QR code at the back of the bus to ensure no students are left behind?",true,()=>{
+    showModal("Final Sync","Initiating final sync with School Admin. Do you confirm the bus is empty?",true,()=>{
+      showModal("Trip Completed","✅ Well done, Captain! Data synced with Parents and School. Safety points awarded.",false,()=>{
+        playSuccess();
+        tripStarted=false;
+        logEvent("trip_end");
+
+        let trips = parseInt(localStorage.getItem("trips_"+userId))||0;
+        trips++; localStorage.setItem("trips_"+userId, trips);
+
+        let start = localStorage.getItem("tripStartTime_"+userId);
+        if(start) logEvent("trip_duration",{minutes:Math.floor((new Date()-new Date(start))/60000)});
+
+        localStorage.setItem("tripStatus","ended");
+        sendNotification("✅ Trip Completed Safely","system");
+
+        let currentCoins = parseInt(localStorage.getItem("coins_"+userId))||0;
+        currentCoins++;
+        if(trips>0 && trips%5===0) currentCoins++;
+        localStorage.setItem("coins_"+userId,currentCoins);
+        logEvent("points_earned",{value:currentCoins});
+        document.getElementById('pointsDisplay').innerText = currentCoins+" ⭐";
+
+        document.getElementById('statusText').innerHTML='<span class="live-dot dot-red"></span><span>Trip Status: Stopped</span>';
+
+        const period = localStorage.getItem("tripPeriod_"+userId) || getCurrentPeriod() || 'morning';
+        const day = new Date().getDay();
+        if(!isWeekend() && day<=4){
+          let allData = initWeeklyData();
+          allData[period][day] += 1;
+          localStorage.setItem("driverMorning_"+userId, JSON.stringify(allData.morning));
+          localStorage.setItem("driverEvening_"+userId, JSON.stringify(allData.evening));
+          safetyChart.data.datasets[0].data = allData[currentPeriodView];
+          safetyChart.update();
+        }
+      },'✅');
+    },'🔍');
+  },'📋');
+}
+
+// ─── HANDLE SOS ───
+function handleSOS(){
+  playSOS();
+  logEvent("sos");
+  let safety = parseInt(localStorage.getItem("safety_"+userId))||100;
+  safety=Math.max(0,safety-10);
+  localStorage.setItem("safety_"+userId,safety);
+  showModal(
+    "Emergency Center",
+    "Choose emergency type:\n1. Mechanical Breakdown\n2. Medical Emergency\n3. Accident\n\nPress OK to broadcast SOS to all linked contacts.",
+    true, ()=>{
+      sendNotification("🚨 SOS ALERT: Bus in Emergency State!","emergency");
+      document.body.style.transition="background 0.5s";
+      document.body.style.background="linear-gradient(170deg, #1a0505, #200a0a)";
+      setTimeout(()=>{ document.body.style.background=""; },4000);
+      showModal("SOS Alert Active","🚨 Emergency alert sent to School Emergency Team and all linked accounts.",false,null,'🚨');
+    },'🆘'
+  );
+}
+
+// ─── MENU SLIDER ───
+let imgs=["driver1.png","driver2.png"];
+let sliderIdx=0;
+setInterval(()=>{
+  const el=document.getElementById("menuSlider");
+  if(el){ sliderIdx=(sliderIdx+1)%imgs.length; el.style.opacity="0"; setTimeout(()=>{ el.src=imgs[sliderIdx]; el.style.opacity="1"; },300); }
+},3000);
+
+// ─── INIT ───
+window.onload=()=>{
+  updateWorkBanner();
+  buildChart();
+
+  setTimeout(()=>{
+    document.getElementById('pointsDisplay').innerText=(localStorage.getItem("coins_"+userId)||0)+" ⭐";
+  },300);
+
+  const status=localStorage.getItem("tripStatus");
+  if(status==="started"){
+    tripStarted=true;
+    document.getElementById('statusText').innerHTML='<span class="live-dot dot-green"></span><span>Trip Status: In Progress</span>';
+    sendNotification("🔄 Trip resumed after reload","system");
+  }
+};
+
+function logout(){
+  localStorage.removeItem('currentUser');
+  window.location.href="login.html";
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js')
+    .then(()=>console.log("SW Registered"))
+    .catch(err=>console.log("SW Error",err));
+}
+</script>
+</body>
+</html>

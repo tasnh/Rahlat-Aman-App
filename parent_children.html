@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Monitor | Rahlat Aman</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#060d1a;--surface:#0d1b2e;--s2:#111f35;--s3:#162540;
+  --teal:#00c9b1;--teal2:#00e8ce;--gold:#f5a623;--gold2:#ffd47e;
+  --sky:#3b9eff;--rose:#ff5c7a;--violet:#7c5cfc;--green:#22c55e;
+  --border:rgba(255,255,255,0.07);--border2:rgba(0,201,177,0.28);
+  --text:#e2e8f4;--text2:#7a90b0;--r:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 70% 50% at 15% 5%,rgba(0,201,177,.07) 0,transparent 55%),
+  radial-gradient(ellipse 50% 70% at 85% 95%,rgba(124,92,252,.06) 0,transparent 55%);
+  pointer-events:none;z-index:0;}
+.topnav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:rgba(6,13,26,.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:18px;font-weight:700;letter-spacing:.5px;color:var(--teal);}
+.back-glass{display:flex;align-items:center;gap:8px;padding:10px 18px;border-radius:50px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .25s;}
+.back-glass:hover{background:rgba(0,201,177,.1);color:var(--teal);border-color:var(--border2);}
+.nav-badge{padding:6px 14px;border-radius:50px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.8px;text-transform:uppercase;}
+.hero-zone{position:relative;z-index:1;padding:56px 28px 44px;max-width:1200px;margin:0 auto;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:50px;background:rgba(0,201,177,.08);border:1px solid rgba(0,201,177,.2);font-size:12px;font-weight:700;color:var(--teal);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:20px;}
+.hero-zone h1{font-size:clamp(32px,5vw,58px);font-weight:800;line-height:1.08;letter-spacing:-1.2px;margin-bottom:16px;}
+.hero-zone h1 em{font-style:normal;background:linear-gradient(90deg,var(--teal),var(--teal2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-zone p{max-width:600px;margin:0 auto;font-size:16px;line-height:1.75;color:var(--text2);}
+.search-wrap{max-width:680px;margin:0 auto 60px;padding:0 28px;position:relative;z-index:1;}
+.search-card{background:var(--s2);border:1px solid var(--border);border-radius:28px;padding:36px;box-shadow:0 24px 60px rgba(0,0,0,.4);}
+.search-card label{display:block;font-size:13px;font-weight:700;color:var(--teal);letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px;}
+.search-row{display:flex;gap:12px;}
+.search-row input{flex:1;padding:14px 20px;background:var(--s3);border:1px solid var(--border);border-radius:14px;color:var(--text);font-family:'Sora',sans-serif;font-size:15px;outline:none;transition:border-color .25s;}
+.search-row input::placeholder{color:var(--text2);}
+.search-row input:focus{border-color:var(--border2);}
+.search-btn{padding:14px 28px;border-radius:14px;background:linear-gradient(135deg,var(--teal),#009e8c);color:#040d18;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;border:none;cursor:pointer;transition:all .25s;white-space:nowrap;}
+.search-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,201,177,.35);}
+.add-link{display:inline-flex;align-items:center;gap:8px;margin-top:18px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:color .2s;}
+.add-link:hover{color:var(--teal);}
+.toast{position:fixed;top:-120px;left:50%;transform:translateX(-50%);z-index:9999;padding:16px 28px;border-radius:18px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:14px;box-shadow:0 20px 50px rgba(0,0,0,.5);transition:top .55s cubic-bezier(.22,1,.36,1);min-width:300px;max-width:460px;border:1px solid rgba(255,255,255,.12);}
+.toast.show{top:26px;}
+.toast.success{background:linear-gradient(135deg,#052e1e,#063d26);border-color:rgba(34,197,94,.3);}
+.toast.error{background:linear-gradient(135deg,#2a0a0a,#3d0f0f);border-color:rgba(255,92,122,.3);}
+.toast-icon{font-size:22px;}
+.toast-close{margin-left:auto;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.load-overlay{position:fixed;inset:0;background:var(--bg);z-index:8888;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s,visibility .5s;}
+.load-overlay.done{opacity:0;visibility:hidden;pointer-events:none;}
+.spin{width:48px;height:48px;border:3px solid rgba(0,201,177,.15);border-top-color:var(--teal);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#mainDash{display:none;position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 28px 60px;}
+.profile-strip{display:flex;align-items:center;gap:24px;background:var(--s2);border:1px solid var(--border);border-radius:28px;padding:28px 32px;margin-bottom:32px;position:relative;overflow:hidden;}
+.profile-strip::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--violet));}
+.p-avatar{width:80px;height:80px;border-radius:22px;background:linear-gradient(135deg,rgba(0,201,177,.2),rgba(124,92,252,.2));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;font-family:'Space Mono',monospace;flex-shrink:0;border:2px solid rgba(0,201,177,.3);}
+.p-name{font-size:22px;font-weight:800;margin-bottom:5px;}
+.p-school{font-size:13px;color:var(--text2);margin-bottom:10px;}
+.p-level{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;}
+.tabs-bar{display:flex;gap:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;padding:8px;margin-bottom:32px;flex-wrap:wrap;}
+.tab-btn{flex:1;min-width:120px;padding:13px 16px;border-radius:12px;border:none;background:transparent;color:var(--text2);font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;}
+.tab-btn:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.tab-btn.active{background:var(--teal);color:#040d18;box-shadow:0 4px 16px rgba(0,201,177,.3);}
+.panel{display:none;}
+.panel.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+.stat-box{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:22px;text-align:center;transition:border-color .25s;}
+.stat-box:hover{border-color:var(--border2);}
+.stat-val{font-size:28px;font-weight:800;font-family:'Space Mono',monospace;margin-bottom:5px;}
+.stat-lbl{font-size:12px;color:var(--text2);font-weight:500;}
+.game-card{background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:12px;transition:all .25s;}
+.game-card:hover{border-color:var(--border2);transform:translateX(4px);}
+.game-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+.game-name{font-size:15px;font-weight:700;}
+.game-date{font-size:11px;color:var(--text2);margin-top:3px;}
+.game-pts{font-size:26px;font-weight:800;font-family:'Space Mono',monospace;color:var(--gold);}
+.game-pts-lbl{font-size:11px;color:var(--text2);}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.bdg{padding:4px 10px;border-radius:50px;font-size:11px;font-weight:700;}
+.bdg-green{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.2);}
+.bdg-gold{background:rgba(245,166,35,.15);color:var(--gold);border:1px solid rgba(245,166,35,.2);}
+.bdg-red{background:rgba(255,92,122,.15);color:#ff8fa3;border:1px solid rgba(255,92,122,.2);}
+.bdg-gray{background:rgba(138,153,179,.1);color:var(--text2);border:1px solid var(--border);}
+.prog-bar{height:5px;border-radius:10px;background:rgba(255,255,255,.06);overflow:hidden;}
+.prog-fill{height:100%;border-radius:10px;transition:width 1s .3s;}
+.stars-row{display:flex;align-items:center;gap:6px;margin-top:14px;}
+.stars-row span{font-size:12px;color:var(--text2);margin-right:4px;}
+.star-i{font-size:18px;color:rgba(255,255,255,.15);cursor:pointer;transition:all .15s;}
+.star-i:hover,.star-i.lit{color:var(--gold);text-shadow:0 0 8px rgba(245,166,35,.5);}
+.mission-row{display:flex;align-items:center;gap:14px;background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;transition:border-color .25s;}
+.mission-row:hover{border-color:var(--border2);}
+.m-num{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;flex-shrink:0;}
+.m-info{flex:1;}
+.m-title{font-size:13px;font-weight:700;}
+.m-meta{font-size:11px;color:var(--text2);margin-top:3px;line-height:1.5;}
+.m-status{padding:4px 10px;border-radius:50px;font-size:11px;font-weight:700;white-space:nowrap;}
+.reward-row{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;transition:all .25s;}
+.reward-row:hover{border-color:var(--border2);}
+.reward-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.reward-info{flex:1;}
+.reward-name{font-size:14px;font-weight:700;}
+.reward-meta{font-size:12px;color:var(--text2);margin-top:3px;}
+.reward-status{padding:5px 12px;border-radius:50px;font-size:11px;font-weight:700;white-space:nowrap;}
+.chart-card{background:var(--s2);border:1px solid var(--border);border-radius:22px;padding:28px;margin-bottom:28px;position:relative;overflow:hidden;}
+.chart-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--teal));}
+.chart-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+.chart-sub{font-size:13px;color:var(--text2);margin-bottom:24px;}
+.chart-wrap{height:240px;position:relative;}
+.rating-section{background:var(--s2);border:1px solid var(--border);border-radius:22px;padding:28px;margin-bottom:28px;text-align:center;}
+.rating-section h3{font-size:17px;font-weight:700;margin-bottom:8px;}
+.rating-section p{font-size:13px;color:var(--text2);margin-bottom:20px;}
+.big-stars{display:flex;align-items:center;justify-content:center;gap:12px;}
+.big-star{font-size:36px;cursor:pointer;color:rgba(255,255,255,.15);transition:all .2s;}
+.big-star:hover,.big-star.lit{color:var(--gold);transform:scale(1.15);text-shadow:0 0 14px rgba(245,166,35,.5);}
+.empty{text-align:center;padding:48px 20px;color:var(--text2);}
+.empty i{font-size:42px;display:block;margin-bottom:14px;opacity:.3;}
+.empty p{font-size:14px;}
+.cert-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.cert-modal-overlay.open{display:flex;}
+.cert-modal{background:white;border-radius:20px;padding:44px;max-width:660px;width:100%;font-family:'Sora',sans-serif;color:#0f1f2d;position:relative;text-align:center;box-shadow:0 40px 80px rgba(0,0,0,.6);animation:zoomIn .4s cubic-bezier(.22,1,.36,1);}
+@keyframes zoomIn{from{transform:scale(.85);opacity:0;}to{transform:scale(1);opacity:1;}}
+.cert-modal::before{content:'';position:absolute;inset:0;border-radius:20px;border:8px double #d4a020;pointer-events:none;}
+.cert-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:#f1f5f9;border:none;cursor:pointer;font-size:15px;}
+.cert-head{font-size:24px;font-weight:800;color:#0b3a6a;margin-bottom:4px;}
+.cert-sub{font-size:10px;letter-spacing:3px;color:#f5a623;font-weight:700;margin-bottom:20px;}
+.cert-headline{font-size:30px;font-family:Georgia,serif;font-weight:normal;color:#1a3a5c;margin-bottom:10px;}
+.cert-issued{font-size:13px;color:#777;font-style:italic;margin-bottom:18px;}
+.cert-name{font-size:24px;font-weight:800;color:#0b1120;border-bottom:2px solid #0b3a6a;display:inline-block;padding-bottom:5px;margin-bottom:18px;}
+.cert-body{font-size:13px;color:#444;line-height:1.8;max-width:480px;margin:0 auto 20px;}
+.cert-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:16px;}
+.cert-footer-lbl{font-size:10px;color:#999;}
+.cert-footer-val{font-size:12px;font-weight:700;color:#0b3a6a;margin-top:3px;}
+.cert-verified{font-size:10px;font-weight:700;color:#22c55e;border:1.5px dashed #22c55e;padding:3px 8px;border-radius:5px;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:10px;}
+@media(max-width:800px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .tabs-bar{gap:6px;}
+  .tab-btn{min-width:90px;font-size:12px;}
+  .search-row{flex-direction:column;}
+  #mainDash,.search-wrap,.hero-zone{padding-left:16px;padding-right:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="load-overlay" id="loadOverlay">
+  <div class="spin"></div>
+  <div style="font-size:14px;color:var(--text2);">Connecting to Rahlat Aman…</div>
+</div>
+
+<div class="toast" id="toast">
+  <span class="toast-icon" id="tIcon">🔔</span>
+  <span id="tMsg" style="flex:1;font-size:14px;line-height:1.4;">Notification</span>
+  <button class="toast-close" onclick="closeToast()">✕</button>
+</div>
+
+<nav class="topnav">
+  <a href="parent_dashboard.html" class="back-glass"><i class="fas fa-arrow-left"></i> Dashboard</a>
+  <div class="nav-logo">RAHLAT AMAN</div>
+  <div class="nav-badge">Parent Portal</div>
+</nav>
+
+<div class="hero-zone">
+  <div class="hero-badge"><i class="fas fa-shield-heart"></i>  Parent Monitoring</div>
+  <h1>Track Your Child's<br><em> RAHLAT AMAN</em></h1>
+  <p>Monitor your child's games, safety content progress, certificates, coupons, and more — all in one place, in real time.</p>
+</div>
+
+<div class="search-wrap">
+  <div class="search-card">
+    <label><i class="fas fa-search"></i> &nbsp;Enter Your Child's Registered Email</label>
+    <div class="search-row">
+      <input type="email" id="searchInput" placeholder="e.g., student@gmail.com" onkeydown="if(event.key==='Enter') searchStudent()">
+      <button class="search-btn" onclick="searchStudent()"><i class="fas fa-arrow-right"></i> View Data Child </button>
+    </div>
+    <div style="text-align:center;">
+      <span class="add-link" onclick="resetSearch()"><i class="fas fa-user-plus"></i> Add  another Child</span>
+    </div>
+  </div>
+</div>
+
+<div id="mainDash">
+  <div class="profile-strip">
+    <div class="p-avatar" id="pAvatar">S</div>
+    <div>
+      <div class="p-name" id="pName">—</div>
+      <div class="p-school" id="pSchool"><i class="fas fa-school"></i> —</div>
+      <div class="p-level" id="pLevel" style="background:rgba(0,201,177,.15);color:var(--teal);border:1px solid rgba(0,201,177,.25);">🌱 Beginner</div>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('games',this)"><i class="fas fa-gamepad"></i> Games</button>
+    <button class="tab-btn" onclick="switchTab('safety',this)"><i class="fas fa-shield-heart"></i> Safety Content</button>
+    <button class="tab-btn" onclick="switchTab('rewards',this)"><i class="fas fa-trophy"></i> Rewards</button>
+    <button class="tab-btn" onclick="switchTab('chart',this)"><i class="fas fa-chart-line"></i> Analytics</button>
+  </div>
+
+  <!-- GAMES -->
+  <div class="panel active" id="panel-games">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="g-totalXP" style="color:var(--gold)">0</div><div class="stat-lbl">Total Game XP</div></div>
+      <div class="stat-box"><div class="stat-val" id="g-completed" style="color:#4ade80">0/5</div><div class="stat-lbl">Games Completed</div></div>
+      <div class="stat-box"><div class="stat-val" id="g-liked" style="color:#ff8fa3">0</div><div class="stat-lbl">Games Liked</div></div>
+    </div>
+    <div id="gamesList"></div>
+    <div class="rating-section" style="margin-top:24px;">
+      <h3>⭐ Rate Your Child's Game Engagement</h3>
+      <p>How satisfied are you with your child's participation in safety games?</p>
+      <div class="big-stars" id="gStars">
+        <i class="fas fa-star big-star" onclick="rateSection('g',1)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('g',2)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('g',3)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('g',4)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('g',5)"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAFETY -->
+  <div class="panel" id="panel-safety">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="s-xp" style="color:var(--sky)">0</div><div class="stat-lbl">Safety XP</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-done" style="color:#4ade80">0/8</div><div class="stat-lbl">Courses Completed</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-acc" style="color:var(--gold)">0%</div><div class="stat-lbl">Quiz Accuracy</div></div>
+    </div>
+    <div id="missionsList"></div>
+    <div class="rating-section" style="margin-top:24px;">
+      <h3>⭐ Rate Your Child's Safety Awareness</h3>
+      <p>How do you evaluate your child's engagement with safety content?</p>
+      <div class="big-stars" id="sStars">
+        <i class="fas fa-star big-star" onclick="rateSection('s',1)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('s',2)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('s',3)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('s',4)"></i>
+        <i class="fas fa-star big-star" onclick="rateSection('s',5)"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- REWARDS -->
+  <div class="panel" id="panel-rewards">
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-val" id="r-pts" style="color:var(--gold)">0</div><div class="stat-lbl">Total XP</div></div>
+      <div class="stat-box"><div class="stat-val" id="r-certs" style="color:#fde68a">0</div><div class="stat-lbl">Certificates</div></div>
+      <div class="stat-box"><div class="stat-val" id="r-coupons" style="color:#a78bfa">0</div><div class="stat-lbl">Coupons Used</div></div>
+    </div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:14px;padding-left:12px;border-left:3px solid var(--gold);">🎓 Certificates</div>
+    <div id="certsList"></div>
+    <div style="font-size:15px;font-weight:700;margin:22px 0 14px;padding-left:12px;border-left:3px solid var(--violet);">🎟️ Discount Coupons</div>
+    <div id="couponsList"></div>
+    <div style="font-size:15px;font-weight:700;margin:22px 0 14px;padding-left:12px;border-left:3px solid var(--green);">🎁 Gifts & Prizes</div>
+    <div id="giftsList"></div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="panel" id="panel-chart">
+    <div class="chart-card">
+      <div class="chart-title">🎮 Games XP — Points per Game</div>
+      <div class="chart-sub">Points your child earned in each of the 5 safety games</div>
+      <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📚 Safety Content Progress</div>
+      <div class="chart-sub">Missions completed: Basic (1–3), Advanced (4–6), Top (7–8)</div>
+      <div class="chart-wrap"><canvas id="progressChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🏆 Rewards Distribution</div>
+      <div class="chart-sub">Overview of certificates, coupons, and gifts earned</div>
+      <div class="chart-wrap"><canvas id="rewardsChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Cert Modal -->
+<div class="cert-modal-overlay" id="certModal" onclick="if(event.target===this)closeCert()">
+  <div class="cert-modal">
+    <button class="cert-close" onclick="closeCert()">✕</button>
+    <div class="cert-head">RAHLAT AMAN</div>
+    <div class="cert-sub">INTELLIGENT SAFETY ECOSYSTEM</div>
+    <div class="cert-headline">Certificate of Achievement</div>
+    <div class="cert-issued">This official document is proudly presented to</div>
+    <div class="cert-name" id="certName">—</div>
+    <div class="cert-body" id="certBody">—</div>
+    <div class="cert-footer">
+      <div><div class="cert-footer-lbl">Issue Date</div><div class="cert-footer-val" id="certDate">—</div></div>
+      <div class="cert-verified">✓ VERIFIED</div>
+      <div style="text-align:right"><div style="font-size:13px;font-weight:700;color:#1c3d5c;font-style:italic;border-bottom:1px solid #ccc">Rahlat Aman Admin</div><div class="cert-footer-lbl" style="margin-top:3px">Authorized Signature</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, query, where, setDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+  authDomain:"rahlataman-bus-safety-app.firebaseapp.com",
+  projectId:"rahlataman-bus-safety-app",
+  storageBucket:"rahlataman-bus-safety-app.firebasestorage.app",
+  messagingSenderId:"1088859717905",
+  appId:"1:1088859717905:web:e65d7054db709e274dccb0"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+window._db=db; window._col=collection; window._doc=doc;
+window._get=getDoc; window._gets=getDocs;
+window._q=query; window._w=where; window._set=setDoc;
+document.getElementById('loadOverlay').classList.add('done');
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONSTANTS — مطابقة لـ safety_content وrewards وadmin pages
+═══════════════════════════════════════════════════════════════ */
+const GAMES_META = [
+  {id:'game1', name:'Aman Hero',          icon:'🦸', color:'#00c9b1'},
+  {id:'game2', name:'Puzzle Challenge',   icon:'🧩', color:'#f5a623'},
+  {id:'game3', name:'Bus Safety Quest',   icon:'🚌', color:'#7c5cfc'},
+  {id:'game4', name:'Rahlat Aman Leader', icon:'👑', color:'#3b9eff'},
+  {id:'game5', name:'Safety Assistant',   icon:'🤝', color:'#ff5c7a'}
+];
+const MISSIONS_META = [
+  {id:1, name:'Bus Safety Rules',                   xp:15},
+  {id:2, name:'Safe Behavior Inside Bus',           xp:15},
+  {id:3, name:'Crossing the Road Safely',           xp:20},
+  {id:4, name:'Emergency Safety Awareness',         xp:25},
+  {id:5, name:'Smart Travel Habits',                xp:25},
+  {id:6, name:'School Transportation Awareness',    xp:30},
+  {id:7, name:'Safety Leadership & Responsibility', xp:35},
+  {id:8, name:'General Safety Awareness',           xp:40}
+];
+const MISSION_TITLES = {
+  1:'Bus Safety Rules Certificate',
+  2:'Safe Behavior Certificate',
+  3:'Road Crossing Safety Certificate',
+  4:'Emergency Safety Certificate',
+  5:'Smart Travel Habits Certificate',
+  6:'Transportation Awareness Certificate',
+  7:'Safety Leadership Certificate',
+  8:'General Safety Hero Certificate'
+};
+const M_COLORS=['#fde68a','#fde68a','#fde68a','#7eb8ff','#7eb8ff','#7eb8ff','#4ade80','#4ade80'];
+
+/* ═══════════════════════════════════════════════════════════════
+   KEY HELPERS — نسخة طبق الأصل من admin page
+   toKey: نفس الـ replace اللي يستخدمه safety_content وrewards
+   allKeys: يولد جميع أشكال الـ key الممكنة
+═══════════════════════════════════════════════════════════════ */
+function toKey(s){
+  // هذا هو نفس الـ replace في safety_content:
+  // currentId.toLowerCase().replace(/[.#$[\]]/g, "_")
+  // وفي admin: (s||'').toLowerCase().replace(/[.#$[\]@+]/g,'_')
+  return (s||'').toLowerCase().replace(/[.#$[\]@+]/g,'_');
+}
+
+function allKeys(student){
+  const set=new Set();
+  const add=v=>{
+    if(v&&String(v).trim()){
+      const val=String(v).trim();
+      set.add(val);
+      set.add(val.toLowerCase());
+      set.add(toKey(val));
+    }
+  };
+  add(student.email);
+  add(student._docId);
+  add(student.id);
+  add(student.studentId);
+  return [...set].filter(k=>k.length>1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SAFE FETCH — نسخة طبق الأصل من admin page
+═══════════════════════════════════════════════════════════════ */
+async function safeDoc(col,id){
+  try{const s=await window._get(window._doc(window._db,col,id));return s.exists()?s.data():null;}catch{return null;}
+}
+async function safeSubDoc(col,id,sub,subId){
+  try{const s=await window._get(window._doc(window._db,col,id,sub,subId));return s.exists()?s.data():null;}catch{return null;}
+}
+// يجرب عدة collections وعدة keys — نفس admin
+async function findInCols(cols,keys){
+  for(const col of cols)
+    for(const k of keys){
+      const d=await safeDoc(col,k);
+      if(d) return {data:d,col,key:k};
+    }
+  return null;
+}
+async function findSubInCols(cols,keys,sub,subId){
+  for(const col of cols)
+    for(const k of keys){
+      const d=await safeSubDoc(col,k,sub,subId);
+      if(d) return d;
+    }
+  return null;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════ */
+let _student=null;
+let _charts={bar:null,prog:null,rewards:null};
+let _missionsCache={};
+let _rewardsCache={};
+
+/* ═══════════════════════════════════════════════════════════════
+   AUDIO
+═══════════════════════════════════════════════════════════════ */
+function beep(ok){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const freqs=ok?[523,784]:[220,180];
+    freqs.forEach((f,i)=>setTimeout(()=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(.15,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.22);
+      o.connect(g);g.connect(ctx.destination);
+      o.start();o.stop(ctx.currentTime+.22);
+    },i*90));
+  }catch{}
+}
+function beepClick(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';o.frequency.value=659;
+    g.gain.setValueAtTime(.08,ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.1);
+    o.connect(g);g.connect(ctx.destination);
+    o.start();o.stop(ctx.currentTime+.1);
+  }catch{}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════════ */
+let _tT;
+function toast(msg,ok=true){
+  const el=document.getElementById('toast');
+  el.className='toast '+(ok?'success':'error');
+  document.getElementById('tIcon').textContent=ok?'✅':'❌';
+  document.getElementById('tMsg').textContent=msg;
+  el.classList.add('show');
+  beep(ok);
+  clearTimeout(_tT);
+  _tT=setTimeout(()=>el.classList.remove('show'),4500);
+}
+function closeToast(){document.getElementById('toast').classList.remove('show');}
+
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════ */
+function fmtDate(ts){
+  if(!ts) return '—';
+  try{const d=ts?.toDate?ts.toDate():new Date(ts);return isNaN(d)?'—':d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});}catch{return '—';}
+}
+function fmtDT(ts){
+  if(!ts) return 'Not played yet';
+  try{const d=ts?.toDate?ts.toDate():new Date(ts);return isNaN(d)?'Not played yet':d.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch{return 'Not played yet';}
+}
+function getLevel(p){
+  if(p>=300)return{label:'Master Guardian 👑',color:'#a78bfa'};
+  if(p>=200)return{label:'Safety Hero 🔥',color:'#f59e0b'};
+  if(p>=120)return{label:'Protector 🛡️',color:'#4ade80'};
+  if(p>=50) return{label:'Explorer ⭐',color:'#7eb8ff'};
+  return{label:'Beginner 🌱',color:'var(--text2)'};
+}
+function extractPts(d){
+  if(!d) return 0;
+  return Number(d.earnedPoints??d.score??d.lastScore??d.points??d.xpEarned??0);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEARCH
+═══════════════════════════════════════════════════════════════ */
+window.searchStudent=async function(){
+  beepClick();
+  const email=document.getElementById('searchInput').value.trim().toLowerCase();
+  if(!email){toast('Please enter a student email address.',false);return;}
+  toast('Searching…',true);
+  try{
+    const sn=await window._gets(window._q(window._col(window._db,'users'),window._w('email','==',email)));
+    if(sn.empty){toast('No student found with this email.',false);return;}
+    const studentDoc=sn.docs[0];
+    const studentData={...studentDoc.data(),_docId:studentDoc.id};
+    const role=(studentData.role||'').toLowerCase();
+    if(role&&role!=='student'){toast('This account is not a student account.',false);return;}
+    _student=studentData;
+    toast('Student found! Loading all data…',true);
+    await loadDashboard(studentData);
+  }catch(e){
+    console.error(e);
+    toast('Connection error. Please try again.',false);
+  }
+};
+
+window.resetSearch=function(){
+  beepClick();
+  document.getElementById('mainDash').style.display='none';
+  document.getElementById('searchInput').value='';
+  _student=null;
+  _missionsCache={};
+  _rewardsCache={};
+  toast('Ready to search for another child.',true);
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAD DASHBOARD
+═══════════════════════════════════════════════════════════════ */
+async function loadDashboard(student){
+  const email=student.email||'';
+  const name=student.fullName||student.name||'Student';
+  const init=name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'S';
+  document.getElementById('pAvatar').textContent=init;
+  document.getElementById('pName').textContent=name;
+  document.getElementById('pSchool').innerHTML=`<i class="fas fa-school"></i> ${student.schoolName||student.school||'Rahlat Aman School'}`;
+
+  const [games,missions,rewards,pts]=await Promise.all([
+    loadGames(student),
+    loadMissions(student),   // ← يستخدم allKeys + findSubInCols مثل admin
+    loadRewards(student),    // ← يستخدم allKeys + findInCols مثل admin
+    loadPoints(student)
+  ]);
+
+  // cache for charts
+  _missionsCache=missions;
+  _rewardsCache=rewards;
+
+  const lv=getLevel(pts);
+  const levelEl=document.getElementById('pLevel');
+  levelEl.textContent=lv.label;
+  levelEl.style.background=lv.color+'22';
+  levelEl.style.color=lv.color;
+  levelEl.style.borderColor=lv.color+'44';
+
+  renderGames(games,name);
+  renderMissions(missions,pts);
+  renderRewards(missions,rewards,pts,name);
+  renderCharts(games,missions,rewards,pts);
+
+  document.getElementById('mainDash').style.display='block';
+  toast('All data loaded for '+name+' ✨',true);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAD POINTS
+   يقرأ من student_dashboard (الذي تكتب فيه safety_content)
+   وStudent-Dashboard (الذي تكتب فيه الألعاب)
+═══════════════════════════════════════════════════════════════ */
+async function loadPoints(student){
+  const keys=allKeys(student);
+  let max=0;
+  for(const col of ['student_dashboard','Student-Dashboard','student_stats']){
+    for(const k of keys){
+      const d=await safeDoc(col,k);
+      if(d){
+        const p=Number(d.points||d.totalXP||0);
+        if(p>max) max=p;
+      }
+    }
+  }
+  const fallback=Number(student.performance?.xp||student.points||0);
+  return Math.max(max,fallback);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAD GAMES — نسخة admin
+═══════════════════════════════════════════════════════════════ */
+async function loadGames(student){
+  const result={};
+  // المفاتيح الأساسية للألعاب: email الخام (الصفحات الجديدة تحفظ بالـ email مباشرة)
+  const primaryKeys=[];
+  if(student.email) primaryKeys.push(student.email.trim(), student.email.trim().toLowerCase());
+  if(student._docId) primaryKeys.push(student._docId);
+  if(student.id) primaryKeys.push(student.id);
+  const allK=[...new Set([...primaryKeys,...allKeys(student)])].filter(k=>k.length>1);
+
+  for(const g of GAMES_META){
+    const found=await findSubInCols(['StudentActivities','student_activities'],allK,'games',g.id);
+    if(found) result[g.id]=found;
+  }
+  return result;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAD MISSIONS — نسخة admin (نفس الـ pattern بالضبط)
+   safety_content يحفظ في: student_safety_data/{toKey(email)}/missions/mission_X
+   هذا هو السبب الجذري للمشكلة — الـ key يمر عبر toKey أولاً
+═══════════════════════════════════════════════════════════════ */
+async function loadMissions(student){
+  const result={};
+  const keys=allKeys(student); // يشمل toKey(email) تلقائياً
+
+  for(const m of MISSIONS_META){
+    const mk='mission_'+m.id;
+    // student_safety_data هو المسار الرئيسي لـ safety_content
+    // student_progress هو fallback
+    const d=await findSubInCols(
+      ['student_safety_data','student_progress'],
+      keys,
+      'missions',
+      mk
+    );
+    if(d) result[m.id]=d;
+  }
+  return result;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAD REWARDS — نسخة admin (نفس الـ pattern بالضبط)
+   rewards_portal يحفظ في: student_rewards/{toKey(email)}
+   البيانات: { usedCoupons: [...], claimedGifts: [...] }
+═══════════════════════════════════════════════════════════════ */
+async function loadRewards(student){
+  const keys=allKeys(student); // يشمل toKey(email) تلقائياً
+  const r=await findInCols(['student_rewards'],keys);
+  return r?r.data:{};
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER GAMES
+═══════════════════════════════════════════════════════════════ */
+function renderGames(games,studentName){
+  let totalXP=0,completed=0,liked=0;
+  GAMES_META.forEach(g=>{
+    const d=games[g.id];
+    if(d){totalXP+=extractPts(d);if(d.completed)completed++;if(d.liked)liked++;}
+  });
+  document.getElementById('g-totalXP').textContent=totalXP;
+  document.getElementById('g-completed').textContent=completed+'/5';
+  document.getElementById('g-liked').textContent=liked;
+
+  const box=document.getElementById('gamesList');
+  if(!Object.keys(games).length){
+    box.innerHTML=`<div class="empty"><i class="fas fa-gamepad"></i><p>No game data found for this student yet.</p></div>`;
+    return;
+  }
+  box.innerHTML='';
+  GAMES_META.forEach(g=>{
+    const d=games[g.id]||{};
+    const pts=extractPts(d);
+    const done=!!(d.completed);
+    const lk=!!(d.liked);
+    const ts=d.playedAt||d.lastPlayedAt||d.dateCompleted||null;
+    const pct=done?100:(pts>0?Math.min(80,pts/10):0);
+    const hasData=Object.keys(d).length>0;
+    box.innerHTML+=`
+    <div class="game-card">
+      <div class="game-top">
+        <div>
+          <div class="game-name" style="color:${g.color}">${g.icon} ${g.name}</div>
+          <div class="game-date">${fmtDT(ts)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="game-pts">${pts}</div>
+          <div class="game-pts-lbl">Points</div>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="bdg ${done?'bdg-green':'bdg-gray'}">${done?'✓ Completed':'Not Completed'}</span>
+        ${lk?'<span class="bdg bdg-red">❤️ Liked</span>':''}
+        ${pts>0?`<span class="bdg bdg-gold">+${pts} XP</span>`:''}
+        ${!hasData?'<span class="bdg bdg-gray">Not Played</span>':''}
+      </div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${g.color}"></div></div>
+      <div class="stars-row">
+        <span>Rate:</span>
+        <i class="fas fa-star star-i" onclick="rateStar(this,1,'${g.id}')"></i>
+        <i class="fas fa-star star-i" onclick="rateStar(this,2,'${g.id}')"></i>
+        <i class="fas fa-star star-i" onclick="rateStar(this,3,'${g.id}')"></i>
+        <i class="fas fa-star star-i" onclick="rateStar(this,4,'${g.id}')"></i>
+        <i class="fas fa-star star-i" onclick="rateStar(this,5,'${g.id}')"></i>
+      </div>
+    </div>`;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER MISSIONS
+═══════════════════════════════════════════════════════════════ */
+function renderMissions(missions,totalPts){
+  const done=MISSIONS_META.filter(m=>missions[m.id]?.completed);
+  let safetyXP=0,correct=0,totalQ=0;
+  done.forEach(m=>{
+    const md=missions[m.id]||{};
+    safetyXP+=Number(md.xpEarned||md.xp||md.points||m.xp||0);
+    correct+=Number(md.correctAnswers||0);
+    totalQ+=Number(md.totalQuestions||5);
+  });
+  const acc=totalQ>0?Math.round(correct/totalQ*100):0;
+  document.getElementById('s-xp').textContent=safetyXP;
+  document.getElementById('s-done').textContent=done.length+'/8';
+  document.getElementById('s-acc').textContent=acc+'%';
+
+  const box=document.getElementById('missionsList');
+  if(!done.length&&!Object.keys(missions).length){
+    box.innerHTML=`<div class="empty"><i class="fas fa-shield-heart"></i><p>No safety missions completed yet.</p></div>`;
+    return;
+  }
+  box.innerHTML='';
+  MISSIONS_META.forEach((m,i)=>{
+    const md=missions[m.id]||{};
+    const isDone=!!(md.completed);
+    const xp=Number(md.xpEarned||md.xp||md.points||0);
+    const cor=Number(md.correctAnswers||0);
+    const total=Number(md.totalQuestions||5);
+    const date=md.dateCompleted||null;
+    const title=md.title||m.name;
+    const col=M_COLORS[i];
+    box.innerHTML+=`
+    <div class="mission-row">
+      <div class="m-num" style="background:${col}18;color:${col}">${m.id}</div>
+      <div class="m-info">
+        <div class="m-title">${title}</div>
+        <div class="m-meta">
+          ${isDone
+            ?`<span style="color:#4ade80">✓ Completed</span>${date?' · '+fmtDate(date):''} · ${cor}/${total} correct · +${xp} XP`
+            :`<span style="color:var(--text2)">Not started yet</span>`
+          }
+        </div>
+      </div>
+      <span class="m-status ${isDone?'bdg-green bdg':'bdg-gray bdg'}">${isDone?'Done':'Pending'}</span>
+    </div>`;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER REWARDS
+   يقرأ usedCoupons وclaimedGifts بالأسماء الصحيحة مثل admin
+═══════════════════════════════════════════════════════════════ */
+function renderRewards(missions,rewards,pts,studentName){
+  // ← نفس الطريقة في admin: rewards.coupons||rewards.usedCoupons
+  const usedCoupons=rewards.usedCoupons||rewards.coupons||[];
+  const claimedGifts=rewards.claimedGifts||rewards.gifts||[];
+  const earnedCerts=MISSIONS_META.filter(m=>missions[m.id]?.completed);
+
+  document.getElementById('r-pts').textContent=pts.toLocaleString();
+  document.getElementById('r-certs').textContent=earnedCerts.length;
+  document.getElementById('r-coupons').textContent=usedCoupons.length;
+
+  // Certificates
+  const certsBox=document.getElementById('certsList');
+  if(!earnedCerts.length){
+    certsBox.innerHTML=`<div class="empty" style="padding:24px"><i class="fas fa-certificate"></i><p>No certificates earned yet.</p></div>`;
+  } else {
+    certsBox.innerHTML='';
+    earnedCerts.forEach(m=>{
+      const md=missions[m.id]||{};
+      const certName=MISSION_TITLES[m.id]||m.name+' Certificate';
+      const xpE=Number(md.xpEarned||md.xp||m.xp||0);
+      const dateStr=md.dateCompleted||null;
+      const sn=studentName.replace(/['"\\]/g,'');
+      const cn=certName.replace(/['"\\]/g,'');
+      certsBox.innerHTML+=`
+      <div class="reward-row" style="cursor:pointer" onclick='viewCert(${JSON.stringify(sn)},${JSON.stringify(cn)},${pts},${JSON.stringify(dateStr||"")})'>
+        <div class="reward-icon" style="background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.2)">🎓</div>
+        <div class="reward-info">
+          <div class="reward-name">${certName}</div>
+          <div class="reward-meta">Issued: ${fmtDate(dateStr)} · +${xpE} XP</div>
+        </div>
+        <span class="reward-status bdg bdg-gold">View ▸</span>
+      </div>`;
+    });
+  }
+
+  // Coupons
+  const couponsBox=document.getElementById('couponsList');
+  couponsBox.innerHTML='';
+  [
+    {id:'cp_1',name:'School Cafe 20% Discount',    threshold:50,  icon:'☕',desc:'Unlocks at 50 XP'},
+    {id:'cp_2',name:'Innovation Lab Access Voucher',threshold:120,icon:'🔬',desc:'Unlocks at 120 XP'}
+  ].forEach(c=>{
+    const earned=pts>=c.threshold;
+    const used=usedCoupons.includes(c.id);
+    couponsBox.innerHTML+=`
+    <div class="reward-row">
+      <div class="reward-icon" style="background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.2)">${c.icon}</div>
+      <div class="reward-info">
+        <div class="reward-name">${c.name}</div>
+        <div class="reward-meta">${c.desc}</div>
+      </div>
+      <span class="reward-status bdg ${!earned?'bdg-gray':used?'bdg-red':'bdg-gold'}">
+        ${!earned?'🔒 Locked':used?'✓ Used':'✅ Available'}
+      </span>
+    </div>`;
+  });
+
+  // Gifts
+  const giftsBox=document.getElementById('giftsList');
+  giftsBox.innerHTML='';
+  [{id:'gf_1',name:'Golden Shield Badge of Honor',threshold:100,icon:'🥇',desc:'Unlocks at 100 XP (Level 2)'}].forEach(g=>{
+    const earned=pts>=g.threshold;
+    const claimed=claimedGifts.includes(g.id);
+    giftsBox.innerHTML+=`
+    <div class="reward-row">
+      <div class="reward-icon" style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)">${g.icon}</div>
+      <div class="reward-info">
+        <div class="reward-name">${g.name}</div>
+        <div class="reward-meta">${g.desc}</div>
+      </div>
+      <span class="reward-status bdg ${!earned?'bdg-gray':claimed?'bdg-green':'bdg-gold'}">
+        ${!earned?'🔒 Locked':claimed?'🎁 Claimed':'✨ Available'}
+      </span>
+    </div>`;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDER CHARTS — مربوط بالبيانات الحقيقية من Firebase
+═══════════════════════════════════════════════════════════════ */
+function renderCharts(games,missions,rewards,pts){
+  Object.values(_charts).forEach(c=>{if(c)c.destroy();});
+
+  const baseOpts={
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#8a99b3',font:{size:12}}}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8a99b3',font:{size:11}}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#8a99b3',font:{size:11}},beginAtZero:true}
+    }
+  };
+
+  // Chart 1: Game XP per game
+  const gameXPs=GAMES_META.map(g=>extractPts(games[g.id]));
+  _charts.bar=new Chart(document.getElementById('barChart').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:GAMES_META.map(g=>g.name),
+      datasets:[{
+        label:'Points',data:gameXPs,
+        backgroundColor:GAMES_META.map(g=>g.color+'aa'),
+        borderColor:GAMES_META.map(g=>g.color),
+        borderWidth:2,borderRadius:10,borderSkipped:false
+      }]
+    },
+    options:{...baseOpts,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y} XP`}}}}
+  });
+
+  // Chart 2: Safety missions by tier — من بيانات missions الحقيقية
+  const doneCount=MISSIONS_META.filter(m=>missions[m.id]?.completed).length;
+  const basic=Math.min(doneCount,3);
+  const advanced=Math.max(0,Math.min(doneCount-3,3));
+  const top=Math.max(0,doneCount-6);
+  _charts.prog=new Chart(document.getElementById('progressChart').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:['Basic (1–3)','Advanced (4–6)','Top (7–8)'],
+      datasets:[{
+        label:'Missions Done',data:[basic,advanced,top],
+        backgroundColor:['rgba(253,230,138,.65)','rgba(59,158,255,.65)','rgba(74,222,128,.7)'],
+        borderColor:['#fde68a','#3b9eff','#4ade80'],
+        borderWidth:2,borderRadius:12,borderSkipped:false
+      }]
+    },
+    options:{
+      ...baseOpts,
+      plugins:{legend:{display:false}},
+      scales:{...baseOpts.scales,y:{...baseOpts.scales.y,max:3,ticks:{stepSize:1,color:'#8a99b3'}}}
+    }
+  });
+
+  // Chart 3: Rewards doughnut — من بيانات rewards الحقيقية
+  const usedCoupons=(rewards.usedCoupons||rewards.coupons||[]).length;
+  const claimedGifts=(rewards.claimedGifts||rewards.gifts||[]).length;
+  const certsCount=MISSIONS_META.filter(m=>missions[m.id]?.completed).length;
+  const lockedItems=Math.max(0,11-certsCount-usedCoupons-claimedGifts);
+  _charts.rewards=new Chart(document.getElementById('rewardsChart').getContext('2d'),{
+    type:'doughnut',
+    data:{
+      labels:['Certificates','Coupons Used','Gifts Claimed','Locked Items'],
+      datasets:[{
+        data:[certsCount,usedCoupons,claimedGifts,lockedItems],
+        backgroundColor:['rgba(253,230,138,.8)','rgba(124,92,252,.8)','rgba(74,222,128,.8)','rgba(138,153,179,.2)'],
+        borderColor:['#fde68a','#a78bfa','#4ade80','rgba(138,153,179,.3)'],
+        borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{legend:{position:'bottom',labels:{color:'#8a99b3',font:{size:12},padding:18}}}
+    }
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════════════ */
+window.switchTab=function(name,btn){
+  beepClick();
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   STAR RATINGS
+═══════════════════════════════════════════════════════════════ */
+window.rateStar=function(el,val,gameId){
+  beepClick();
+  const row=el.closest('.stars-row');
+  row.querySelectorAll('.star-i').forEach((s,i)=>s.classList.toggle('lit',i<val));
+  toast(`Rated ${gameId} — ${val} star${val>1?'s':''}! Saved.`,true);
+  if(_student&&_student.email){
+    try{
+      window._set(window._doc(window._db,'StudentActivities',_student.email,'games',gameId),
+        {parentRating:val,ratedAt:new Date().toISOString()},{merge:true});
+    }catch{}
+  }
+};
+window.rateSection=function(prefix,val){
+  beepClick();
+  document.querySelectorAll('#'+prefix+'Stars .big-star').forEach((s,i)=>s.classList.toggle('lit',i<val));
+  const section=prefix==='g'?'Games':'Safety Content';
+  toast(`${section} rated ${val} star${val>1?'s':''}! Thank you.`,true);
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   CERT MODAL
+═══════════════════════════════════════════════════════════════ */
+window.viewCert=function(sName,certName,xp,date){
+  beepClick();
+  document.getElementById('certName').textContent=sName;
+  document.getElementById('certBody').innerHTML=`For successfully completing the safety module <b>"${certName}"</b> and earning a total of <b>${xp} XP</b> in the Rahlat Aman Safety Program.`;
+  const d=new Date(date);
+  document.getElementById('certDate').textContent=isNaN(d)?'—':d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('certModal').classList.add('open');
+};
+window.closeCert=function(){document.getElementById('certModal').classList.remove('open');};
+</script>
+</body>
+</html>
