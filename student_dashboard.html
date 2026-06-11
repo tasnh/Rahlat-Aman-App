@@ -3,1030 +3,355 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rahlat Aman - Home Page for the Student </title>
-
+<title>Rahlat Aman - Student Dashboard</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 <style>
-
-:root{
-  --main:#0A6AA1;
-  --main2:#48A5D9;
-  --bg:#EEF5FB;
-  --white:#fff;
-  --dark:#183B56;
-  --gold:#FFD54F;
-  --shadow:0 10px 30px rgba(0,0,0,0.08);
-}
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
-body{
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(to bottom,#EEF5FB,#DCEFFC);
-  overflow-x:hidden;
-  color:var(--dark);
-}
-
-/* HEADER */
-
-.header{
-  position:relative;
-  background:linear-gradient(135deg,var(--main2),var(--main));
-  padding:28px 22px 90px;
-  border-radius:0 0 35px 35px;
-  overflow:hidden;
-  box-shadow:var(--shadow);
-}
-
-.header::before{
-  content:"";
-  position:absolute;
-  width:250px;
-  height:250px;
-  background:rgba(255,255,255,0.08);
-  border-radius:50%;
-  top:-100px;
-  right:-70px;
-}
-
-.header::after{
-  content:"";
-  position:absolute;
-  width:180px;
-  height:180px;
-  background:rgba(255,255,255,0.06);
-  border-radius:50%;
-  bottom:-80px;
-  left:-60px;
-}
-
-.top-bar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  position:relative;
-  z-index:2;
-}
-
-.user{
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
-
-.avatar{
-  width:72px;
-  height:72px;
-  border-radius:50%;
-  border:3px solid rgba(255,255,255,0.9);
-  object-fit:cover;
-  box-shadow:0 6px 18px rgba(0,0,0,0.15);
-}
-
-.welcome-text{
-  color:white;
-}
-
-#welcome{
-  font-size:23px;
-  font-weight:700;
-}
-
-#name{
-  margin-top:4px;
-  opacity:0.95;
-  font-size:15px;
-}
-
-.menu-btn{
-  width:48px;
-  height:48px;
-  border-radius:14px;
-  background:rgba(255,255,255,0.18);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:22px;
-  cursor:pointer;
-  backdrop-filter:blur(10px);
-  transition:0.3s;
-}
-
-.menu-btn:hover{
-  transform:scale(1.08);
-}
-
-/* STATS */
-
-.stats-wrapper{
-  margin-top:-55px;
-  position:relative;
-  z-index:10;
-  padding:0 15px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:14px;
-}
-
-.stat-box{
-  background:rgba(255,255,255,0.95);
-  backdrop-filter:blur(10px);
-  border-radius:22px;
-  padding:18px 12px;
-  text-align:center;
-  box-shadow:var(--shadow);
-  transition:0.3s;
-}
-
-.stat-box:hover{
-  transform:translateY(-4px);
-}
-
-.stat-icon{
-  width:42px;
-  height:42px;
-  margin:auto;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:10px;
-  font-size:18px;
-  color:white;
-}
-
-.blue{background:#3498db;}
-.green{background:#00c853;}
-.gold{background:#f4b400;}
-
-.stat-title{
-  color:#666;
-  font-size:13px;
-  margin-bottom:6px;
-}
-
-.stat-value{
-  font-size:20px;
-  font-weight:bold;
-  color:var(--dark);
-}
-
-/* PROGRESS */
-
-.progress-section{
-  background:white;
-  margin:18px 15px;
-  padding:18px;
-  border-radius:22px;
-  box-shadow:var(--shadow);
-}
-
-.progress-top{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:10px;
-  font-size:14px;
-  font-weight:600;
-}
-
-.progress-bar-bg{
-  width:100%;
-  height:14px;
-  background:#e0e0e0;
-  border-radius:20px;
-  overflow:hidden;
-}
-
-.progress-bar-fill{
-  height:100%;
-  width:0%;
-  border-radius:20px;
-  background:linear-gradient(90deg,#00c853,#64dd17);
-  transition:width 1.2s ease;
-  box-shadow:0 0 10px rgba(0,200,83,0.5);
-  position:relative;
-}
-
-.progress-bar-fill::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-40px;
-  width:40px;
-  height:100%;
-  background:rgba(255,255,255,0.5);
-  transform:skewX(-20deg);
-  animation:shine 2s infinite;
-}
-
-@keyframes shine{
-  0%{ left:-40px; }
-  100%{ left:100%; }
-}
-
-/* BANNER */
-
-.banner{
-  width:92%;
-  margin:18px auto;
-}
-
-.banner img{
-  width:100%;
-  height:190px;
-  object-fit:cover;
-  border-radius:28px;
-  box-shadow:var(--shadow);
-}
-
-/* SECTION TITLE */
-
-.section-title{
-  margin:22px 18px 14px;
-  font-size:20px;
-  font-weight:700;
-}
-
-/* CARDS */
-
-.container{
-  padding:0 15px 40px;
-}
-
-.card{
-  background:white;
-  border-radius:24px;
-  padding:18px;
-  margin-bottom:16px;
-  display:flex;
-  align-items:center;
-  gap:16px;
-  cursor:pointer;
-  box-shadow:var(--shadow);
-  transition:0.3s;
-  position:relative;
-  overflow:hidden;
-}
-
-.card::before{
-  content:"";
-  position:absolute;
-  width:120px;
-  height:120px;
-  background:rgba(72,165,217,0.08);
-  border-radius:50%;
-  right:-40px;
-  top:-40px;
-}
-
-.card:hover{
-  transform:translateY(-5px);
-}
-
-.card-icon{
-  width:60px;
-  height:60px;
-  border-radius:18px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(135deg,var(--main2),var(--main));
-  box-shadow:0 10px 20px rgba(10,106,161,0.25);
-}
-
-.card-icon img{
-  width:30px;
-}
-
-.card-content{
-  flex:1;
-  position:relative;
-  z-index:2;
-}
-
-.card-title{
-  font-size:18px;
-  font-weight:700;
-}
-
-.card-sub{
-  margin-top:4px;
-  color:#666;
-  font-size:13px;
-}
-
-.arrow{
-  font-size:18px;
-  color:#888;
-}
-
-/* MENU */
-
-.menu{
-  position:fixed;
-  top:0;
-  right:-100%;
-  width:82%;
-  max-width:340px;
-  height:100%;
-  background:white;
-  z-index:9999;
-  transition:0.45s;
-  overflow-y:auto;
-  box-shadow:-10px 0 30px rgba(0,0,0,0.15);
-}
-
-.menu.active{
-  right:0;
-}
-
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.45);
-  backdrop-filter:blur(3px);
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s;
-  z-index:999;
-}
-
-.overlay.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.menu-top{
-  background:linear-gradient(135deg,var(--main2),var(--main));
-  padding:28px 20px;
-  color:white;
-  border-radius:0 0 30px 30px;
-  text-align:center;
-}
-
-.logo{
-  width:75px;
-  margin-bottom:10px;
-}
-
-.menu-banner{
-  padding:15px;
-}
-
-.menu-banner img{
-  width:100%;
-  border-radius:18px;
-  height:150px;
-  object-fit:cover;
-}
-
-.menu-links{
-  padding:0 15px 25px;
-}
-
-.menu-item{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  background:#F7FAFD;
-  padding:15px;
-  margin-bottom:12px;
-  border-radius:16px;
-  cursor:pointer;
-  transition:0.3s;
-  font-weight:600;
-}
-
-.menu-item:hover{
-  background:#E6F4FD;
-  transform:translateX(-4px);
-}
-
-.menu-item i{
-  width:38px;
-  height:38px;
-  border-radius:12px;
-  background:linear-gradient(135deg,var(--main2),var(--main));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-}
-
-.logout{
-  background:#FFECEC !important;
-  color:#d32f2f;
-}
-
-.logout i{
-  background:#ff4d4d;
-}
-
-/* NOTIFY */
-
-.notify{
-  position:fixed;
-  top:-100px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#00c853;
-  color:white;
-  padding:14px 30px;
-  border-radius:40px;
-  font-weight:bold;
-  z-index:20000;
-  transition:0.5s;
-  box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-.notify.show{
-  top:20px;
-}
-
-/* MOBILE */
-
-@media(max-width:700px){
-
-.stats{
-  grid-template-columns:1fr;
-}
-
-.banner img{
-  height:160px;
-}}
-
+:root{--main:#0A6AA1;--main2:#48A5D9;--bg:#EEF5FB;--white:#fff;--dark:#183B56;--shadow:0 10px 30px rgba(0,0,0,0.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(to bottom,#EEF5FB,#DCEFFC);overflow-x:hidden;color:var(--dark);}
+.header{position:relative;background:linear-gradient(135deg,var(--main2),var(--main));padding:28px 22px 90px;border-radius:0 0 35px 35px;overflow:hidden;box-shadow:var(--shadow);}
+.header::before{content:"";position:absolute;width:250px;height:250px;background:rgba(255,255,255,0.08);border-radius:50%;top:-100px;right:-70px;}
+.header::after{content:"";position:absolute;width:180px;height:180px;background:rgba(255,255,255,0.06);border-radius:50%;bottom:-80px;left:-60px;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2;}
+.user{display:flex;align-items:center;gap:15px;}
+.avatar{width:72px;height:72px;border-radius:50%;border:3px solid rgba(255,255,255,0.9);object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,0.15);}
+.welcome-text{color:white;}
+#welcome{font-size:23px;font-weight:700;}
+#name{margin-top:4px;opacity:0.95;font-size:15px;}
+.menu-btn{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;color:white;font-size:22px;cursor:pointer;backdrop-filter:blur(10px);transition:0.3s;}
+.menu-btn:hover{transform:scale(1.08);}
+.stats-wrapper{margin-top:-55px;position:relative;z-index:10;padding:0 15px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.stat-box{background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-radius:22px;padding:18px 12px;text-align:center;box-shadow:var(--shadow);transition:0.3s;}
+.stat-box:hover{transform:translateY(-4px);}
+.stat-icon{width:42px;height:42px;margin:auto;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;font-size:18px;color:white;}
+.blue{background:#3498db;}.green{background:#00c853;}.gold{background:#f4b400;}
+.stat-title{color:#666;font-size:13px;margin-bottom:6px;}
+.stat-value{font-size:20px;font-weight:bold;color:var(--dark);}
+.progress-section{background:white;margin:18px 15px;padding:18px;border-radius:22px;box-shadow:var(--shadow);}
+.progress-top{display:flex;justify-content:space-between;margin-bottom:10px;font-size:14px;font-weight:600;}
+.progress-bar-bg{width:100%;height:14px;background:#e0e0e0;border-radius:20px;overflow:hidden;}
+.progress-bar-fill{height:100%;width:0%;border-radius:20px;background:linear-gradient(90deg,#00c853,#64dd17);transition:width 1.2s ease;box-shadow:0 0 10px rgba(0,200,83,0.5);position:relative;}
+.progress-bar-fill::after{content:"";position:absolute;top:0;left:-40px;width:40px;height:100%;background:rgba(255,255,255,0.5);transform:skewX(-20deg);animation:shine 2s infinite;}
+@keyframes shine{0%{left:-40px;}100%{left:100%;}}
+.banner{width:92%;margin:18px auto;}
+.banner img{width:100%;height:190px;object-fit:cover;border-radius:28px;box-shadow:var(--shadow);}
+.section-title{margin:22px 18px 14px;font-size:20px;font-weight:700;}
+.container{padding:0 15px 40px;}
+.card{background:white;border-radius:24px;padding:18px;margin-bottom:16px;display:flex;align-items:center;gap:16px;cursor:pointer;box-shadow:var(--shadow);transition:0.3s;position:relative;overflow:hidden;}
+.card::before{content:"";position:absolute;width:120px;height:120px;background:rgba(72,165,217,0.08);border-radius:50%;right:-40px;top:-40px;}
+.card:hover{transform:translateY(-5px);}
+.card-icon{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--main2),var(--main));box-shadow:0 10px 20px rgba(10,106,161,0.25);}
+.card-icon img{width:30px;}
+.card-content{flex:1;position:relative;z-index:2;}
+.card-title{font-size:18px;font-weight:700;}
+.card-sub{margin-top:4px;color:#666;font-size:13px;}
+.arrow{font-size:18px;color:#888;}
+.menu{position:fixed;top:0;right:-100%;width:82%;max-width:340px;height:100%;background:white;z-index:9999;transition:0.45s;overflow-y:auto;box-shadow:-10px 0 30px rgba(0,0,0,0.15);}
+.menu.active{right:0;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:0.3s;z-index:999;}
+.overlay.active{opacity:1;pointer-events:auto;}
+.menu-top{background:linear-gradient(135deg,var(--main2),var(--main));padding:28px 20px;color:white;border-radius:0 0 30px 30px;text-align:center;}
+.logo{width:75px;margin-bottom:10px;}
+.menu-banner{padding:15px;}
+.menu-banner img{width:100%;border-radius:18px;height:150px;object-fit:cover;}
+.menu-links{padding:0 15px 25px;}
+.menu-item{display:flex;align-items:center;gap:14px;background:#F7FAFD;padding:15px;margin-bottom:12px;border-radius:16px;cursor:pointer;transition:0.3s;font-weight:600;}
+.menu-item:hover{background:#E6F4FD;transform:translateX(-4px);}
+.menu-item i{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--main2),var(--main));display:flex;align-items:center;justify-content:center;color:white;}
+.logout{background:#FFECEC !important;color:#d32f2f;}
+.logout i{background:#ff4d4d;}
+.notify{position:fixed;top:-100px;left:50%;transform:translateX(-50%);background:#00c853;color:white;padding:14px 30px;border-radius:40px;font-weight:bold;z-index:20000;transition:0.5s;box-shadow:0 10px 25px rgba(0,0,0,0.15);}
+.notify.show{top:20px;}
+@media(max-width:700px){.stats{grid-template-columns:1fr;}.banner img{height:160px;}}
 </style>
 </head>
 <body>
+
 <div class="notify" id="notify"></div>
 
 <div class="header">
-<div class="top-bar">
-<div class="user">
-<img src="my.png" class="avatar">
-<div class="welcome-text">
-<div id="welcome">Welcome Student 👋</div>
-<div id="name">Student</div>
-</div>
-</div>
-
-<div class="menu-btn" onclick="openMenu()">
-<i class="fas fa-bars"></i>
-</div>
-</div>
+  <div class="top-bar">
+    <div class="user">
+      <img src="my.png" class="avatar">
+      <div class="welcome-text">
+        <div id="welcome">Welcome Student 👋</div>
+        <div id="name">Student</div>
+      </div>
+    </div>
+    <div class="menu-btn" onclick="openMenu()"><i class="fas fa-bars"></i></div>
+  </div>
 </div>
 
 <div class="stats-wrapper">
-<div class="stats">
-<div class="stat-box">
-<div class="stat-icon blue">
-<i class="fas fa-coins"></i>
-</div>
-<div class="stat-title">Points</div>
-<div class="stat-value" id="points">0</div>
-</div>
-<div class="stat-box">
-<div class="stat-icon green">
-<i class="fas fa-layer-group"></i>
-</div>
-<div class="stat-title">Level</div>
-<div class="stat-value" id="level">Beginner</div>
-</div>
-<div class="stat-box">
-<div class="stat-icon gold">
-<i class="fas fa-award"></i>
-</div>
-<div class="stat-title">Badge</div>
-<div class="stat-value" id="badges">🥉</div>
-</div>
-</div>
+  <div class="stats">
+    <div class="stat-box">
+      <div class="stat-icon blue"><i class="fas fa-coins"></i></div>
+      <div class="stat-title">Points</div>
+      <div class="stat-value" id="points">...</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon green"><i class="fas fa-layer-group"></i></div>
+      <div class="stat-title">Level</div>
+      <div class="stat-value" id="level">...</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon gold"><i class="fas fa-award"></i></div>
+      <div class="stat-title">Badge</div>
+      <div class="stat-value" id="badges">...</div>
+    </div>
+  </div>
 </div>
 
 <div class="progress-section">
-<div class="progress-top">
-<span>Progress to next level</span>
-<span id="progressText">0%</span>
-</div>
-<div class="progress-bar-bg">
-<div class="progress-bar-fill" id="progressBar"></div>
-</div>
-</div>
-
-<div class="banner">
-<img id="slider" src="student.png">
+  <div class="progress-top">
+    <span>Progress to next level</span>
+    <span id="progressText">0%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
 </div>
 
-<div class="section-title">
-Your Services
-</div>
+<div class="banner"><img src="student.png"></div>
+
+<div class="section-title">Your Services</div>
 <div class="container">
-<div class="card" onclick="goActivities()">
-<div class="card-icon">
-<img src="activities.png">
-</div>
-<div class="card-content">
-<div class="card-title">Activities</div>
-<div class="card-sub">Educational games and challenges</div>
-</div>
-<div class="arrow">
-<i class="fas fa-chevron-right"></i>
-</div>
-</div>
-<div class="card" onclick="goSafety()">
-<div class="card-icon">
-<img src="SafetyContent.png">
-</div>
-<div class="card-content">
-<div class="card-title">Safety Content</div>
-<div class="card-sub">Videos, quizzes and safety learning</div>
-</div>
-
-<div class="arrow">
-<i class="fas fa-chevron-right"></i>
-</div>
-
-</div>
-
-<div class="card" onclick="goRewards()">
-
-<div class="card-icon">
-<img src="rewards.png">
-</div>
-
-<div class="card-content">
-<div class="card-title">Rewards</div>
-<div class="card-sub">Achievements, badges and points</div>
-</div>
-
-<div class="arrow">
-<i class="fas fa-chevron-right"></i>
-</div>
-
-</div>
-
-<div class="card" onclick="goTrip()">
-
-<div class="card-icon">
-<img src="tripstatus.png">
-</div>
-
-<div class="card-content">
-<div class="card-title">Trip Status</div>
-<div class="card-sub">Track your trip and bus status</div>
-</div>
-
-<div class="arrow">
-<i class="fas fa-chevron-right"></i>
-</div>
-
-</div>
-
-<div class="card" onclick="goNotifications()">
-
-<div class="card-icon">
-<img src="notification.png">
-</div>
-
-<div class="card-content">
-<div class="card-title">Notifications</div>
-<div class="card-sub">Latest alerts and updates</div>
-</div>
-
-<div class="arrow">
-<i class="fas fa-chevron-right"></i>
-</div>
-
-</div>
-
+  <div class="card" onclick="window.location.href='student_Activities.html'">
+    <div class="card-icon"><img src="activities.png"></div>
+    <div class="card-content"><div class="card-title">Activities</div><div class="card-sub">Educational games and challenges</div></div>
+    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+  </div>
+  <div class="card" onclick="window.location.href='student_safetycontent.html'">
+    <div class="card-icon"><img src="SafetyContent.png"></div>
+    <div class="card-content"><div class="card-title">Safety Content</div><div class="card-sub">Videos, quizzes and safety learning</div></div>
+    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+  </div>
+  <div class="card" onclick="window.location.href='student_reward.html'">
+    <div class="card-icon"><img src="rewards.png"></div>
+    <div class="card-content"><div class="card-title">Rewards</div><div class="card-sub">Achievements, badges and points</div></div>
+    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+  </div>
+  <div class="card" onclick="window.location.href='student_trip_status.html'">
+    <div class="card-icon"><img src="tripstatus.png"></div>
+    <div class="card-content"><div class="card-title">Trip Status</div><div class="card-sub">Track your trip and bus status</div></div>
+    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+  </div>
+  <div class="card" onclick="window.location.href='student_notifications.html'">
+    <div class="card-icon"><img src="notification.png"></div>
+    <div class="card-content"><div class="card-title">Notifications</div><div class="card-sub">Latest alerts and updates</div></div>
+    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+  </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
-
 <div class="menu" id="menu">
-
-<div class="menu-top">
-
-<img src="logo.png" class="logo">
-
-<h2>Rahlat Aman</h2>
-
-<p style="margin-top:8px;opacity:0.9;">
-Student System
-</p>
-</div>
-<div class="menu-banner">
-<img id="menuImg" src="menustudent.png">
-</div>
-<div class="menu-links">
-<div class="menu-item" onclick="goProfile()">
-<i class="fas fa-user"></i>
-<span>Profile</span>
+  <div class="menu-top">
+    <img src="logo.png" class="logo">
+    <h2>Rahlat Aman</h2>
+    <p style="margin-top:8px;opacity:0.9;">Student System</p>
+  </div>
+  <div class="menu-banner"><img src="menustudent.png"></div>
+  <div class="menu-links">
+    <div class="menu-item" onclick="closeMenu();window.location.href='student_profile.html'"><i class="fas fa-user"></i><span>Profile</span></div>
+    <div class="menu-item" onclick="closeMenu();window.location.href='student_feedback.html'"><i class="fas fa-comment-dots"></i><span>Feedback</span></div>
+    <div class="menu-item" onclick="closeMenu();window.location.href='student_settings.html'"><i class="fas fa-gear"></i><span>Settings</span></div>
+    <div class="menu-item logout" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i><span>Logout</span></div>
+  </div>
 </div>
 
-<div class="menu-item" onclick="goFeedback()">
-<i class="fas fa-comment-dots"></i>
-<span>Feedback</span>
-</div>
-
-<div class="menu-item" onclick="goSettings()">
-<i class="fas fa-gear"></i>
-<span>Settings</span>
-</div>
-
-<div class="menu-item logout" onclick="logout()">
-<i class="fas fa-right-from-bracket"></i>
-<span>Logout</span>
-</div>
-
-</div>
-
-</div>
-
+<!-- ══════════════════════════════════════════
+     كل شيء في script واحد — Firebase + Logic
+     ══════════════════════════════════════════ -->
 <script type="module">
 
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+/* ── استيراد Firebase ── */
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, collection, addDoc, serverTimestamp }
+                           from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-import {
-getFirestore,
-doc,
-setDoc,
-updateDoc,
-collection,
-addDoc,
-serverTimestamp,
-getDoc
-}
-from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  appId:"1:1088859717905:web:e65d7054db709e274dccb0", 
- apiKey: "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q", 
-        authDomain: "rahlataman-bus-safety-app.firebaseapp.com", 
-        projectId: "rahlataman-bus-safety-app", 
-        storageBucket: "rahlataman-bus-safety-app.firebasestorage.app", 
-        messagingSenderId: "1088859717905",  
-
-};
-
-const app = initializeApp(firebaseConfig);
+/* ── تهيئة Firebase ── */
+const app = initializeApp({
+  apiKey:            "AIzaSyBz8I_y4VfRaJiFAh32Y07KOwPrVjytt_Q",
+  authDomain:        "rahlataman-bus-safety-app.firebaseapp.com",
+  projectId:         "rahlataman-bus-safety-app",
+  storageBucket:     "rahlataman-bus-safety-app.firebasestorage.app",
+  messagingSenderId: "1088859717905",
+  appId:             "1:1088859717905:web:e65d7054db709e274dccb0"
+});
 const db = getFirestore(app);
 
-window.db = db;
-window.doc = doc;
-window.getDoc = getDoc;
-window.setDoc = setDoc;
-window.updateDoc = updateDoc;
-window.collection = collection;
-window.addDoc = addDoc;
-window.serverTimestamp = serverTimestamp;
+/* ══════════════════════════════════════════
+   HELPERS
+   ══════════════════════════════════════════ */
 
-</script>
-
-<script>
-
-/* NAVIGATION */
-
-function goActivities(){
-window.location.href="student_Activities.html";
-}
-function goSafety(){
-window.location.href="student_safetycontent.html";
-}
-function goRewards(){
-window.location.href="student_reward.html";
-}
-function goTrip(){
-window.location.href="student_trip_status.html";
-}
-function goNotifications(){
-window.location.href="student_notifications.html";
-}
-function goProfile(){
-closeMenu();
-window.location.href="student_profile.html";
-}
-function goFeedback(){
-closeMenu();
-window.location.href="student_feedback.html";
-}
-function goSettings(){
-closeMenu();
-window.location.href="student_settings.html";
+/** نفس منطق كل الألعاب بالضبط */
+function getUserId() {
+  try {
+    const u = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    return u.email || u.studentId || u.id || "guest";
+  } catch { return "guest"; }
 }
 
-/* USER */
-
-let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-
-function loadUser(){
-  let studentName =
-    currentUser.fullName ||
-    currentUser.name ||
-    "Student";
-  document.getElementById("name").innerText = studentName;
-  document.getElementById("welcome").innerText = "Welcome Student👋";
-}
-
-/* USER UNIQUE ID */
-
-function getUserId(){
-  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-  return (
-    currentUser.email ||
-    currentUser.id ||
-    "guest_user"
-  )
-  .toLowerCase()
-  .replace(/[.#$[\]]/g, "_");
-}
-
-/* ═══════════════════════════════════════════════════════════
-   LEVEL SYSTEM — موحّد مع جميع الألعاب
-   game1, game2, game3, game4, game5 تستخدم نفس القيم
-   ═══════════════════════════════════════════════════════════ */
-function getLevel(points){
-  if(points >= 1000) return "Legend 🔥";
-  if(points >= 500)  return "Master 🔴";
-  if(points >= 250)  return "Pro 🟡";
-  if(points >= 100)  return "Explorer 🔵";
+function getLevel(p) {
+  if (p >= 1000) return "Legend 🔥";
+  if (p >= 500)  return "Master 🔴";
+  if (p >= 250)  return "Pro 🟡";
+  if (p >= 100)  return "Explorer 🔵";
   return "Beginner 🟢";
 }
 
-function getBadge(points){
-  if(points >= 1000) return "👑";
-  if(points >= 500)  return "🏆";
-  if(points >= 250)  return "🥇";
-  if(points >= 100)  return "🥈";
+function getBadge(p) {
+  if (p >= 1000) return "👑";
+  if (p >= 500)  return "🏆";
+  if (p >= 250)  return "🥇";
+  if (p >= 100)  return "🥈";
   return "🥉";
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PROGRESS — كل 100 نقطة = مستوى جديد
-   نحسب النسبة داخل المستوى الحالي
-   ═══════════════════════════════════════════════════════════ */
-function getProgress(points){
-  // مستويات الحدود: 0, 100, 250, 500, 1000
-  const thresholds = [0, 100, 250, 500, 1000];
-  for(let i = thresholds.length - 1; i >= 0; i--){
-    if(points >= thresholds[i]){
-      const current = thresholds[i];
-      const next    = thresholds[i + 1];
-      if(!next) return 100; // أعلى مستوى
-      return Math.floor(((points - current) / (next - current)) * 100);
-    }
+function showNotify(text) {
+  const n = document.getElementById("notify");
+  n.innerText = text;
+  n.classList.add("show");
+  setTimeout(() => n.classList.remove("show"), 3000);
+}
+
+function renderStats(pts) {
+  document.getElementById("points").innerText = pts;
+  document.getElementById("level").innerText  = getLevel(pts);
+  document.getElementById("badges").innerText = getBadge(pts);
+
+  /* progress bar: كم تبقى للـ level التالي */
+  const thresholds = [100, 250, 500, 1000];
+  let prevT = 0, nextT = 100;
+  for (const t of thresholds) {
+    if (pts < t) { nextT = t; break; }
+    prevT = t; nextT = t + 100;
   }
-  return 0;
+  const pct = Math.min(100, Math.round(((pts - prevT) / (nextT - prevT)) * 100));
+  document.getElementById("progressBar").style.width = pct + "%";
+  document.getElementById("progressText").innerText  = pct + "%";
 }
 
-function animateProgress(target){
-  let progressBar  = document.getElementById("progressBar");
-  let progressText = document.getElementById("progressText");
-  let current = 0;
-  let interval = setInterval(()=>{
-    if(current >= target){
-      clearInterval(interval);
-    } else {
-      current += 1;
-      if(current > target) current = target;
-      progressBar.style.width  = current + "%";
-      progressText.innerText   = current + "%";
-    }
-  }, 25);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   LOAD STATS — يقرأ مباشرة من Student-Dashboard/{userId}
-   نفس المسار الذي تكتب فيه جميع الألعاب
-   ═══════════════════════════════════════════════════════════ */
-async function loadStats(){
+/* ══════════════════════════════════════════
+   القراءة من Firebase
+   ══════════════════════════════════════════ */
+async function loadStats() {
   const userId = getUserId();
 
-  try{
-    const dashboardRef  = window.doc(db, "Student-Dashboard", userId);
-    const dashboardSnap = await window.getDoc(dashboardRef);
+  /* 1) اعرض ما في localStorage فوراً */
+  const localPts = parseInt(localStorage.getItem("safetyXP_" + userId) || "0");
+  renderStats(localPts);
 
-    let points = 0;
-    let budget = 0;
+  try {
+    /* 2) اقرأ من Firebase */
+    const snap = await getDoc(doc(db, "Student-Dashboard", userId));
+    const fbPts = snap.exists() ? (snap.data().points || 0) : 0;
 
-    if(dashboardSnap.exists()){
-      const data = dashboardSnap.data();
-      points = data.points || 0;
-      budget = data.budget || data.points || 0; // budget يساوي points إذا لم يُضبط منفصلاً
+    /* 3) اعرض الأعلى */
+    const finalPts = Math.max(fbPts, localPts);
+    renderStats(finalPts);
+    localStorage.setItem("safetyXP_" + userId, finalPts);
+
+    /* 4) إذا المحلي أعلى، حدّث Firebase */
+    if (localPts > fbPts) {
+      await setDoc(doc(db, "Student-Dashboard", userId), {
+        points: finalPts, budget: finalPts,
+        level: getLevel(finalPts), badge: getBadge(finalPts),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
     }
 
-    /* تحديث الـ UI */
-    document.getElementById("points").innerText = points;
-    document.getElementById("level").innerText  = getLevel(points);
-    document.getElementById("badges").innerText = getBadge(points);
+    /* 5) level-up notification */
+    const prevLv = localStorage.getItem("lastLevel_" + userId) || "";
+    const newLv  = getLevel(finalPts);
+    if (prevLv && prevLv !== newLv) showNotify("🎉 Level Up! " + newLv);
+    localStorage.setItem("lastLevel_" + userId, newLv);
 
-    /* شريط التقدم */
-    const progress = getProgress(points);
-    animateProgress(progress);
-
-    /* حفظ في الكاش المحلي */
-    localStorage.setItem("safetyXP_"  + userId, points);
-    localStorage.setItem("safetyBudget_" + userId, budget);
-
-    /* فحص Level Up */
-    await checkLevelUp(points);
-
-  } catch(error){
-    console.error("Dashboard Load Error:", error);
+  } catch(e) {
+    console.error("loadStats error:", e);
   }
 }
 
-/* LEVEL UP CHECK */
-async function checkLevelUp(points){
-  const userId       = getUserId();
-  const prev         = localStorage.getItem("lastLevel_" + userId) || "";
-  const currentLevel = getLevel(points);
-
-  if(prev !== currentLevel){
-    if(prev !== ""){
-      showNotify("🎉 Level Up! " + currentLevel);
-    }
-    localStorage.setItem("lastLevel_" + userId, currentLevel);
-  }
+/* ══════════════════════════════════════════
+   تحميل اسم الطالب
+   ══════════════════════════════════════════ */
+function loadUser() {
+  try {
+    const u = JSON.parse(localStorage.getItem("currentUser") || "{}");
+    document.getElementById("name").innerText    = u.fullName || u.name || "Student";
+    document.getElementById("welcome").innerText = "Welcome Student 👋";
+  } catch {}
 }
 
-/* ═══════════════════════════════════════════════════════════
-   UPDATE DASHBOARD — يُسجّل نشاط الطالب في الداشبورد
-   ═══════════════════════════════════════════════════════════ */
-async function updateStudentDashboard(type, description){
-  const userId      = getUserId();
-  const studentName = currentUser.fullName || currentUser.name || "Student";
-
-  try{
-    const dashboardRef  = window.doc(db, "Student-Dashboard", userId);
-    const dashboardSnap = await window.getDoc(dashboardRef);
-    let points = 0;
-    if(dashboardSnap.exists()) points = dashboardSnap.data().points || 0;
-
-    await window.setDoc(
-      dashboardRef,
-      {
-        studentName,
-        points,
-        level:            getLevel(points),
-        badge:            getBadge(points),
-        lastActivity:     description,
-        lastActivityType: type,
-        updatedAt:        window.serverTimestamp(),
-        lastSeen:         window.serverTimestamp()
-      },
-      { merge: true }
-    );
-
-    await logStudentActivity(type, description);
-    await loadStats();
-
-  } catch(error){
-    console.error("Dashboard Update Error:", error);
-  }
+/* ══════════════════════════════════════════
+   تسجيل النشاط
+   ══════════════════════════════════════════ */
+async function logActivity(type, desc) {
+  try {
+    const userId = getUserId();
+    await addDoc(collection(db, "Student-Dashboard", userId, "activities"), {
+      type, description: desc, createdAt: serverTimestamp()
+    });
+  } catch {}
 }
 
-/* MENU */
-
-let menu    = document.getElementById("menu");
-let overlay = document.getElementById("overlay");
-
-function openMenu(){
-  menu.classList.add("active");
-  overlay.classList.add("active");
-}
-
-function closeMenu(){
-  menu.classList.remove("active");
-  overlay.classList.remove("active");
-}
-
-document.addEventListener("click", function(e){
-  if(
-    menu.classList.contains("active") &&
-    !menu.contains(e.target) &&
-    !e.target.closest(".menu-btn")
-  ){
-    closeMenu();
+/* ══════════════════════════════════════════
+   MENU & LOGOUT  (تعريف global)
+   ══════════════════════════════════════════ */
+window.openMenu = () => {
+  document.getElementById("menu").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
+};
+window.closeMenu = () => {
+  document.getElementById("menu").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
+};
+document.addEventListener("click", e => {
+  const m = document.getElementById("menu");
+  if (m.classList.contains("active") &&
+      !m.contains(e.target) &&
+      !e.target.closest(".menu-btn")) {
+    window.closeMenu();
   }
 });
-
-/* LOGOUT */
-
-function logout(){
-  if(confirm("Are you sure you want to logout?")){
+window.doLogout = () => {
+  if (confirm("Are you sure you want to logout?")) {
     localStorage.removeItem("currentUser");
     localStorage.removeItem("lastDashboardOpen");
     showNotify("👋 Logged out");
-    setTimeout(()=>{ window.location.href = "welcome.html"; }, 1500);
-  }
-}
-
-/* ADD XP */
-
-async function addXP(amount, reason = "activity"){
-  const userId = getUserId();
-
-  try{
-    const dashboardRef  = window.doc(db, "Student-Dashboard", userId);
-    const dashboardSnap = await window.getDoc(dashboardRef);
-    let currentPoints   = 0;
-    if(dashboardSnap.exists()) currentPoints = dashboardSnap.data().points || 0;
-
-    const newPoints = currentPoints + amount;
-
-    await window.setDoc(
-      dashboardRef,
-      {
-        points:    newPoints,
-        budget:    newPoints,
-        level:     getLevel(newPoints),
-        badge:     getBadge(newPoints),
-        updatedAt: window.serverTimestamp()
-      },
-      { merge: true }
-    );
-
-    localStorage.setItem("safetyXP_" + userId, newPoints);
-    await loadStats();
-    showNotify(`+${amount} XP`);
-
-  } catch(error){
-    console.error("XP Error:", error);
-  }
-}
-
-/* NOTIFICATION */
-
-function showNotify(text){
-  let n = document.getElementById("notify");
-  n.innerText = text;
-  n.classList.add("show");
-  setTimeout(()=>{ n.classList.remove("show"); }, 3000);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   ON LOAD
-   ═══════════════════════════════════════════════════════════ */
-window.onload = async function(){
-  loadUser();
-  await loadStats();
-
-  const lastOpen = localStorage.getItem("lastDashboardOpen");
-  const now      = Date.now();
-
-  if(!lastOpen || now - parseInt(lastOpen) > 300000){
-    await updateStudentDashboard("open_dashboard", "Student opened dashboard");
-    localStorage.setItem("lastDashboardOpen", now);
-  }
-
-  /* تحديث تلقائي عند العودة للتبويب */
-  window.addEventListener("focus", async ()=>{ await loadStats(); });
-
-  /* إظهار أي رسالة معلّقة من لعبة */
-  const msg = localStorage.getItem("notifyNow");
-  if(msg){
-    showNotify(msg);
-    localStorage.removeItem("notifyNow");
+    setTimeout(() => { window.location.href = "welcome.html"; }, 1500);
   }
 };
 
-</script>
-<script src="js/userSystem.js"></script>
-<script>
+/* ══════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════ */
+loadUser();
+await loadStats();
 
-async function logStudentActivity(type, description){
-  try{
-    const userId = getUserId();
-    await window.addDoc(
-      window.collection(db, "Student-Dashboard", userId, "activities"),
-      {
-        type,
-        description,
-        createdAt: window.serverTimestamp()
-      }
-    );
-  } catch(error){
-    console.error("Activity Error:", error);
-  }
+/* إشعار من لعبة */
+const pending = localStorage.getItem("notifyNow");
+if (pending) { showNotify(pending); localStorage.removeItem("notifyNow"); }
+
+/* تسجيل فتح الداشبورد (مرة كل 5 دقائق) */
+const last = localStorage.getItem("lastDashboardOpen");
+const now  = Date.now();
+if (!last || now - parseInt(last) > 300000) {
+  logActivity("open_dashboard", "Student opened dashboard");
+  localStorage.setItem("lastDashboardOpen", now);
 }
 
-document.addEventListener("visibilitychange", () => {
-  if(document.hidden){
-    updateStudentDashboard("close_game", "Student closed dashboard");
-  }
-});
+/* إعادة قراءة عند العودة أو focus */
+window.addEventListener("pageshow",          () => loadStats());
+window.addEventListener("focus",             () => loadStats());
+document.addEventListener("visibilitychange",() => { if (!document.hidden) loadStats(); });
+
+/* تحديث دوري كل 8 ثوانٍ */
+setInterval(loadStats, 8000);
 
 </script>
+
+<script src="js/userSystem.js"></script>
 </body>
 </html>
