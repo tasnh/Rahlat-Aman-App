@@ -683,7 +683,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 window.db = db;
-// نقوم بربط الدوال مباشرة بـ window لتكون متاحة لكل السكربتات
 window.doc = doc;
 window.getDoc = getDoc;
 window.setDoc = setDoc;
@@ -725,10 +724,10 @@ function goSettings(){
 closeMenu();
 window.location.href="student_settings.html";
 }
+
 /* USER */
 
 let currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-/* 🔥 إصلاح الاسم */
 
 function loadUser(){
   let studentName =
@@ -736,504 +735,270 @@ function loadUser(){
     currentUser.name ||
     "Student";
   document.getElementById("name").innerText = studentName;
-  document.getElementById("welcome").innerText =
-    "Welcome Student👋";
+  document.getElementById("welcome").innerText = "Welcome Student👋";
 }
 
-/* 🔥 USER UNIQUE ID */
+/* USER UNIQUE ID */
 
 function getUserId(){
-const currentUser =
-    JSON.parse(localStorage.getItem("currentUser")) || {};
-return (
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+  return (
     currentUser.email ||
     currentUser.id ||
     "guest_user"
-)
-.toLowerCase()
-.replace(/[.#$[\]]/g, "_");
+  )
+  .toLowerCase()
+  .replace(/[.#$[\]]/g, "_");
 }
 
-
-async function updateStudentDashboard(type, description){
-    const userId =
-    getUserId();
-
-const studentName =
-    currentUser.fullName ||
-    currentUser.name ||
-    "Student";
-
-try{
-
-    const dashboardRef =
-        window.doc(
-            db,
-            "Student-Dashboard",
-            userId
-        );
-
-    const dashboardSnap =
-        await window.getDoc(
-            dashboardRef
-        );
-
-    let points = 0;
-
-    if(dashboardSnap.exists()){
-
-        points =
-            dashboardSnap.data()
-            .points || 0;
-    }
-
-    await window.setDoc(
-        dashboardRef,
-        {
-
-            studentName,
-
-            points,
-
-            level:
-                getLevel(points),
-
-            badge:
-                getBadge(points),
-
-            lastActivity:
-                description,
-
-            lastActivityType:
-                type,
-
-            updatedAt:
-                window.serverTimestamp(),
-
-            lastSeen:
-                window.serverTimestamp()
-
-        },
-        {
-            merge:true
-        }
-    );
-
-    // activity log
-
-    await logStudentActivity(
-        type,
-        description
-    );
-
-    // refresh dashboard
-
-    await loadStats();
-
-}catch(error){
-
-    console.error(
-        "Dashboard Update Error:",
-        error
-    );
-
-}
-}
-
-/* LEVEL SYSTEM */
+/* ═══════════════════════════════════════════════════════════
+   LEVEL SYSTEM — موحّد مع جميع الألعاب
+   game1, game2, game3, game4, game5 تستخدم نفس القيم
+   ═══════════════════════════════════════════════════════════ */
 function getLevel(points){
-
-if(points >= 5000){
-    return "Legend 🔥";
-}
-
-if(points >= 3000){
-    return "Bus Master 🚌";
-}
-
-if(points >= 1000){
-    return "Safety Hero 🛡️";
-}
-
-if(points >= 300){
-    return "Explorer 🔵";
-}
-
-return "Beginner 🟢"
+  if(points >= 1000) return "Legend 🔥";
+  if(points >= 500)  return "Master 🔴";
+  if(points >= 250)  return "Pro 🟡";
+  if(points >= 100)  return "Explorer 🔵";
+  return "Beginner 🟢";
 }
 
 function getBadge(points){
-if(points >= 5000)
-    return "👑";
-
-if(points >= 3000)
-    return "🏆";
-
-if(points >= 1000)
-    return "🥇";
-
-if(points >= 300)
-    return "🥈";
-
-return "🥉"
+  if(points >= 1000) return "👑";
+  if(points >= 500)  return "🏆";
+  if(points >= 250)  return "🥇";
+  if(points >= 100)  return "🥈";
+  return "🥉";
 }
 
-/* 🔥 SMART PROGRESS */
-/* كل 1 نقطة = 1% فقط */
+/* ═══════════════════════════════════════════════════════════
+   PROGRESS — كل 100 نقطة = مستوى جديد
+   نحسب النسبة داخل المستوى الحالي
+   ═══════════════════════════════════════════════════════════ */
 function getProgress(points){
-  return points % 100;
+  // مستويات الحدود: 0, 100, 250, 500, 1000
+  const thresholds = [0, 100, 250, 500, 1000];
+  for(let i = thresholds.length - 1; i >= 0; i--){
+    if(points >= thresholds[i]){
+      const current = thresholds[i];
+      const next    = thresholds[i + 1];
+      if(!next) return 100; // أعلى مستوى
+      return Math.floor(((points - current) / (next - current)) * 100);
+    }
+  }
+  return 0;
 }
 
 function animateProgress(target){
-
-  let progressBar = document.getElementById("progressBar");
+  let progressBar  = document.getElementById("progressBar");
   let progressText = document.getElementById("progressText");
-
   let current = 0;
-
   let interval = setInterval(()=>{
-
     if(current >= target){
-
       clearInterval(interval);
-
-    }else{
-
+    } else {
       current += 1;
-
-      if(current > target){
-        current = target;
-      }
-
-      progressBar.style.width = current + "%";
-      progressText.innerText = current + "%";
-
+      if(current > target) current = target;
+      progressBar.style.width  = current + "%";
+      progressText.innerText   = current + "%";
     }
-
-  },25);
-
+  }, 25);
 }
 
-/* 🔥 USER STATS */
-/* كل طالب له بياناته الخاصة */
-/* 🔥 USER STATS */
-/* التحديث المباشر من الفايربيس لضمان دقة النقاط واللفل */
+/* ═══════════════════════════════════════════════════════════
+   LOAD STATS — يقرأ مباشرة من Student-Dashboard/{userId}
+   نفس المسار الذي تكتب فيه جميع الألعاب
+   ═══════════════════════════════════════════════════════════ */
 async function loadStats(){
-    const userId = getUserId();
+  const userId = getUserId();
 
-try{
-
-    const dashboardRef =
-        window.doc(
-            db,
-            "Student-Dashboard",
-            userId
-        );
-
-    const dashboardSnap =
-        await window.getDoc(dashboardRef);
+  try{
+    const dashboardRef  = window.doc(db, "Student-Dashboard", userId);
+    const dashboardSnap = await window.getDoc(dashboardRef);
 
     let points = 0;
+    let budget = 0;
 
     if(dashboardSnap.exists()){
-
-        const data =
-            dashboardSnap.data();
-
-        points =
-            data.points || 0;
+      const data = dashboardSnap.data();
+      points = data.points || 0;
+      budget = data.budget || data.points || 0; // budget يساوي points إذا لم يُضبط منفصلاً
     }
 
-    // UI UPDATE
+    /* تحديث الـ UI */
+    document.getElementById("points").innerText = points;
+    document.getElementById("level").innerText  = getLevel(points);
+    document.getElementById("badges").innerText = getBadge(points);
 
-    document.getElementById(
-        "points"
-    ).innerText = points;
-
-    document.getElementById(
-        "level"
-    ).innerText =
-        getLevel(points);
-
-    document.getElementById(
-        "badges"
-    ).innerText =
-        getBadge(points);
-
-    // Progress
-
-    const progress =
-        getProgress(points);
-
+    /* شريط التقدم */
+    const progress = getProgress(points);
     animateProgress(progress);
 
-    // Sync cache
-    localStorage.setItem(
-        "safetyXP_" + userId,
-        points
-    );
+    /* حفظ في الكاش المحلي */
+    localStorage.setItem("safetyXP_"  + userId, points);
+    localStorage.setItem("safetyBudget_" + userId, budget);
 
-    // Check level up
-    await checkLevelUp();
+    /* فحص Level Up */
+    await checkLevelUp(points);
 
-}catch(error){
-
-    console.error(
-        "Dashboard Load Error:",
-        error
-    );
-
-}
-}
-/* LEVEL UP */
-async function checkLevelUp(){
-
-  let userId = getUserId();
-
-  let prev =
-    localStorage.getItem("lastLevel_" + userId) || "";
-
-  const docRef = window.doc(db, "Student-Dashboard", userId);
-  const docSnap = await window.getDoc(docRef);
-
-  let points = 0;
-
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    points = data.points || 0;
+  } catch(error){
+    console.error("Dashboard Load Error:", error);
   }
+}
 
-  let currentLevel = getLevel(points);
+/* LEVEL UP CHECK */
+async function checkLevelUp(points){
+  const userId       = getUserId();
+  const prev         = localStorage.getItem("lastLevel_" + userId) || "";
+  const currentLevel = getLevel(points);
 
   if(prev !== currentLevel){
-
     if(prev !== ""){
       showNotify("🎉 Level Up! " + currentLevel);
     }
+    localStorage.setItem("lastLevel_" + userId, currentLevel);
+  }
+}
 
-    localStorage.setItem(
-      "lastLevel_" + userId,
-      currentLevel
+/* ═══════════════════════════════════════════════════════════
+   UPDATE DASHBOARD — يُسجّل نشاط الطالب في الداشبورد
+   ═══════════════════════════════════════════════════════════ */
+async function updateStudentDashboard(type, description){
+  const userId      = getUserId();
+  const studentName = currentUser.fullName || currentUser.name || "Student";
+
+  try{
+    const dashboardRef  = window.doc(db, "Student-Dashboard", userId);
+    const dashboardSnap = await window.getDoc(dashboardRef);
+    let points = 0;
+    if(dashboardSnap.exists()) points = dashboardSnap.data().points || 0;
+
+    await window.setDoc(
+      dashboardRef,
+      {
+        studentName,
+        points,
+        level:            getLevel(points),
+        badge:            getBadge(points),
+        lastActivity:     description,
+        lastActivityType: type,
+        updatedAt:        window.serverTimestamp(),
+        lastSeen:         window.serverTimestamp()
+      },
+      { merge: true }
     );
+
+    await logStudentActivity(type, description);
+    await loadStats();
+
+  } catch(error){
+    console.error("Dashboard Update Error:", error);
   }
 }
 
 /* MENU */
 
-let menu = document.getElementById("menu");
+let menu    = document.getElementById("menu");
 let overlay = document.getElementById("overlay");
 
 function openMenu(){
-
   menu.classList.add("active");
   overlay.classList.add("active");
-
 }
 
 function closeMenu(){
-
   menu.classList.remove("active");
   overlay.classList.remove("active");
-
 }
 
-/* CLOSE WHEN CLICK OUTSIDE */
-
-document.addEventListener("click",function(e){
-
-if(
-menu.classList.contains("active") &&
-!menu.contains(e.target) &&
-!e.target.closest(".menu-btn")
-){
-closeMenu();
-}
-
+document.addEventListener("click", function(e){
+  if(
+    menu.classList.contains("active") &&
+    !menu.contains(e.target) &&
+    !e.target.closest(".menu-btn")
+  ){
+    closeMenu();
+  }
 });
 
 /* LOGOUT */
 
 function logout(){
-
-if(confirm("Are you sure you want to logout?")){
-  localStorage.removeItem("currentUser");
-  localStorage.removeItem("lastDashboardOpen");
-  showNotify("👋 Logged out");
-  setTimeout(()=>{
-    window.location.href="welcome.html";
-  },1500);
-
+  if(confirm("Are you sure you want to logout?")){
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("lastDashboardOpen");
+    showNotify("👋 Logged out");
+    setTimeout(()=>{ window.location.href = "welcome.html"; }, 1500);
+  }
 }
 
-}
+/* ADD XP */
 
-async function addXP(amount, reason = "activity") {
-  const userId =
-    getUserId();
+async function addXP(amount, reason = "activity"){
+  const userId = getUserId();
 
-try{
+  try{
+    const dashboardRef  = window.doc(db, "Student-Dashboard", userId);
+    const dashboardSnap = await window.getDoc(dashboardRef);
+    let currentPoints   = 0;
+    if(dashboardSnap.exists()) currentPoints = dashboardSnap.data().points || 0;
 
-    const dashboardRef =
-        window.doc(
-            db,
-            "Student-Dashboard",
-            userId
-        );
-
-    const dashboardSnap =
-        await window.getDoc(
-            dashboardRef
-        );
-
-    let currentPoints = 0;
-
-    if(
-        dashboardSnap.exists()
-    ){
-
-        currentPoints =
-            dashboardSnap.data()
-            .points || 0;
-    }
-
-    const newPoints =
-        currentPoints + amount;
+    const newPoints = currentPoints + amount;
 
     await window.setDoc(
-        dashboardRef,
-        {
-
-            points: newPoints,
-
-            level:
-                getLevel(
-                    newPoints
-                ),
-
-            badge:
-                getBadge(
-                    newPoints
-                ),
-
-            updatedAt:
-                window.serverTimestamp()
-
-        },
-        {
-            merge:true
-        }
+      dashboardRef,
+      {
+        points:    newPoints,
+        budget:    newPoints,
+        level:     getLevel(newPoints),
+        badge:     getBadge(newPoints),
+        updatedAt: window.serverTimestamp()
+      },
+      { merge: true }
     );
 
-    // Local sync
-
-    localStorage.setItem(
-        "safetyXP_" + userId,
-        newPoints
-    );
-
-    // Refresh dashboard مباشرة
-
+    localStorage.setItem("safetyXP_" + userId, newPoints);
     await loadStats();
+    showNotify(`+${amount} XP`);
 
-    showNotify(
-        `+${amount} XP`
-    );
-
-}catch(error){
-
-    console.error(
-        "XP Error:",
-        error
-    );
-}
+  } catch(error){
+    console.error("XP Error:", error);
+  }
 }
 
 /* NOTIFICATION */
 
 function showNotify(text){
-let n=document.getElementById("notify");
-n.innerText=text;
-n.classList.add("show");
-setTimeout(()=>{
-n.classList.remove("show");
-},3000);
-
+  let n = document.getElementById("notify");
+  n.innerText = text;
+  n.classList.add("show");
+  setTimeout(()=>{ n.classList.remove("show"); }, 3000);
 }
 
-/* LOAD */
-
+/* ═══════════════════════════════════════════════════════════
+   ON LOAD
+   ═══════════════════════════════════════════════════════════ */
 window.onload = async function(){
-   loadUser();
+  loadUser();
+  await loadStats();
 
-await loadStats();
+  const lastOpen = localStorage.getItem("lastDashboardOpen");
+  const now      = Date.now();
 
-const lastOpen =
-    localStorage.getItem(
-        "lastDashboardOpen"
-    );
+  if(!lastOpen || now - parseInt(lastOpen) > 300000){
+    await updateStudentDashboard("open_dashboard", "Student opened dashboard");
+    localStorage.setItem("lastDashboardOpen", now);
+  }
 
-const now =
-    Date.now();
+  /* تحديث تلقائي عند العودة للتبويب */
+  window.addEventListener("focus", async ()=>{ await loadStats(); });
 
-// log once every 5 mins
-
-if(
-
-    !lastOpen ||
-
-    now - parseInt(lastOpen)
-    > 300000
-
-){
-
-    await updateStudentDashboard(
-
-        "open_dashboard",
-
-        "Student opened dashboard"
-
-    );
-
-    localStorage.setItem(
-
-        "lastDashboardOpen",
-
-        now
-
-    );
-
-}
-
-// auto refresh
-
-window.addEventListener(
-
-    "focus",
-
-    async ()=>{
-
-        await loadStats();
-
-    }
-
-);
-
-// notification restore
-
-const msg =
-    localStorage.getItem(
-        "notifyNow"
-    );
-
-if(msg){
-
+  /* إظهار أي رسالة معلّقة من لعبة */
+  const msg = localStorage.getItem("notifyNow");
+  if(msg){
     showNotify(msg);
-
-    localStorage.removeItem(
-        "notifyNow"
-    );
-
-}
+    localStorage.removeItem("notifyNow");
+  }
 };
 
 </script>
@@ -1242,48 +1007,23 @@ if(msg){
 
 async function logStudentActivity(type, description){
   try{
-
-    const userId =
-        getUserId();
-
+    const userId = getUserId();
     await window.addDoc(
-
-        window.collection(
-            db,
-            "Student-Dashboard",
-            userId,
-            "activities"
-        ),
-
-        {
-
-            type,
-
-            description,
-
-            createdAt:
-                window.serverTimestamp()
-
-        }
-
+      window.collection(db, "Student-Dashboard", userId, "activities"),
+      {
+        type,
+        description,
+        createdAt: window.serverTimestamp()
+      }
     );
-
-}catch(error){
-
-    console.error(
-        "Activity Error:",
-        error
-    );
-
-}
+  } catch(error){
+    console.error("Activity Error:", error);
+  }
 }
 
 document.addEventListener("visibilitychange", () => {
   if(document.hidden){
-     updateStudentDashboard(
-      "close_game",
-      "Student closed dashboard"
-    );
+    updateStudentDashboard("close_game", "Student closed dashboard");
   }
 });
 
